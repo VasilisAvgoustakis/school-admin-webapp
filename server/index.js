@@ -1,10 +1,12 @@
 const cors = require('cors');
 const express = require('express');
+const basicAuth = require('express-basic-auth');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+
 
 const app = express();
 
@@ -17,18 +19,24 @@ const pool = mysql.createPool({
 
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:3000"],
+  methods: ["GET", "POST"],
+  credentials: true,
+})
+);
+
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
-
-
-
-//app.use(cookieParser());
-//app.use(bodyParser.urlencoded({ extended: true }));
 app.use (
   session ({
+      //genid: function(req){
+      //  return genuuid() // use UUIDs for session IDs
+      //},
       //“key” is the name of the cookie 
-      key: "user",
+      key: "authorizedUser",
       //“secret” is used to access data from the server-side
       //for real applications use a very strong secret key.
       secret: "sub",
@@ -42,12 +50,10 @@ app.use (
       // cookie sets the cookie expiry time. 
       //Let’s set it as a 24 hr (60 x 60 x 24 seconds)
       cookie: {
-          expires: 60 * 60 * 24,
+          expires: 60 * 60 * 24, secure: true, httpOnly: true, signed: true
       },
   })
 );
-
-
 
 
 app.get('/test', (req, res) => {
@@ -69,33 +75,75 @@ app.get('/test', (req, res) => {
 app.post('/register', (req, res)=> {
   const username = req.body.username;
   const password = req.body.password;
-  bcrypt.hash(password,saltRound, (err, hash) => {
-  if (err) {
-          console.log(err)
-      }
-      pool.query( 
-          "INSERT INTO users (username, password) VALUES (?,?)",
-          [username, hash], 
-          (err, result)=> {
-              console.log(err);
+  const verifCode = req.body.verifCode;
+  if (username && password && verifCode){
+    pool.query(
+      "SELECT * FROM verification WHERE verifcode = ?;",
+      [verifCode],
+      (err,result) => {
+          if (err) {
+            //console.log("error")
+            res.send({err: err});
           }
-      );
-  })
+          if (result.length > 0) {
+            //console.log(result)
+            bcrypt.hash(password,saltRound, (err, hash) => {
+              if (err) {
+                      console.log(err)
+                  }
+                //insert newly registered user in users table
+                  pool.query( 
+                      "INSERT INTO users (username, password) VALUES (?,?);",
+                      [username, hash], 
+                      (err, result)=> {
+                        if(err){
+                          res.send({message: "User already exists!"})
+                          console.log(err);
+                        }else{
+                          
+                          //delete used verification code from verification table
+                          pool.query( 
+                            "DELETE FROM verification WHERE verifcode = ?;",
+                            [verifCode], 
+                            (err, result)=> {
+                              console.log(err);
+                            }
+                          );
+                          
+                          res.send({message: "User Successfully registered!"})
+
+                        }
+                      }
+                  );
+                }
+              )
+          }else {
+              res.send({message: "Falsches Code!"})
+            }
+        })
+    }else{
+      res.send({message: "Input is missing!"})
+    }
 });
 
-
-//Indicate login status using session variables
-app.get("/login", (req, res) => {
-  if (req.session.user) {
-    res.send({ loggedIn: true, user: req.session.user });
-  } else {
-    res.send({ loggedIn: false });
-  }
-});
 
 //Set a value for saltRounds
 // Higher values of “saltRound” take more time to the hashing algorithm. 
 const saltRound = 10;
+
+//Indicate login status using session variables
+app.get("/login", (req, res) => {
+  console.log("inthe GET")
+  console.log(req.session.user);
+  if (req.session.user) {
+    console.log("inthe TRUE")
+    res.send({ loggedIn: true, user: req.session.user });
+  } else {
+    console.log("inthe FALSE")
+    res.send({ loggedIn: false });
+  }
+});
+
 
 app.post("/login", (req, res) => {
   const username = req.body.username;
@@ -111,9 +159,15 @@ app.post("/login", (req, res) => {
         if (result.length > 0) {
             bcrypt.compare(password, result[0].password, (error, response) => {
                 if (response) {
+                    //console.log(req.session)
                     req.session.user = result;
-                    console.log(req.session.user);
-                    res.send(result);
+                    
+                    req.session.user.loggedIn = true;
+                    console.log("Logged In Status: " + req.session.user.loggedIn);
+                    //res.send(result);
+                    res.send(req.session.user.loggedIn);
+                    //res.send({ loggedIn: true, user: req.session.user });
+                    
                 } else{
                     res.send({message: "Wrong username/ password comination!"}); 
                 }
@@ -124,6 +178,9 @@ app.post("/login", (req, res) => {
     }
 );
 });
+
+
+
 //End of Authentication
 
 

@@ -18,13 +18,21 @@
 
 USE fsx_db;
 
+-- table for user verification when registering
+CREATE TABLE `fsx_db`.`verification` ( 
+  `code_id` INT NOT NULL AUTO_INCREMENT , 
+  `verifcode` VARCHAR(6) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL , 
+  PRIMARY KEY (`code_id`)
+  ) ENGINE = InnoDB; 
+
 
 -- table for user authentication
 CREATE TABLE `users` ( 
   `user_id` INT NOT NULL AUTO_INCREMENT , 
   `username` VARCHAR(20) NOT NULL , 
   `password` VARCHAR(1000) NOT NULL , 
-  PRIMARY KEY (`user_id`)
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `username_UNIQUE` (`username`)
   ) ENGINE = InnoDB; 
 
 --

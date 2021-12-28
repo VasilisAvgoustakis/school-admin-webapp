@@ -1,51 +1,68 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, setRole} from 'react';
 import axios from 'axios';
+import { Navigate } from 'react-router-dom';
 
 
 export function Login(props){
 
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-  
-    const [loginStatus, setLoginStatus] = useState("");
-  
-  
-    async function login() {
-      await axios.post(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/login`, {
-        username: username,
-        password: password,
-      }).then((response)  => {
-  
-        if (response.data.message){
-          setLoginStatus(response.data.message);
-        }else {
-          setLoginStatus(response.data[0].username)}
-        console.log(response.data);
-      })
-    }
-  
-    return(
-      <div className="login">
-          <h1>Anmelden</h1>
-          <input 
-            type="text" 
-            placeholder="Benutzername..."
-            onChange={(e) => {
-              setUsername(e.target.value);
-            }}
-          />
-  
-          <input 
-            type="password" 
-            placeholder="Passwort..."
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-          />
-          <button onClick={login}>
-            Anmelden
-          </button>
-          <h1>{loginStatus}</h1>
-        </div>   
-    )
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [loginStatus, setLoginStatus] = useState("");
+
+  const [toDashboard, setToDashboard] = React.useState(false);
+/**
+ * To send the information from the client application to the server 
+ * application to see a session exists, we have to be very careful. 
+ * The XMLHttpRequest from a different domain cannot set cookie values 
+ * for their domain unless withCredentials is set to true before making 
+ * the request.
+ */
+  axios.defaults.withCredentials = true;
+
+  async function login() {
+    await axios.post(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/login`, {
+      username: username,
+      password: password,
+    }).then((response)  => {
+
+      if (response.data.message){
+        setLoginStatus(response.data.message);
+      }else {
+        //setLoginStatus(response.data[0].username)
+      }
+      console.log(response.data);
+    })
   }
+
+
+
+  if(toDashboard === true){
+    return <Navigate to ='/dashboard' />
+  }
+
+  return(
+    <div className="login">
+        <h1>Anmelden</h1>
+        <input 
+          type="text" 
+          placeholder="Benutzername..."
+          onChange={(e) => {
+            setUsername(e.target.value);
+          }}
+        />
+
+        <input 
+          type="password" 
+          placeholder="Passwort..."
+          onChange={(e) => {
+            setPassword(e.target.value);
+          }}
+        />
+        <button onClick={login} after>
+          Anmelden
+        </button>
+        <h1>{loginStatus}</h1>
+      </div>   
+  )
+}

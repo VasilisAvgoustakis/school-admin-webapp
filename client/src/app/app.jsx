@@ -1,52 +1,49 @@
 import React, {useState, useEffect, setRole} from 'react';
-import { Login,PersonSelectList} from '../components';
+import { Login,PersonSelectList, Register} from '../components';
 import axios from 'axios';
 import { Outlet, Link, withRouter } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {Personen} from '../routes/personen';
+
+
+const Dashboard = () => <h1>Personen (Private)</h1>;
 
 function App() {
 
-  /**
-   * To send the information from the client application to the server 
-   * application to see a session exists, we have to be very careful. 
-   * The XMLHttpRequest from a different domain cannot set cookie values 
-   * for their domain unless withCredentials is set to true before making 
-   * the request.
-   */
-  axios.defaults.withCredentials = false;
 
-  // Check already logged users using Axios.
+    // Check already logged users using Axios.
   // a useEffect to run whenever we refresh the page.
   // In here “SET ROLE” changes the active roles within the current session.
-  function useEffect(){
+  useEffect(() => {
     axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/login`).then((response) => {
+      console.log("effect")
       if (response.data.loggedIn == true) {
-        setRole(response.data.user[0].role);
+        setRole(response.data[0].user.role);
+        console.log(response.data.loggedIn);
+        
+        
+      }else{
+        console.log(response.data.loggedIn);
+        //console.log(response.data[0].user.role);
       }
     });
-  };
-
+  }, []);
 
   return (
     <div className="App">
-      <h1>FSX_APP</h1>
-      <nav 
-        style={{
-          borderBottom: "solid 1px",
-          paddingBottom: "1rem"
-        }}
-      >
-        
-        <Link to="/personen">Personen</Link> |{" "}
-        
-      </nav>
-      <Outlet />
+      <BrowserRouter>
+        <h1>FSX_APP</h1>
+        <Link to= '/login' > Anmelden </Link>
+        <br></br>
+        <Link to= '/register' > Registrieren  </Link>
       
-      <Login />
-    
-      
-      
-      
-      
+        <Routes>
+          <Route path= "/login" element={<Login />} />
+          <Route path= "/register" element={<Register />} />
+          <Route path="/personen" element={<Personen />} />
+            
+        </Routes>
+    </BrowserRouter>
       
     </div>
   );
