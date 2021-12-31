@@ -9,6 +9,7 @@ export function Login(props){
   const [password, setPassword] = useState("");
 
   const [loginStatus, setLoginStatus] = useState("");
+  const [message,setMessage] = useState("");
 
   const [toDashboard, setToDashboard] = React.useState(false);
 /**
@@ -18,28 +19,27 @@ export function Login(props){
  * for their domain unless withCredentials is set to true before making 
  * the request.
  */
-  axios.defaults.withCredentials = true;
+  
 
-  async function login() {
-    await axios.post(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/login`, {
+  function login() {
+    axios.defaults.crossDomain = true;
+    axios.defaults.withCredentials = true;
+    axios.post(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/login`, {
       username: username,
       password: password,
     }).then((response)  => {
 
       if (response.data.message){
-        setLoginStatus(response.data.message);
+        setMessage(response.data.message);
+        console.log(response.data);
       }else {
-        //setLoginStatus(response.data[0].username)
+        setMessage("")
+        console.log("Session Id: " + response.data);
       }
-      console.log(response.data);
+      
     })
   }
 
-
-
-  if(toDashboard === true){
-    return <Navigate to ='/dashboard' />
-  }
 
   return(
     <div className="login">
@@ -59,10 +59,10 @@ export function Login(props){
             setPassword(e.target.value);
           }}
         />
-        <button onClick={login} after>
+        <button onClick={login}>
           Anmelden
         </button>
-        <h1>{loginStatus}</h1>
+        <h1>{message}</h1>
       </div>   
   )
 }

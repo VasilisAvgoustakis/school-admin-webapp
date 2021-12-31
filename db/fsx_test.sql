@@ -35,6 +35,16 @@ CREATE TABLE `users` (
   UNIQUE KEY `username_UNIQUE` (`username`)
   ) ENGINE = InnoDB; 
 
+
+
+-- data for storing sessions
+CREATE TABLE `fsx_db`.`sessions` (
+   `session_id` VARCHAR(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL , 
+   `expires` INT(11) UNSIGNED NOT NULL , 
+   `data` MEDIUMTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL , 
+   PRIMARY KEY (`session_id`)
+   ) ENGINE = InnoDB; 
+
 --
 -- Table structure for table `arbeitsgruppen`
 --

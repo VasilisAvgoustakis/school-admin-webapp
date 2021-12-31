@@ -1,9 +1,10 @@
 import React from 'react';
-import {PersonSelectList} from '../components';
+import {Register} from '../components';
 
-export function Register() {
+export default function RegisterRoute() {
     return (
       <main style={{ padding: "1rem 0" }}>
+        
         <Register />
       </main>
     );

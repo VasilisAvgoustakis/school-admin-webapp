@@ -1,24 +1,51 @@
-const cors = require('cors');
 const express = require('express');
-const basicAuth = require('express-basic-auth');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+//const basicAuth = require('express-basic-auth');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
-const bodyParser = require('body-parser');
+
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const mysqlStore = require('express-mysql-session')(session);
+//dbobject from db.js containg all queries to db
+const db = require('./db');
+const PORT = process.env.REACT_APP_SERVER_PORT
 
 
-const app = express();
 
+//connection pooll to db
 const pool = mysql.createPool({
   host: process.env.MYSQL_HOST_IP,
   user: process.env.MYSQL_USER,
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
 });
+// create sessioStore middleware  allows
+// work with SQL relational tables and schema-less JSON collections.
+const sessionStore = new mysqlStore({
+  connectionLimit: 10,
+  password: process.env.MYSQL_PASSWORD,
+  user: process.env.MYSQL_USER,
+  database: process.env.MYSQL_DATABASE,
+  host: process.env.MYSQL_HOST_IP,
+  port: 3307,
+  createDatabaseTable: false
+},
+pool)
 
 
-app.use(express.json());
+const app = express();
+
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Origin', "*");
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,UPDATE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+  next();
+});
+
+//app.use(express.json());
 app.use(cors({
   origin: ["http://localhost:3000"],
   methods: ["GET", "POST"],
@@ -26,34 +53,25 @@ app.use(cors({
 })
 );
 
+
+
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-
-app.use (
-  session ({
-      //genid: function(req){
-      //  return genuuid() // use UUIDs for session IDs
-      //},
-      //“key” is the name of the cookie 
-      key: "authorizedUser",
-      //“secret” is used to access data from the server-side
-      //for real applications use a very strong secret key.
-      secret: "sub",
-      //resave enables the session to be stored back to the session store, 
-      //even if the session was never modified during the request. 
-      //It takes a Boolean value.
-      resave: false,
-      //“saveUninitialized” allows any uninitialized session to be sent to 
-      //the store.
-      saveUninitialized: false,
-      // cookie sets the cookie expiry time. 
-      //Let’s set it as a 24 hr (60 x 60 x 24 seconds)
-      cookie: {
-          expires: 60 * 60 * 24, secure: true, httpOnly: true, signed: true
-      },
-  })
-);
+app.use(session({
+  name: "test session",
+  resave: false,
+  saveUninitialized: false,
+  store: sessionStore,
+  secret: "secret",
+  cookie: {
+      maxAge: 60 * 60 * 24,
+      //sameSite: 'None',
+      //secure: "development",
+      httpOnly: true
+  }
+}))
 
 
 app.get('/test', (req, res) => {
@@ -132,23 +150,21 @@ app.post('/register', (req, res)=> {
 const saltRound = 10;
 
 //Indicate login status using session variables
-app.get("/login", (req, res) => {
-  console.log("inthe GET")
-  console.log(req.session.user);
-  if (req.session.user) {
-    console.log("inthe TRUE")
-    res.send({ loggedIn: true, user: req.session.user });
-  } else {
-    console.log("inthe FALSE")
-    res.send({ loggedIn: false });
-  }
-});
+// app.get("/login", (req, res) => {
+//   req.session.user = "user";
+//   if (req.session.user) {
+//     res.send({ loggedIn: true, user: req.session.user });
+//   } else {
+//     res.send({ loggedIn: false });
+//   }
+// });
 
 
 app.post("/login", (req, res) => {
+  //console.log(req.session.id)
   const username = req.body.username;
   const password = req.body.password;
-
+  //console.log(req.session.id)
   pool.query(
     "SELECT * FROM users WHERE username = ?;",
     [username], 
@@ -159,14 +175,11 @@ app.post("/login", (req, res) => {
         if (result.length > 0) {
             bcrypt.compare(password, result[0].password, (error, response) => {
                 if (response) {
-                    //console.log(req.session)
-                    req.session.user = result;
-                    
-                    req.session.user.loggedIn = true;
-                    console.log("Logged In Status: " + req.session.user.loggedIn);
-                    //res.send(result);
-                    res.send(req.session.user.loggedIn);
-                    //res.send({ loggedIn: true, user: req.session.user });
+                  req.session.user = result;
+                  console.log(req.session.id)
+                  console.log(req.session);
+                  res.send(req.session.id);
+          
                     
                 } else{
                     res.send({message: "Wrong username/ password comination!"}); 
@@ -178,6 +191,19 @@ app.post("/login", (req, res) => {
     }
 );
 });
+
+app.post('/logout', (req, res)=>{
+  req.session.destroy(err => {
+      if(err){
+          console.log(err);
+      }
+      sessionStore.close()
+      res.clearCookie("test session")
+      res.send({message: "Loged out succesfully!"})
+      //res.redirect('/login')
+  })
+
+})
 
 
 
