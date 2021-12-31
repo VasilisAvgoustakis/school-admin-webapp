@@ -17,7 +17,7 @@ export function Logout(props){
   }
 
   return(
-      <div classname='logout'>
+      <div className='logout'>
           <button onClick={logout}>Logout</button>
           <h1>{message}</h1>
       </div>

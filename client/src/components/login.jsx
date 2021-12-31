@@ -1,6 +1,8 @@
 import React, {useState, useEffect, setRole} from 'react';
 import axios from 'axios';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
+
 
 
 export function Login(props){
@@ -8,10 +10,15 @@ export function Login(props){
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const [loginStatus, setLoginStatus] = useState("");
+  //const [loginStatus, setLoginStatus] = useState("");
   const [message,setMessage] = useState("");
 
-  const [toDashboard, setToDashboard] = React.useState(false);
+  //const [toDashboard, setToDashboard] = React.useState(false);
+
+  const navigate = useNavigate();
+  //const { loggedIn } = useAuth();
+
+
 /**
  * To send the information from the client application to the server 
  * application to see a session exists, we have to be very careful. 
@@ -19,8 +26,6 @@ export function Login(props){
  * for their domain unless withCredentials is set to true before making 
  * the request.
  */
-  
-
   function login() {
     axios.defaults.crossDomain = true;
     axios.defaults.withCredentials = true;

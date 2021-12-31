@@ -66,7 +66,7 @@ app.use(session({
   store: sessionStore,
   secret: "secret",
   cookie: {
-      maxAge: 60 * 60 * 24,
+      maxAge: 60000,
       //sameSite: 'None',
       //secure: "development",
       httpOnly: true
@@ -150,14 +150,9 @@ app.post('/register', (req, res)=> {
 const saltRound = 10;
 
 //Indicate login status using session variables
-// app.get("/login", (req, res) => {
-//   req.session.user = "user";
-//   if (req.session.user) {
-//     res.send({ loggedIn: true, user: req.session.user });
-//   } else {
-//     res.send({ loggedIn: false });
-//   }
-// });
+app.get("/login", (req, res) => {
+  console.log(req.session.cookie)
+});
 
 
 app.post("/login", (req, res) => {
