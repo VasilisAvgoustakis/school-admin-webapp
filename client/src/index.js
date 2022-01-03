@@ -8,6 +8,10 @@ import LoginRoute from './routes/loginRoute';
 import RegisterRoute from './routes/registerRoute';
 //import { Login,PersonSelectList, } from './components';
 import * as serviceWorker from './serviceWorker';
+import Dashboard from 'components/dashboard'
+
+
+
 
 
 ReactDOM.render(

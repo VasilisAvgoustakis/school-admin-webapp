@@ -32,7 +32,6 @@ function App() {
         <br></br>
         <Register />
         <Outlet />
-      
     </div>
   );
 }
