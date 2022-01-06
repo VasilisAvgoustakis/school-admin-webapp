@@ -23,6 +23,7 @@
     "react-router-dom": "^6.2.1",
     "react-router-native": "^6.2.1",
     "react-scripts": "^5.0.0",
+    "react-scroll": "^1.8.4",
     "webpack": "5.65.0"
   },
   "scripts": {
