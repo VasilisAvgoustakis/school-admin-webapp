@@ -1,11 +1,10 @@
 import React from 'react';
-import {PersonSelectList} from '../components';
+import {PersonSelectList, Dashboard} from '../components';
 
 export default function Personen() {
     return (
       <main style={{ padding: "1rem 0" }}>
-        
-        <PersonSelectList />
+        <Dashboard />
       </main>
     );
   }

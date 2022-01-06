@@ -74,12 +74,13 @@ app.use(session({
 }))
 
 
-app.get('/test', (req, res) => {
+app.get('/personsList', (req, res) => {
   const { table } = req.query;
-  pool.query(`select rufname from ${table}`, (err, results) => {
+  pool.query(`SELECT rufname, nachname FROM ${table} ORDER BY rufname`, (err, results) => {
     if (err) {
       return res.send(err);
     } else {
+      console.log(results)
       return res.send(results);
     }
   });

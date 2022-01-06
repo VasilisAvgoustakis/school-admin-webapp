@@ -1,14 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './app/app';
+import Landing from './app/landing';
 import { Outlet, Link, withRouter } from "react-router-dom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Personen from './routes/personen';
-import LoginRoute from './routes/loginRoute';
-import RegisterRoute from './routes/registerRoute';
-//import { Login,PersonSelectList, } from './components';
+import { Navigation} from './components';
 import * as serviceWorker from './serviceWorker';
-import Dashboard from 'components/dashboard'
+
 
 
 
@@ -17,10 +14,8 @@ import Dashboard from 'components/dashboard'
 ReactDOM.render(
     <BrowserRouter>
         <Routes>
-            <Route path='/' element= {<App />} />
-            
-            <Route path="/personen" element={<Personen />} />
-            
+            <Route path='/' element= {<Landing />} />
+            <Route path="/dashboard" element={<Navigation />} />
         </Routes>
     </BrowserRouter>, document.getElementById('root'));
 
