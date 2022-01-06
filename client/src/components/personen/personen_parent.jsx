@@ -28,12 +28,10 @@ export function Personen() {
 
 
   return (
-    
-    <div className="main-content-container">
       
-      <PersonSelectList />
+        <PersonSelectList  />
+        
       
-    </div>
   );
 }
 

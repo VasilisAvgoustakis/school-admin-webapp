@@ -1,6 +1,19 @@
 
 
+.personen-main{
+  height:88vh;
+  width: 100%;
+  margin: 0 auto;
+}
 
+.person-scroller {
+  position: absolute;
+  left: 0px;
+  margin: 0 auto;
+  height:100%;
+  width: 17.6%;
+  overflow: auto;
+}
 
 ul {
     padding: 0;
@@ -29,19 +42,10 @@ ul {
     cursor: pointer;
     
     box-shadow: 2px 2px 3px #666;
-    user-select: none;
+    user-select:none;
   }
   
-  li:before {
-    position: absolute;
-    content: "";
-    left: 4px;
-    top: 50%;
-    margin-top: -10px;
-    border-left: 20px solid #ccc;
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-  }
+ 
   
   li:after {
     position: absolute;
@@ -73,6 +77,6 @@ ul {
   }
   
   li:active {
-    background: #eee;
+    background: rgb(28, 4, 241);
     box-shadow: inset 0 1px 1px #666;
   }

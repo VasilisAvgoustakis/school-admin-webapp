@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios,{setPost} from 'axios';
-import styles from '../stylesheets/listItems.css';
+import styles from '../stylesheets/personen.css';
+import {Link, DirectLink, Element, Events, animateScroll as scroll,  scrollSpy, scroller} from 'react-scroll';
 
 
 async function callDatabase(table){
@@ -28,6 +29,7 @@ export class Person extends React.Component{
 export class PersonSelectList extends Component{
   constructor(props) {
     super(props);
+    this.scrollToTop = this.scrollToTop.bind(this);
     this.state = {
       persons: []
     };
@@ -42,21 +44,64 @@ export class PersonSelectList extends Component{
     });
   }
 
+  scrollToTop() {
+    scroll.scrollToTop();
+  }
+  scrollTo() {
+    scroller.scrollTo('scroll-to-element', {
+      duration: 800,
+      delay: 0,
+      smooth: 'easeInOutQuart'
+    })
+  }
+  scrollToWithContainer() {
+
+    let goToContainer = new Promise((resolve, reject) => {
+
+      Events.scrollEvent.register('end', () => {
+        resolve();
+        Events.scrollEvent.remove('end');
+      });
+
+      scroller.scrollTo('scroll-container', {
+        duration: 800,
+        delay: 0,
+        smooth: 'easeInOutQuart'
+      });
+
+    });
+
+    goToContainer.then(() =>
+      scroller.scrollTo('scroll-container-second-element', {
+        duration: 800,
+        delay: 0,
+        smooth: 'easeInOutQuart',
+        containerId: 'scroll-container'
+      }));
+  }
+  componentWillUnmount() {
+    Events.scrollEvent.remove('begin');
+    Events.scrollEvent.remove('end');
+  }
+
   render() {
     
     
       return (
-      
-        <ul className='personenSelect'>
-        {this.state.persons.map(person => (
-          <li key={ person.rufname + person.nachname }>
-            <Person
-            rufname={person.rufname}
-            nachname={person.nachname}
-            />
-          </li>
-        ))}
-        </ul>
+        <div className='personen-main' >
+          <input></input>
+          <button>Suchen</button>
+          <ul className='person-scroller' >
+          {this.state.persons.map(person => (
+            <li key={ person.rufname + person.nachname } spy={true} smooth={true} duration={500} >
+              <Person
+              rufname={person.rufname}
+              nachname={person.nachname}
+              />
+            </li>
+          ))}
+          </ul>
+        </div>
      
       );
     // return (
