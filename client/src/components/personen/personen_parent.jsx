@@ -10,7 +10,7 @@ import '../stylesheets/dashboard.css';
 
 
 
-export function Personen() {
+export function PersonenScreen() {
   axios.defaults.withCredentials = true;
   
     // Check already logged users using Axios.
@@ -29,12 +29,15 @@ export function Personen() {
 
   return (
       
+      <div className='personen-main'>
         <PersonSelectList  />
-        
+        <div className='person-data-cont'  id='person-data'>Person Data Container in personen_parent</div>
+      </div>
+      
       
   );
 }
 
 
 
-export default Personen;
+export default PersonenScreen;

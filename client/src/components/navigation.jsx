@@ -1,6 +1,6 @@
 import React, {useState, useEffect, setRole} from 'react';
 import {createMaterialTopTabNavigator}  from "@react-navigation/material-top-tabs";
-import { Personen, PersonSelectList, Logout } from '.';
+import { Personen, PersonSelectList, Logout, PersonenScreen } from '.';
 import { NavigationContainer } from '@react-navigation/native';
 import './stylesheets/dashboard.css';
 
@@ -15,12 +15,12 @@ export function Navigation() {
         <Logout />
       
         <Tab.Navigator>
-          <Tab.Screen name="Personen" component={Personen} />
-          <Tab.Screen name="Haushalte" component={PersonSelectList} />
-          <Tab.Screen name="Arbeitsgruppen" component={PersonSelectList} />
-          <Tab.Screen name="Lerngruppen" component={PersonSelectList} />
-          <Tab.Screen name="Tätigkeiten" component={PersonSelectList} />
-          <Tab.Screen name="allg. Abfragen" component={PersonSelectList} />
+          <Tab.Screen name="Personen" component={PersonenScreen} />
+          <Tab.Screen name="Haushalte" component={Logout} />
+          <Tab.Screen name="Arbeitsgruppen" component={Logout} />
+          <Tab.Screen name="Lerngruppen" component={Logout} />
+          <Tab.Screen name="Tätigkeiten" component={Logout} />
+          <Tab.Screen name="allg. Abfragen" component={Logout} />
         </Tab.Navigator>
       
     </NavigationContainer>

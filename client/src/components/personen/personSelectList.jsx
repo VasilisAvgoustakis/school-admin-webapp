@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios,{setPost} from 'axios';
+import {Person} from './person';
 import styles from '../stylesheets/personen.css';
 import {Link, DirectLink, Element, Events, animateScroll as scroll,  scrollSpy, scroller} from 'react-scroll';
 
@@ -10,25 +11,16 @@ async function callDatabase(table){
       params: {
         table: table,
       },
-    }).then(console.log(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/personsList`) ))
+    }))//.then(console.log(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/personsList`) ))
 
 }
 
-export class Person extends React.Component{
-  render() {
-    let rufname = this.props.rufname;
-    let nachname = this.props.nachname; 
-    return (
-      <div>
-        <h3>{rufname +', ' + nachname}</h3>
-      </div>
-    )
-  }
-}
+
 
 export class PersonSelectList extends Component{
   constructor(props) {
     super(props);
+    //this.clickedPerson = this.clickedPerson.bind(this,);
     this.scrollToTop = this.scrollToTop.bind(this);
     this.state = {
       persons: []
@@ -36,13 +28,19 @@ export class PersonSelectList extends Component{
   }
 
   componentDidMount() {
-    callDatabase('personen').then(async res => {
-      console.log(res);
+    callDatabase('personen').then(res => {
+      
       this.setState({
         persons: res.data
       })
+      console.log(this.state.persons);
     });
   }
+
+  // clickedPerson(data){
+    
+  //   //console.log(data);
+  // }
 
   scrollToTop() {
     scroll.scrollToTop();
@@ -88,27 +86,21 @@ export class PersonSelectList extends Component{
     
     
       return (
-        <div className='personen-main' >
+        <div  >
           <input></input>
           <button>Suchen</button>
           <ul className='person-scroller' >
           {this.state.persons.map(person => (
-            <li key={ person.rufname + person.nachname } spy={true} smooth={true} duration={500} >
-              <Person
+            <Person
+              person_id={person.person_id}
               rufname={person.rufname}
-              nachname={person.nachname}
-              />
-            </li>
+              nachname={person.nachname} 
+            />
           ))}
           </ul>
         </div>
      
       );
-    // return (
-    //   <div>
-    //     {persons}
-    //   </div>
-    // )
   }
 }
 

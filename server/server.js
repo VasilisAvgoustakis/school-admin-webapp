@@ -76,7 +76,7 @@ app.use(session({
 
 app.get('/personsList', (req, res) => {
   const { table } = req.query;
-  pool.query(`SELECT rufname, nachname FROM ${table} ORDER BY rufname`, (err, results) => {
+  pool.query(`SELECT person_id, rufname, nachname FROM ${table} ORDER BY rufname`, (err, results) => {
     if (err) {
       return res.send(err);
     } else {
