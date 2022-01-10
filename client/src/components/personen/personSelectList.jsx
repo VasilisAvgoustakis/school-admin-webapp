@@ -3,7 +3,7 @@ import axios,{setPost} from 'axios';
 import {Person} from './person';
 import styles from '../stylesheets/personen.css';
 import {Link, DirectLink, Element, Events, animateScroll as scroll,  scrollSpy, scroller} from 'react-scroll';
-
+import SearchPerson from './search_person';
 
 async function callDatabase(table){
   return (
@@ -16,15 +16,32 @@ async function callDatabase(table){
 }
 
 
-
 export class PersonSelectList extends Component{
+  
   constructor(props) {
     super(props);
-    //this.clickedPerson = this.clickedPerson.bind(this,);
-    this.scrollToTop = this.scrollToTop.bind(this);
+    this.search = this.search.bind(this);
     this.state = {
-      persons: []
+      persons: [],
+      find:'',
+      searchedPersons: []
     };
+  }
+  
+  search(){
+    const name = this.state.find;
+    const results = [];
+    this.state.persons.forEach(function(person){
+      const person_name_credentials = person.rufname + person.nachname;
+      if(person_name_credentials.includes(name) && name != '' ){
+        results.push(person);
+      }
+    })
+    
+    this.state.searchedPersons = results;
+    
+    //console.log(this.state.searchedPersons);
+    this.forceUpdate();
   }
 
   componentDidMount() {
@@ -33,64 +50,52 @@ export class PersonSelectList extends Component{
       this.setState({
         persons: res.data
       })
-      console.log(this.state.persons);
+      
+      this.setState.searchedPersons = [];
+      //console.log(this.state.searchedPersons);
     });
   }
-
-  // clickedPerson(data){
-    
-  //   //console.log(data);
-  // }
-
-  scrollToTop() {
-    scroll.scrollToTop();
-  }
-  scrollTo() {
-    scroller.scrollTo('scroll-to-element', {
-      duration: 800,
-      delay: 0,
-      smooth: 'easeInOutQuart'
-    })
-  }
-  scrollToWithContainer() {
-
-    let goToContainer = new Promise((resolve, reject) => {
-
-      Events.scrollEvent.register('end', () => {
-        resolve();
-        Events.scrollEvent.remove('end');
-      });
-
-      scroller.scrollTo('scroll-container', {
-        duration: 800,
-        delay: 0,
-        smooth: 'easeInOutQuart'
-      });
-
-    });
-
-    goToContainer.then(() =>
-      scroller.scrollTo('scroll-container-second-element', {
-        duration: 800,
-        delay: 0,
-        smooth: 'easeInOutQuart',
-        containerId: 'scroll-container'
-      }));
-  }
-  componentWillUnmount() {
-    Events.scrollEvent.remove('begin');
-    Events.scrollEvent.remove('end');
-  }
+  
 
   render() {
+    
+    this.setState.searchedPersons = [];
+    //console.log(this.state.searchedPersons);
+    var personsToRender = [];
+    
+    if(this.state.searchedPersons.length >=1){
+      console.log("true");
+      personsToRender = this.state.searchedPersons;
+      //console.log(this.state.searchedPersons);
+      //console.log(personsToRender);
+    }else{
+      personsToRender = this.state.persons;
+
+    }
+    console.log(personsToRender);
     
     
       return (
         <div  >
-          <input></input>
-          <button>Suchen</button>
-          <ul className='person-scroller' >
-          {this.state.persons.map(person => (
+          <form action="/" method="get">
+            <label htmlFor="header-search">
+                <span className="visually-hidden"></span>
+            </label>
+            <input
+                type="text"
+                id="header-search"
+                placeholder="Personen Suche"
+                name="s" 
+                onChange={(e) => {
+                  this.setState({find: e.target.value });
+                  
+                }}
+            />
+            <button type='button' onClick={this.search}>Suchen</button>
+        </form>
+
+          <ul id='person-list' className='person-scroller' >
+          {personsToRender.map(person => (
             <Person
               person_id={person.person_id}
               rufname={person.rufname}

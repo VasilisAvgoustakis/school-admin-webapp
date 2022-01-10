@@ -22,7 +22,7 @@ export class Person extends React.Component{
 
 
     handleClick(){
-        console.log(this.state.core_data);
+        //console.log(this.state.core_data);
         
         
         ReactDOM.render(
@@ -40,8 +40,10 @@ export class Person extends React.Component{
     render() {
       return (
 
-        <li key={ this.state.core_data.personId} onClick={this.handleClick} >
-             {this.state.core_data.rufname +', ' + this.state.core_data.nachname}
+        <li name= {this.state.core_data.rufname + ' ' + this.state.core_data.nachname} 
+            key={ this.state.core_data.personId} 
+            onClick={this.handleClick} >
+             {this.state.core_data.rufname +' ' + this.state.core_data.nachname}
         </li>
         
       )
