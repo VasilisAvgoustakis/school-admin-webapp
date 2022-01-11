@@ -5,34 +5,46 @@ import styles from '../stylesheets/personen.css';
 import {Link, DirectLink, Element, Events, animateScroll as scroll,  scrollSpy, scroller} from 'react-scroll';
 import SearchPerson from './search_person';
 
-async function callDatabase(table){
-  return (
-  await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/personsList`, {
-      params: {
-        table: table,
-      },
-    }))//.then(console.log(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/personsList`) ))
+// async function callDatabase(table){
+//   return (
+//   await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/personsList`, {
+//       params: {
+//         table: table,
+//       },
+//     }))
 
-}
+// }
 
 
 export class PersonSelectList extends Component{
   
   constructor(props) {
     super(props);
+    this.fetchData = this.fetchData.bind(this);
     this.search = this.search.bind(this);
     this.state = {
       persons: [],
-      find:'',
       searchedPersons: []
     };
   }
+
+
+  fetchData(table){
+    return (
+    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/personsList`, {
+        params: {
+          table: table,
+        },
+      }))
+  }
   
-  search(){
-    const name = this.state.find;
+
+  search(name){
+    this.setState.searchedPersons = [];
+    console.log(this.state.searchedPersons);
     const results = [];
     this.state.persons.forEach(function(person){
-      const person_name_credentials = person.rufname + person.nachname;
+      const person_name_credentials = person.rufname + ' '+ person.amtlicher_vorname + person.nachname;
       if(person_name_credentials.includes(name) && name != '' ){
         results.push(person);
       }
@@ -40,34 +52,26 @@ export class PersonSelectList extends Component{
     
     this.state.searchedPersons = results;
     
-    //console.log(this.state.searchedPersons);
+    console.log(this.state.searchedPersons);
     this.forceUpdate();
   }
 
   componentDidMount() {
-    callDatabase('personen').then(res => {
+    this.fetchData('personen').then(res => {
       
       this.setState({
         persons: res.data
       })
-      
       this.setState.searchedPersons = [];
-      //console.log(this.state.searchedPersons);
     });
   }
   
 
   render() {
-    
-    this.setState.searchedPersons = [];
-    //console.log(this.state.searchedPersons);
     var personsToRender = [];
-    
+    console.log(personsToRender)
     if(this.state.searchedPersons.length >=1){
-      console.log("true");
       personsToRender = this.state.searchedPersons;
-      //console.log(this.state.searchedPersons);
-      //console.log(personsToRender);
     }else{
       personsToRender = this.state.persons;
 
@@ -77,28 +81,24 @@ export class PersonSelectList extends Component{
     
       return (
         <div  >
-          <form action="/" method="get">
-            <label htmlFor="header-search">
-                <span className="visually-hidden"></span>
-            </label>
-            <input
-                type="text"
-                id="header-search"
-                placeholder="Personen Suche"
-                name="s" 
-                onChange={(e) => {
-                  this.setState({find: e.target.value });
-                  
-                }}
-            />
-            <button type='button' onClick={this.search}>Suchen</button>
-        </form>
+          
+          <input
+              type="text"
+              id="header-search"
+              placeholder="Personen Suche"
+              name="s" 
+              onChange={(e) => {
+                this.search(e.target.value);
+              }}
+          />
+            
 
           <ul id='person-list' className='person-scroller' >
           {personsToRender.map(person => (
-            <Person
+            <Person key={person.person_id}
               person_id={person.person_id}
               rufname={person.rufname}
+              amtlicher_vorname={person.amtlicher_vorname}
               nachname={person.nachname} 
             />
           ))}

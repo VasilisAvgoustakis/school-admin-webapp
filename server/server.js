@@ -74,17 +74,7 @@ app.use(session({
 }))
 
 
-app.get('/personsList', (req, res) => {
-  const { table } = req.query;
-  pool.query(`SELECT person_id, rufname, nachname FROM ${table} ORDER BY rufname, nachname`, (err, results) => {
-    if (err) {
-      return res.send(err);
-    } else {
-      console.log(results)
-      return res.send(results);
-    }
-  });
-});
+
 
 
 //Authentication
@@ -204,6 +194,41 @@ app.post('/logout', (req, res)=>{
 
 
 //End of Authentication
+
+//Data Queries
+app.get('/personsList', (req, res) => {
+  const { table } = req.query;
+  pool.query(`SELECT person_id, rufname, amtlicher_vorname, nachname FROM ${table} ORDER BY rufname, nachname`, (err, results) => {
+    if (err) {
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+
+app.get('/personsData', (req, res) => {
+  const { person_id } = req.query;
+  pool.query(`SELECT * FROM personen 
+    INNER JOIN kontakt_daten ON personen.person_id = kontakt_daten.person_id 
+    WHERE
+      personen.person_id = ${ person_id }`, 
+    (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results[0]);
+      //return res.json(results[0]);
+    }
+  });
+});
+
+
+//End of Queries
 
 
 

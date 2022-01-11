@@ -1,4 +1,5 @@
 import React from 'react';
+import axios,{setPost} from 'axios';
 import ReactDOM from 'react-dom'
 import '../stylesheets/personen.css'
 
@@ -7,31 +8,81 @@ export class Person extends React.Component{
     constructor(props){
         super(props);
         this.target = document.getElementById('person-data');
-        this.handleClick = this.handleClick.bind(this)
+        this.fetchData = this.fetchData.bind(this);
+        this.handleClick = this.handleClick.bind(this);
         this.state = {
+            loading: false,
             core_data:{
                 personId: this.props.person_id,
                 rufname: this.props.rufname,
+                amtlicher_vorname: this.props.amtlicher_vorname,
                 nachname: this.props.nachname
             },
-            data:{
-                test: "test"
-            }
+            data:''
         }
     }
 
 
-    handleClick(){
-        //console.log(this.state.core_data);
-        
-        
+    async fetchData(person_id){
+        this.setState({loading: true})
+        return (
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/personsData`, {
+            params: {
+                person_id: person_id,
+            },
+          }))
+      }
+
+
+    handleClick = () => {
+        this.setState({loading : true }, () => {;
+        console.log(this.state.loading)
+        this.fetchData(this.state.core_data.personId)
+        .then(result => {
+            this.setState({
+                loading: false,
+                data: result.data,
+                })
+        console.log(this.state.loading);
+        console.log(this.state.data)
+
+
         ReactDOM.render(
-        <div>
-            <p>Id: {this.state.core_data.personId}</p>
-            <p>Rufname: {this.state.core_data.rufname}</p>
-            <p>Nachname: {this.state.core_data.nachname}</p>    
-        </div>  
-        , document.getElementById('person-data'))
+            <div>
+                {/* {this.state.loading ? (<svg className="spinner" viewBox="0 0 50 50">
+                                            <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
+                                          </svg>) : ("Fetch Data")} */}
+                <div>
+                    <h2>Kern Daten zur Person</h2>
+                    <p>Id: <span>{this.state.core_data.personId}</span></p>
+                    <p>Rufname: {this.state.core_data.rufname}</p>
+                    <p>Amtlicher Vorname: {this.state.core_data.amtlicher_vorname} </p>
+                    <p>Nachname: {this.state.core_data.nachname}</p> 
+                </div>
+                <div>
+                    <h2>Kontakt Daten</h2>
+                    <p>SomeData: {this.state.loading ? (<p>Spinner</p>) : (this.state.data.mobil_telefon_1)}</p>
+                </div>
+                
+            </div>  
+            , document.getElementById('person-data'))
+
+
+    })})
+        
+        
+        // ReactDOM.render(
+        // <div>
+        //     {this.state.loading ? (<svg className="spinner" viewBox="0 0 50 50">
+        //                                 <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
+        //                               </svg>) : ("Fetch Data")}
+        //     <p>Id: {this.state.core_data.personId}</p>
+        //     <p>Rufname: {this.state.core_data.rufname}</p>
+        //     <p>Nachname: {this.state.core_data.nachname}</p> 
+        //     <div>Data: {this.state.loading ? (<p>Spinner</p>) : (this.state.data.geburtsdatum)}</div>
+            
+        // </div>  
+        // , document.getElementById('person-data'))
     
     }
 
@@ -40,10 +91,9 @@ export class Person extends React.Component{
     render() {
       return (
 
-        <li name= {this.state.core_data.rufname + ' ' + this.state.core_data.nachname} 
-            key={ this.state.core_data.personId} 
-            onClick={this.handleClick} >
-             {this.state.core_data.rufname +' ' + this.state.core_data.nachname}
+        <li key={ this.state.core_data.personId} onClick={this.handleClick} >
+              
+            {this.state.core_data.rufname +' ' + this.state.core_data.nachname}
         </li>
         
       )
