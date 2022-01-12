@@ -198,7 +198,7 @@ app.post('/logout', (req, res)=>{
 //Data Queries
 app.get('/personsList', (req, res) => {
   const { table } = req.query;
-  pool.query(`SELECT person_id, rufname, amtlicher_vorname, nachname FROM ${table} ORDER BY rufname, nachname`, (err, results) => {
+  pool.query(`SELECT person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum FROM ${table} ORDER BY rufname, nachname`, (err, results) => {
     if (err) {
       return res.send(err);
     } else {
@@ -211,10 +211,65 @@ app.get('/personsList', (req, res) => {
 
 app.get('/personsData', (req, res) => {
   const { person_id } = req.query;
-  pool.query(`SELECT * FROM personen 
-    INNER JOIN kontakt_daten ON personen.person_id = kontakt_daten.person_id 
-    WHERE
-      personen.person_id = ${ person_id }`, 
+  pool.query(`SELECT distinct
+  personen.*,
+  FLOOR(DATEDIFF(CURDATE(), personen.einschulungsdatum) / 365) + 1 + COALESCE((SELECT 
+                  SUM(jahrgangswechsel.wert)
+              FROM
+                  jahrgangswechsel
+              WHERE
+                  jahrgangswechsel.person_id = personen.person_id),
+          0) AS Jahrgangsstufe,
+  COALESCE((SELECT 
+                  lerngruppen.bezeichnung
+              FROM
+                  lerngruppen
+                      LEFT OUTER JOIN
+                  kind_lerngruppe ON kind_lerngruppe.lerngruppe_id = lerngruppen.lerngruppe_id
+                      AND kind_lerngruppe.eintrittsdatum = (SELECT 
+                          MAX(kind_lerngruppe.eintrittsdatum)
+                      FROM
+                          kind_lerngruppe
+                              LEFT OUTER JOIN
+                          personen ON personen.person_id = kind_lerngruppe.person_id)
+              WHERE
+                  personen.person_id = kind_lerngruppe.person_id),
+          0) AS Lerngruppe,
+COALESCE((SELECT 
+  MAX(kind_but.but_ende)
+FROM
+  kind_but
+WHERE
+  personen.person_id = kind_but.person_id),
+0) AS but_ende,
+  kind_daten.*,
+  kind_schule.*,
+  kind_betreuung.*,
+  kontakt_daten.*,
+  taetigkeit
+FROM
+  personen
+      LEFT OUTER JOIN
+  kind_daten ON personen.person_id = kind_daten.person_id
+      LEFT OUTER JOIN
+  kind_schule ON personen.person_id = kind_schule.person_id
+      LEFT OUTER JOIN
+  kind_betreuung ON personen.person_id = kind_betreuung.person_id
+      AND betreuung_ende = (SELECT 
+          MAX(betreuung_ende)
+      FROM
+          kind_betreuung
+      WHERE
+          personen.person_id = kind_betreuung.person_id)
+      LEFT OUTER JOIN
+  vereinsmitgliedschaft ON personen.person_id = vereinsmitgliedschaft.person_id
+      LEFT OUTER JOIN
+  kontakt_daten ON personen.person_id = kontakt_daten.person_id
+  LEFT OUTER JOIN
+taetigkeit ON personen.person_id = taetigkeit.person_id
+  
+WHERE 
+personen.person_id = ${ person_id }`, 
     (err, results) => {
     if (err) {
       console.log(err)

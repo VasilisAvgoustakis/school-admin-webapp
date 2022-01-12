@@ -1,7 +1,9 @@
 import React from 'react';
 import axios,{setPost} from 'axios';
 import ReactDOM from 'react-dom'
+import KontaktDaten from './kontaktdaten';
 import '../stylesheets/personen.css'
+import { KindDaten } from './kindDaten';
 
 
 export class Person extends React.Component{
@@ -16,7 +18,9 @@ export class Person extends React.Component{
                 personId: this.props.person_id,
                 rufname: this.props.rufname,
                 amtlicher_vorname: this.props.amtlicher_vorname,
-                nachname: this.props.nachname
+                nachname: this.props.nachname,
+                geburtsdatum: this.props.geburtsdatum,
+                einschulungsdatum: this.props.einschulungsdatum
             },
             data:''
         }
@@ -36,15 +40,15 @@ export class Person extends React.Component{
 
     handleClick = () => {
         this.setState({loading : true }, () => {;
-        console.log(this.state.loading)
+        //console.log(this.state.loading)
         this.fetchData(this.state.core_data.personId)
         .then(result => {
             this.setState({
                 loading: false,
                 data: result.data,
                 })
-        console.log(this.state.loading);
-        console.log(this.state.data)
+        //console.log(this.state.loading);
+        //console.log(this.state.data)
 
 
         ReactDOM.render(
@@ -53,17 +57,47 @@ export class Person extends React.Component{
                                             <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
                                           </svg>) : ("Fetch Data")} */}
                 <div>
-                    <h2>Kern Daten zur Person</h2>
-                    <p>Id: <span>{this.state.core_data.personId}</span></p>
-                    <p>Rufname: {this.state.core_data.rufname}</p>
-                    <p>Amtlicher Vorname: {this.state.core_data.amtlicher_vorname} </p>
-                    <p>Nachname: {this.state.core_data.nachname}</p> 
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colSpan="2">Kerndaten</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Id:</td>
+                                <td>{this.state.core_data.personId}</td>
+                            </tr>
+                            <tr>
+                                <td>Rufname:</td>
+                                <td>{this.state.core_data.rufname}</td>
+                            </tr>
+                            <tr>
+                                <td>Amt. Vorname:</td>
+                                <td>{this.state.core_data.amtlicher_vorname}</td>
+                            </tr>
+                            <tr>
+                                <td>Nachname:</td>
+                                <td>{this.state.core_data.nachname}</td>
+                            </tr>
+                            <tr>
+                                <td>Geburtsdatum:</td>
+                                <td>{this.state.core_data.geburtsdatum}</td>
+                            </tr>
+                            {this.state.core_data.einschulungsdatum ? (<tr>
+                                <td>Einschulungsdatum:</td>
+                                <td>{this.state.core_data.einschulungsdatum}</td>
+                            </tr>) : ("") }
+                        </tbody>
+                    </table>
                 </div>
-                <div>
-                    <h2>Kontakt Daten</h2>
-                    <p>SomeData: {this.state.loading ? (<p>Spinner</p>) : (this.state.data.mobil_telefon_1)}</p>
-                </div>
+                <br></br>
                 
+                <KontaktDaten 
+                    data= {this.state.data}/>
+
+                <KindDaten 
+                    data= {this.state.data}/>
             </div>  
             , document.getElementById('person-data'))
 

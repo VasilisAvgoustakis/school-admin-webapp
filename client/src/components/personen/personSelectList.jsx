@@ -3,7 +3,7 @@ import axios,{setPost} from 'axios';
 import {Person} from './person';
 import styles from '../stylesheets/personen.css';
 import {Link, DirectLink, Element, Events, animateScroll as scroll,  scrollSpy, scroller} from 'react-scroll';
-import SearchPerson from './search_person';
+
 
 // async function callDatabase(table){
 //   return (
@@ -69,14 +69,14 @@ export class PersonSelectList extends Component{
 
   render() {
     var personsToRender = [];
-    console.log(personsToRender)
+    //console.log(personsToRender)
     if(this.state.searchedPersons.length >=1){
       personsToRender = this.state.searchedPersons;
     }else{
       personsToRender = this.state.persons;
 
     }
-    console.log(personsToRender);
+    //console.log(personsToRender);
     
     
       return (
@@ -100,6 +100,8 @@ export class PersonSelectList extends Component{
               rufname={person.rufname}
               amtlicher_vorname={person.amtlicher_vorname}
               nachname={person.nachname} 
+              geburtsdatum={person.geburtsdatum}
+              einschulungsdatum={person.einschulungsdatum}
             />
           ))}
           </ul>
