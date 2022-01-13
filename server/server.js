@@ -283,6 +283,31 @@ personen.person_id = ${ person_id }`,
 });
 
 
+app.get('/addresses', (req, res) => {
+  const { person_id } = req.query;
+  pool.query(`SELECT 
+  personen.person_id,
+  person_haushalt.meldeanschrift,
+  person_haushalt.datum_einzug,
+  haushalte.*
+FROM
+  personen
+      INNER JOIN
+  person_haushalt ON personen.person_id = person_haushalt.person_id
+      INNER JOIN
+  haushalte ON person_haushalt.haushalt_id = haushalte.haushalt_id
+  where personen.person_id = ${ person_id } ORDER BY person_haushalt.meldeanschrift DESC;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+
 //End of Queries
 
 

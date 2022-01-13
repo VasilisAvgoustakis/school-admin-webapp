@@ -3,6 +3,7 @@ import { PersonSelectList } from '..';
 import axios from 'axios';
 import '../stylesheets/dashboard.css';
 import '../stylesheets/personen.css';
+import dateToDEFormat from '../../globalFunctions'
 
 
 export function KindDaten(props) {
@@ -28,7 +29,7 @@ export function KindDaten(props) {
 
                 <tr>
                     <td>Einschulungsdatum:</td>
-                    <td>{props.data.einschulungsdatum}</td>
+                    <td>{dateToDEFormat(new Date(props.data.einschulungsdatum))}</td>
                 </tr>
 
                 {props.data.Jahrgangsstufe ? (
@@ -58,13 +59,13 @@ export function KindDaten(props) {
                 {props.data.betreuung_beginn ? (
                 <tr>
                     <td>Betreuungsbeginn:</td>
-                    <td>{props.data.betreuung_beginn}</td>
+                    <td>{dateToDEFormat(new Date(props.data.betreuung_beginn))}</td>
                 </tr>) : ("") }
 
                 {props.data.betreuung_ende ? (
                 <tr>
                     <td>Betreuungsende:</td>
-                    <td>{props.data.betreuung_ende}</td>
+                    <td>{dateToDEFormat(new Date(props.data.betreuung_ende))}</td>
                 </tr>) : ("") }
 
                 {props.data.betreuung_ferien ? (
@@ -85,7 +86,7 @@ export function KindDaten(props) {
                 {props.data.but_ende != 0 ? (
                 <tr>
                     <td>BuT:</td>
-                    <td>JA bis {props.data.but_ende}</td>
+                    <td>JA bis {dateToDEFormat(new Date(props.data.but_ende))}</td>
                 </tr>) : (<tr>
                         <td>aktl. BuT? :</td>
                         <td>Nein</td>

@@ -117,7 +117,7 @@ CREATE TABLE `haushalte` (
   `ortsteil_berlin` varchar(50) DEFAULT NULL,
   `quartiersmanagement_gebiet` tinyint(1) DEFAULT '0',
   `telefon` varchar(20) DEFAULT NULL,
-  `adresss_zusatz` varchar(50) DEFAULT NULL,
+  `adress_zusatz` varchar(50) DEFAULT NULL,
   `land` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`haushalt_id`),
   UNIQUE KEY `HaushaltID_UNIQUE` (`haushalt_id`)
