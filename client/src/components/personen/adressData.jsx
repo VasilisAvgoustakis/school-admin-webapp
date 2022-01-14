@@ -1,8 +1,7 @@
 import React, {useState, useEffect, setRole} from 'react';
 import { PersonSelectList } from '..';
 import axios from 'axios';
-import '../stylesheets/dashboard.css';
-import '../stylesheets/personen.css';
+import '../stylesheets/globalstyles.css';
 import dateToDEFormat from '../../globalFunctions'
 
 
@@ -15,7 +14,7 @@ class Address extends React.Component{
     }
 
     render(){
-        console.log(this.state.data)
+        //console.log(this.state.data)
         return(
             
             this.state.data.map(addrRow => (

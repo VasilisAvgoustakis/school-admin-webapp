@@ -296,7 +296,10 @@ FROM
   person_haushalt ON personen.person_id = person_haushalt.person_id
       INNER JOIN
   haushalte ON person_haushalt.haushalt_id = haushalte.haushalt_id
-  where personen.person_id = ${ person_id } ORDER BY person_haushalt.meldeanschrift DESC;`, (err, results) => {
+  where personen.person_id = ${ person_id } 
+  ORDER BY 
+  person_haushalt.meldeanschrift DESC,
+  haushalte.strasse ASC;`, (err, results) => {
     if (err) {
       console.log(err)
       return res.send(err);
@@ -307,6 +310,59 @@ FROM
   });
 });
 
+
+app.get('/arb_grp', (req, res) => {
+  const { person_id } = req.query;
+  pool.query(`SELECT 
+  personen.person_id,
+  person_arbeitsgruppe.koordination_der_ag,
+  person_arbeitsgruppe.datum_mitgliedschaftsbeginn,
+  person_arbeitsgruppe.datum_mitgliedschaftsende,
+  arbeitsgruppen.bezeichnung,
+  arbeitsgruppen.email
+FROM
+  personen
+      INNER JOIN
+  person_arbeitsgruppe ON personen.person_id = person_arbeitsgruppe.person_id
+      INNER JOIN
+  arbeitsgruppen ON person_arbeitsgruppe.arbeitsgruppe_id = arbeitsgruppen.arbeitsgruppe_id
+WHERE
+  personen.person_id =${ person_id } 
+  ORDER BY 
+  person_arbeitsgruppe.koordination_der_ag DESC,
+  arbeitsgruppen.bezeichnung ASC;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+app.get('/bezugspersonen', (req, res) => {
+  const { person_id } = req.query;
+  pool.query(`SELECT
+  personen.rufname,
+  personen.nachname
+FROM
+  bezugsperson_kind
+      INNER JOIN
+  personen ON personen.person_id = bezugsperson_kind.person_id_1
+WHERE
+  bezugsperson_kind.person_id_2 =${ person_id } 
+  ORDER BY 
+  personen.rufname ASC;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
 
 //End of Queries
 

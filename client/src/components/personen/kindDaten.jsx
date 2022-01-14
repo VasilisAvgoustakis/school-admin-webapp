@@ -1,8 +1,7 @@
 import React, {useState, useEffect, setRole} from 'react';
 import { PersonSelectList } from '..';
 import axios from 'axios';
-import '../stylesheets/dashboard.css';
-import '../stylesheets/personen.css';
+import '../stylesheets/globalstyles.css';
 import dateToDEFormat from '../../globalFunctions'
 
 
@@ -23,72 +22,72 @@ export function KindDaten(props) {
             <tbody>
             {props.data.geschlecht ? (
                     <tr>
-                        <td>Geschlecht:</td>
+                        <td><strong>Geschlecht:</strong></td>
                         <td>{props.data.geschlecht}</td>
                     </tr>) : ("") }
 
                 <tr>
-                    <td>Einschulungsdatum:</td>
+                    <td><strong>Einschulungsdatum:</strong></td>
                     <td>{dateToDEFormat(new Date(props.data.einschulungsdatum))}</td>
                 </tr>
 
                 {props.data.Jahrgangsstufe ? (
                     <tr>
-                        <td>aktuelle Klasse:</td>
+                        <td><strong>aktuelle Klasse:</strong></td>
                         <td>{props.data.Jahrgangsstufe}</td>
                     </tr>) : ("") }
 
                 {props.data.Lerngruppe ? (
                 <tr>
-                    <td>aktuelle Lerngruppe:</td>
+                    <td><strong>aktuelle Lerngruppe:</strong></td>
                     <td>{props.data.Lerngruppe}</td>
                 </tr>) : ("") }
 
                 {props.data.mittag == 1 ? (
                 <tr>
-                    <td>Mittag:</td>
+                    <td><strong>Mittag:</strong></td>
                     <td>JA</td>
                 </tr>) : (<td>Nein</td>) }
 
                 {props.data.betreuung_umfang ? (
                 <tr>
-                    <td>Betreuungsumfang:</td>
+                    <td><strong>Betreuungsumfang:</strong></td>
                     <td>{props.data.betreuung_umfang}</td>
                 </tr>) : ("") }
 
                 {props.data.betreuung_beginn ? (
                 <tr>
-                    <td>Betreuungsbeginn:</td>
+                    <td><strong>Betreuungsbeginn:</strong></td>
                     <td>{dateToDEFormat(new Date(props.data.betreuung_beginn))}</td>
                 </tr>) : ("") }
 
                 {props.data.betreuung_ende ? (
                 <tr>
-                    <td>Betreuungsende:</td>
+                    <td><strong>Betreuungsende:</strong></td>
                     <td>{dateToDEFormat(new Date(props.data.betreuung_ende))}</td>
                 </tr>) : ("") }
 
                 {props.data.betreuung_ferien ? (
                 <tr>
-                    <td>Betreuungbedarf w. Ferien?:</td>
+                    <td><strong>Betreuungbedarf w. Ferien?:</strong></td>
                     <td>Ja</td>
                 </tr>) : (<tr>
-                    <td>Betreuungbedarf w. Ferien?:</td>
+                    <td><strong>Betreuungbedarf w. Ferien?:</strong></td>
                     <td>NEIN</td>
                 </tr>) }
 
                 {props.data.staatsangehoerigkeit ? (
                 <tr>
-                    <td>Staatsangehörigkeit:</td>
+                    <td><strong>Staatsangehörigkeit:</strong></td>
                     <td>{props.data.staatsangehoerigkeit}</td>
                 </tr>) : (<td>Nein</td>) }
 
                 {props.data.but_ende != 0 ? (
                 <tr>
-                    <td>BuT:</td>
+                    <td><strong>BuT:</strong></td>
                     <td>JA bis {dateToDEFormat(new Date(props.data.but_ende))}</td>
                 </tr>) : (<tr>
-                        <td>aktl. BuT? :</td>
+                        <td><strong>aktl. BuT? :</strong></td>
                         <td>Nein</td>
                     </tr>) }
 

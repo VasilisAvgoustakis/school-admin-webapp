@@ -1,7 +1,8 @@
 import React, {useState, useEffect, setRole} from 'react';
 import { PersonSelectList } from '..';
 import axios from 'axios';
-import '../stylesheets/dashboard.css';
+import '../stylesheets/personen.css';
+
 
 
 
@@ -31,8 +32,9 @@ export function PersonenScreen() {
       
       <div className='personen-main'>
         <PersonSelectList  />
-        <div className='person-data-cont'  id='person-data'>Person Data Container in personen_parent</div>
       </div>
+      //   {/* <div className='person-data-cont'  id='person-data'>Person Data Container in personen_parent</div>
+      // </div> */}
       
       
   );

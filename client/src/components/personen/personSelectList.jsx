@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import axios,{setPost} from 'axios';
 import {Person} from './person';
-import styles from '../stylesheets/personen.css';
+import '../stylesheets/personen.css';
+import '../stylesheets/globalstyles.css';
 import {Link, DirectLink, Element, Events, animateScroll as scroll,  scrollSpy, scroller} from 'react-scroll';
 
 
@@ -41,7 +42,7 @@ export class PersonSelectList extends Component{
 
   search(name){
     this.setState.searchedPersons = [];
-    console.log(this.state.searchedPersons);
+    // console.log(this.state.searchedPersons);
     const results = [];
     this.state.persons.forEach(function(person){
       const person_name_credentials = person.rufname + ' '+ person.amtlicher_vorname + person.nachname;
@@ -52,7 +53,7 @@ export class PersonSelectList extends Component{
     
     this.state.searchedPersons = results;
     
-    console.log(this.state.searchedPersons);
+    // console.log(this.state.searchedPersons);
     this.forceUpdate();
   }
 
@@ -80,32 +81,37 @@ export class PersonSelectList extends Component{
     
     
       return (
-        <div  >
-          
+        <div className='scroller-cont' >
           <input
-              type="text"
-              id="header-search"
-              placeholder="Personen Suche"
-              name="s" 
-              onChange={(e) => {
-                this.search(e.target.value);
-              }}
-          />
-            
-
-          <ul id='person-list' className='person-scroller' >
-          {personsToRender.map(person => (
-            <Person key={person.person_id}
-              person_id={person.person_id}
-              rufname={person.rufname}
-              amtlicher_vorname={person.amtlicher_vorname}
-              nachname={person.nachname} 
-              geburtsdatum={person.geburtsdatum}
-              einschulungsdatum={person.einschulungsdatum}
+                type="text"
+                className='person-search'              
+                // id="header-search"
+                placeholder="Personen Suche"
+                name="s" 
+                onChange={(e) => {
+                  this.search(e.target.value);
+                }}
             />
-          ))}
-          </ul>
+          <div className='person-scroller'>
+              <ul id='person-list'  >
+              {personsToRender.map(person => (
+                <Person key={person.person_id}
+                  person_id={person.person_id}
+                  rufname={person.rufname}
+                  amtlicher_vorname={person.amtlicher_vorname}
+                  nachname={person.nachname} 
+                  geburtsdatum={person.geburtsdatum}
+                  einschulungsdatum={person.einschulungsdatum}
+                />
+              ))}
+              </ul>
+          </div>
+          <div className='person-data-cont'  id='person-data'>
+            Person Data Container in personen_parent
+          </div>
         </div>
+
+        
      
       );
   }

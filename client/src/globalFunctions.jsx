@@ -19,7 +19,7 @@ function dateToDEFormat(date){
         if(month < 10){
             return '0' + (month+1).toString();
         }else{
-            return (month+1).toStrin();
+            return (month+1).toString();
         }
     }
 
