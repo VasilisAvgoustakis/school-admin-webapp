@@ -127,9 +127,11 @@ export class Person extends React.Component{
                         
                         <KindDaten 
                             data= {this.state.data}/>
-                        
-                        <Bezugspersonen 
-                            data= {this.state.bezugspersonen}/>
+
+                        {this.state.core_data.einschulungsdatum ?
+                            (<Bezugspersonen 
+                                data= {this.state.bezugspersonen}/>)
+                                :(<p></p>)}
 
                      </div>
                         
@@ -141,7 +143,7 @@ export class Person extends React.Component{
                             (<AGData
                                 ags={this.state.arbeitsgruppen} />)
                                 :
-                                ("")}
+                                (<p></p>)}
                         
                         
                     </div>
@@ -205,7 +207,7 @@ export class Person extends React.Component{
                 })}))},
         this.setState({loading:false}),
         this.setState({clicked: true}),
-        console.log(this.state.bezugspersonen)
+        //console.log(this.state.bezugspersonen)
         
         
         // console.log(this.state.loading + ' :after fetching')
