@@ -33,7 +33,7 @@ export class Person extends React.Component{
                 geburtsdatum: this.props.geburtsdatum,
                 einschulungsdatum: this.props.einschulungsdatum
             },
-            data:'',
+            data:[],
             addresses: [],
             arbeitsgruppen: [],
             bezugspersonen: []

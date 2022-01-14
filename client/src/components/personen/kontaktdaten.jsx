@@ -6,7 +6,7 @@ import '../stylesheets/globalstyles.css';
 
 export function KontaktDaten(props) {
     
-    
+    console.log(props.data)
     return (
     
     <div>
