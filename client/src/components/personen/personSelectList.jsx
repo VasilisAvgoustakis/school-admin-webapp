@@ -3,18 +3,7 @@ import axios,{setPost} from 'axios';
 import {Person} from './person';
 import '../stylesheets/personen.css';
 import '../stylesheets/globalstyles.css';
-import {Link, DirectLink, Element, Events, animateScroll as scroll,  scrollSpy, scroller} from 'react-scroll';
-
-
-// async function callDatabase(table){
-//   return (
-//   await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/personsList`, {
-//       params: {
-//         table: table,
-//       },
-//     }))
-
-// }
+import { v4 as uuidv4 } from 'uuid';
 
 
 export class PersonSelectList extends Component{
@@ -46,7 +35,10 @@ export class PersonSelectList extends Component{
     const results = [];
     this.state.persons.forEach(function(person){
       const person_name_credentials = person.rufname + ' '+ person.amtlicher_vorname + person.nachname;
-      if(person_name_credentials.includes(name) && name != '' ){
+      // if(person_name_credentials.includes(name) && name != '' ){
+      //   results.push(person);
+      // }
+      if(person_name_credentials.toLowerCase().includes(name.toLowerCase()) && name != '' ){
         results.push(person);
       }
     })
@@ -81,10 +73,10 @@ export class PersonSelectList extends Component{
     
     
       return (
-        <div className='scroller-cont' >
+        <div className='entity-list-scroller-cont' >
           <input
                 type="text"
-                className='person-search'              
+                className='entity-search'              
                 // id="header-search"
                 placeholder="Personen Suche"
                 name="s" 
@@ -92,10 +84,10 @@ export class PersonSelectList extends Component{
                   this.search(e.target.value);
                 }}
             />
-          <div className='person-scroller'>
+          <div className='entity-list-scroller'>
               <ul id='person-list'  >
               {personsToRender.map(person => (
-                <Person key={person.person_id}
+                <Person key={uuidv4()}
                   person_id={person.person_id}
                   rufname={person.rufname}
                   amtlicher_vorname={person.amtlicher_vorname}
@@ -106,7 +98,7 @@ export class PersonSelectList extends Component{
               ))}
               </ul>
           </div>
-          <div className='person-data-cont'  id='person-data'>
+          <div className='entity-data-cont'  id='person-data'>
             Person Data Container in personen_parent
           </div>
         </div>

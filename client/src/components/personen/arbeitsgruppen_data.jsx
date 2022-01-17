@@ -2,7 +2,8 @@ import React, {useState, useEffect, setRole} from 'react';
 import { PersonSelectList } from '..';
 import axios from 'axios';
 import '../stylesheets/globalstyles.css';
-import dateToDEFormat from '../../globalFunctions'
+import dateToDEFormat from '../../globalFunctions';
+import { v4 as uuidv4 } from 'uuid';
 
 
 class AG extends React.Component{
@@ -18,7 +19,7 @@ class AG extends React.Component{
         return(
             
             this.state.data.map(arbGrpRow => (
-                <tr>
+                <tr key={arbGrpRow.person_id+arbGrpRow.bezeichnung}>
                     {arbGrpRow.koordination_der_ag == 1 ? (<td>JA</td>):(<td>NEIN</td>)}
                     {arbGrpRow.bezeichnung ? (<td>{arbGrpRow.bezeichnung}</td>):(<td> -- </td>)}
                     {arbGrpRow.email ? (<td>{arbGrpRow.email}</td>):(<td> -- </td>)}
@@ -53,7 +54,7 @@ export function AGData(props){
             </thead>
             <tbody>
                 <tr colSpan="5" style={{position:'absolute'}, {width:'100%'}}>
-                    <td><strong>Keine aktuellee AG Mitgliedschaft!</strong></td>
+                    <td><strong>Keine aktuelle AG Mitgliedschaft!</strong></td>
                 </tr>
             </tbody>
         </table>):(
@@ -75,7 +76,7 @@ export function AGData(props){
                 
                     {props.ags.map(ag => (
                         
-                        <AG key={ag.person_id+ag.bezeichnung}
+                        <AG key={uuidv4()}
                         data={ag}
                         />
                        

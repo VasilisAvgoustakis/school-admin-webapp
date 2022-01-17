@@ -2,6 +2,63 @@
 /* This file contains only styling for html elements that are rendered almost in every
 Tab and are thus relevant globaly. */
 
+.main-entity-data-cont{
+  height:88vh;
+  width: 100%;
+  margin: 0 auto;
+  overflow:auto;
+}
+
+.entity-list-scroller-cont{
+  height: 100%;
+}
+
+.entity-list-scroller {
+  position: absolute;
+  left: 0px;
+  margin: 0px auto;
+  height:100%;
+  width: 17.6%;
+  overflow: auto;
+}
+
+.entity-search{
+  width:16%;
+  height: 4%;
+  position:relative;
+  margin-left:2px;
+  
+  
+  border:2px solid rgb(21, 160, 170);
+  border-radius: 5px;
+}
+
+.entity-data-cont {
+  width:82.4%;
+  height: 100%;
+  position: absolute;
+  right: 0%;
+  overflow: auto;
+}
+
+.entity-data-left{
+  position: absolute;
+  left: 0%;
+  width:30%;
+}
+
+.entity-data-right{
+  position:absolute;
+  right: 0%;
+  width:70%;
+
+}
+
+.current-entity {
+  position: absolute;
+  right: 50%;
+}
+
 
 table{
   

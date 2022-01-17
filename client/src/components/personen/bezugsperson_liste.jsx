@@ -2,7 +2,8 @@ import React, {useState, useEffect, setRole} from 'react';
 import { PersonSelectList } from '..';
 import axios from 'axios';
 import '../stylesheets/globalstyles.css';
-import dateToDEFormat from '../../globalFunctions'
+import dateToDEFormat from '../../globalFunctions';
+import { v4 as uuidv4 } from 'uuid';
 
 
 class ListRow extends React.Component{
@@ -18,7 +19,7 @@ class ListRow extends React.Component{
         return(
             
             this.state.data.map(bezugspersonenRow => (
-                <tr>
+                <tr key={uuidv4()}>
                     {bezugspersonenRow.rufname ? (<td>{bezugspersonenRow.rufname}</td>):(<td> -- </td>)}
                     {bezugspersonenRow.nachname ? (<td>{bezugspersonenRow.nachname}</td>):(<td> -- </td>)}
                 </tr>
@@ -64,7 +65,7 @@ export function Bezugspersonen(props){
                 
                     {props.data.map(bezugspersonen => (
                         
-                        <ListRow key={bezugspersonen.rufname+bezugspersonen.nachname}
+                        <ListRow key={uuidv4()}
                         data={bezugspersonen}
                         />
                        

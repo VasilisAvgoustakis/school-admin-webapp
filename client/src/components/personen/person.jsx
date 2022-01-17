@@ -9,6 +9,7 @@ import { AddressData } from './adressData';
 import {AGData} from './arbeitsgruppen_data';
 import { Bezugspersonen } from './bezugsperson_liste';
 import dateToDEFormat from '../../globalFunctions'
+import { v4 as uuidv4 } from 'uuid';
 
 
 
@@ -17,6 +18,7 @@ export class Person extends React.Component{
         super(props);
         this.target = document.getElementById('person-data');
         this.fetchData = this.fetchData.bind(this);
+        this.fetchContactData = this.fetchContactData.bind(this);
         this.fetchAddresses = this.fetchAddresses.bind(this);
         this.fetchAGs = this.fetchAGs.bind(this);
         this.fetchBezugspersonen = this.fetchBezugspersonen.bind(this);
@@ -34,6 +36,7 @@ export class Person extends React.Component{
                 einschulungsdatum: this.props.einschulungsdatum
             },
             data:[],
+            contactData: [],
             addresses: [],
             arbeitsgruppen: [],
             bezugspersonen: []
@@ -49,6 +52,17 @@ export class Person extends React.Component{
             },
           }))
       }
+
+    async fetchContactData(person_id){
+    return (
+    await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/contactData`, {
+        params: {
+            person_id: person_id,
+        },
+        }))
+    }
+    
+
 
     async fetchAddresses(person_id){
         return (
@@ -87,7 +101,7 @@ export class Person extends React.Component{
             ReactDOM.render(
     
                 <div>
-                    <div className='pers-data-left'>
+                    <div className='entity-data-left'>
                         <table>
                             <thead>
                                 <tr>
@@ -104,7 +118,7 @@ export class Person extends React.Component{
                                     <td >{this.state.core_data.rufname}</td>
                                 </tr>
                                 <tr>
-                                    <td style={{width:'10%'}}><strong>Amt. Vorname:</strong></td>
+                                    <td style={{width:'10%'}}><strong>Amt.Vorname:</strong></td>
                                     <td>{this.state.core_data.amtlicher_vorname}</td>
                                 </tr>
                                 <tr>
@@ -118,25 +132,26 @@ export class Person extends React.Component{
                                 {this.state.core_data.einschulungsdatum ? (<tr>
                                     <td style={{width:'10%'}}><strong>Einschulungsdatum:</strong></td>
                                     <td>{dateToDEFormat(new Date(this.state.core_data.einschulungsdatum))}</td>
-                                </tr>) : ("") }
+                                </tr>) : (<tr></tr>) }
+                                {this.state.data.taetigkeit ?(<tr>
+                                    <td style={{width:'10%'}}><strong>Tätigkeit:</strong></td>
+                                    <td>{this.state.data.taetigkeit}</td>
+                                </tr>):(<tr></tr>)}
                             </tbody>
                         </table>
                     
                         <KontaktDaten 
-                            data= {this.state.data}/>
+                            data= {this.state.contactData}/>
                         
                         <KindDaten 
                             data= {this.state.data}/>
 
-                        {this.state.core_data.einschulungsdatum ?
-                            (<Bezugspersonen 
-                                data= {this.state.bezugspersonen}/>)
-                                :(<p></p>)}
+                        
 
                      </div>
                         
-                    <div className='pers-data-right'>
-                        <AddressData 
+                    <div className='entity-data-right'>
+                        <AddressData
                             addresses= {this.state.addresses}/>
                         {/* {console.log(this.state.arbeitsgruppen)} */}
                         {!this.state.core_data.einschulungsdatum ? 
@@ -144,6 +159,11 @@ export class Person extends React.Component{
                                 ags={this.state.arbeitsgruppen} />)
                                 :
                                 (<p></p>)}
+                        
+                        {this.state.core_data.einschulungsdatum ?
+                            (<Bezugspersonen 
+                                data= {this.state.bezugspersonen}/>)
+                                :(<p></p>)}
                         
                         
                     </div>
@@ -188,6 +208,12 @@ export class Person extends React.Component{
                 data: result.data,
                 })}).then(
 
+        this.fetchContactData(this.state.core_data.personId)
+        .then(result => {
+        this.setState({
+            contactData: result.data,
+            })})).then(
+
         this.fetchAddresses(this.state.core_data.personId).then(result => {
             this.setState({
                 
@@ -222,7 +248,7 @@ export class Person extends React.Component{
         
       return (
 
-        <li key={ this.state.core_data.personId} onClick={this.handleClick} >
+        <li key={uuidv4()} onClick={this.handleClick} >
               
             {this.state.core_data.rufname +' ' + this.state.core_data.nachname}
         </li>

@@ -1,6 +1,6 @@
 
 
-.personen-main{
+/* .personen-main{
   height:88vh;
   width: 100%;
   margin: 0 auto;
@@ -18,9 +18,9 @@
   height:100%;
   width: 17.6%;
   overflow: auto;
-}
+} */
 
-.person-search{
+/* .person-search{
   width:16%;
   height: 4%;
   position:relative;
@@ -29,17 +29,17 @@
   
   border:2px solid rgb(21, 160, 170);
   border-radius: 5px;
-}
+} */
 
-.person-data-cont {
+/* .person-data-cont {
   width:82.4%;
   height: 100%;
   position: absolute;
   right: 0%;
   overflow: auto;
-}
+} */
 
-.pers-data-left{
+/* .pers-data-left{
   position: absolute;
   left: 0%;
   width:30%;
@@ -50,11 +50,11 @@
   right: 0%;
   width:70%;
 
-}
+} */
 
-.current-person {
+/* .current-person {
   position: absolute;
   right: 50%;
-}
+} */
 
 

@@ -3,6 +3,7 @@ import { PersonSelectList } from '..';
 import axios from 'axios';
 import '../stylesheets/globalstyles.css';
 import dateToDEFormat from '../../globalFunctions'
+import { v4 as uuidv4 } from 'uuid';
 
 
 class Address extends React.Component{
@@ -18,7 +19,7 @@ class Address extends React.Component{
         return(
             
             this.state.data.map(addrRow => (
-                <tr>
+                <tr key={uuidv4()}>
                     {addrRow.meldeanschrift == 1 ? (<td>JA</td>):(<td>NEIN</td>)}
                     {addrRow.strasse ? (<td>{addrRow.strasse}</td>):(<td> -- </td>)}
                     {addrRow.aderss_zusatz ? (<td>{addrRow.adress_zusatz}</td>):(<td> -- </td>)}
@@ -73,7 +74,7 @@ export function AddressData(props){
                 
                     {props.addresses.map(address => (
                         
-                        <Address key={address.person_id+address.strasse}
+                        <Address key={uuidv4()}
                         data={address}
                         />
                        

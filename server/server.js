@@ -245,7 +245,6 @@ WHERE
   kind_daten.*,
   kind_schule.*,
   kind_betreuung.*,
-  kontakt_daten.*,
   taetigkeit
 FROM
   personen
@@ -263,10 +262,8 @@ FROM
           personen.person_id = kind_betreuung.person_id)
       LEFT OUTER JOIN
   vereinsmitgliedschaft ON personen.person_id = vereinsmitgliedschaft.person_id
-      LEFT OUTER JOIN
-  kontakt_daten ON personen.person_id = kontakt_daten.person_id
-  LEFT OUTER JOIN
-taetigkeit ON personen.person_id = taetigkeit.person_id
+    LEFT OUTER JOIN
+  taetigkeit ON personen.person_id = taetigkeit.person_id
   
 WHERE 
 personen.person_id = ${ person_id }`, 
@@ -278,6 +275,25 @@ personen.person_id = ${ person_id }`,
       console.log(results)
       return res.send(results[0]);
       //return res.json(results[0]);
+    }
+  });
+});
+
+
+app.get('/contactData', (req, res) => {
+  const { person_id } = req.query;
+  pool.query(`SELECT
+  *
+FROM
+  kontakt_daten
+WHERE
+  person_id =${ person_id } ;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
     }
   });
 });
@@ -363,6 +379,31 @@ WHERE
     }
   });
 });
+
+
+app.get('/hausList', (req, res) => {
+  // const { person_id } = req.query;
+  const { table } = req.query;
+  pool.query(
+  `SELECT
+      *
+  FROM
+      ${table}
+  ORDER BY 
+      strasse ASC,
+      postleitzahl ASC,
+      ortsteil_berlin ASC
+  ;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
 
 //End of Queries
 

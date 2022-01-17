@@ -1,5 +1,5 @@
 import React from 'react';
-import { PersonSelectList } from '..';
+import { HausSelectList } from '..';
 import axios from 'axios';
 import '../stylesheets/personen.css';
 import '../stylesheets/globalstyles.css'
@@ -12,7 +12,7 @@ import '../stylesheets/globalstyles.css'
 
 
 
-export function PersonenScreen() {
+export function HaushalteScreen() {
   axios.defaults.withCredentials = true;
   
     // Check already logged users using Axios.
@@ -32,7 +32,7 @@ export function PersonenScreen() {
   return (
       
       <div className='main-entity-data-cont'>
-        <PersonSelectList  />
+        <HausSelectList  />
       </div>
       //   {/* <div className='person-data-cont'  id='person-data'>Person Data Container in personen_parent</div>
       // </div> */}
@@ -43,4 +43,4 @@ export function PersonenScreen() {
 
 
 
-export default PersonenScreen;
+export default HaushalteScreen;
