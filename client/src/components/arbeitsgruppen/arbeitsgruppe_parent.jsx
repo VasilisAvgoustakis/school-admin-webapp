@@ -1,22 +1,21 @@
 import React from 'react';
-import { HausSelectList } from '..';
+import { AgSelectList } from '..';
 import axios from 'axios';
-import '../stylesheets/personen.css';
 import '../stylesheets/globalstyles.css'
 
 
 
-export function HaushalteScreen() {
+export function ArbeitsgruppenScreen() {
   axios.defaults.withCredentials = true;
 
   return (
       
       <div className='main-entity-data-cont'>
-        <HausSelectList  />
+        <AgSelectList  />
       </div>
   );
 }
 
 
 
-export default HaushalteScreen;
+export default ArbeitsgruppenScreen;

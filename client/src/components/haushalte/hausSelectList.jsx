@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import axios,{setPost} from 'axios';
- import {Haushalt} from './haushalt';
+import {Haushalt} from './haushalt';
 import '../stylesheets/personen.css';
 import '../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -59,14 +59,14 @@ export class HausSelectList extends Component{
 
   render() {
     var hauseToRender = [];
-    console.log(this.state.haushalte)
+    // console.log(this.state.haushalte)
     if(this.state.searchedHause.length >=1){
       hauseToRender = this.state.searchedHause;
     }else{
-      hauseToRender = this.state.persons;
+      hauseToRender = this.state.haushalte;
 
     }
-    //console.log(hauseToRender);
+    console.log(hauseToRender);
     
     
       return (
@@ -83,7 +83,7 @@ export class HausSelectList extends Component{
             />
           <div className='entity-list-scroller'>
               <ul>
-              {this.state.haushalte.map(haus => (
+              {hauseToRender.map(haus => (
                 <Haushalt key={uuidv4()}
                   haushalt_id={haus.haushalt_id}
                   strasse={haus.strasse}

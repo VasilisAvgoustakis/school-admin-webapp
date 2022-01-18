@@ -195,7 +195,7 @@ app.post('/logout', (req, res)=>{
 
 //End of Authentication
 
-//Data Queries
+//Personen
 app.get('/personsList', (req, res) => {
   const { table } = req.query;
   pool.query(`SELECT person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum FROM ${table} ORDER BY rufname, nachname`, (err, results) => {
@@ -379,8 +379,10 @@ WHERE
     }
   });
 });
+//end of Personen queries
 
 
+//haushalte
 app.get('/hausList', (req, res) => {
   // const { person_id } = req.query;
   const { table } = req.query;
@@ -404,6 +406,90 @@ app.get('/hausList', (req, res) => {
   });
 });
 
+
+app.get('/anwohner', (req, res) => {
+  const { haushalt_id } = req.query;
+  pool.query(
+  `SELECT
+    personen.person_id,
+    personen.rufname,
+    personen.nachname
+  FROM
+    personen
+  INNER JOIN
+    person_haushalt on personen.person_id = person_haushalt.person_id
+  INNER JOIN
+    haushalte on person_haushalt.haushalt_id = haushalte.haushalt_id
+  where haushalte.haushalt_id = ${haushalt_id}
+  ORDER BY
+    personen.rufname ASC,
+    personen.nachname ASC
+  ;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+//end of haushalte
+
+//Arbeitsgruppen
+app.get('/agList', (req, res) => {
+  // const { person_id } = req.query;
+  const { table } = req.query;
+  pool.query(
+  `SELECT
+      *
+  FROM
+      ${table}
+  ORDER BY 
+      bezeichnung ASC,
+      email ASC
+  ;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+
+app.get('/ag_mitglieder', (req, res) => {
+  const { arbeitsgruppe_id } = req.query;
+  pool.query(
+  `SELECT
+    personen.person_id,
+    personen.rufname,
+    personen.nachname
+  FROM
+    personen
+  INNER JOIN
+    person_arbeitsgruppe on personen.person_id = person_arbeitsgruppe.person_id
+  INNER JOIN
+    arbeitsgruppen on person_arbeitsgruppe.arbeitsgruppe_id = arbeitsgruppen.arbeitsgruppe_id
+  where arbeitsgruppen.arbeitsgruppe_id = ${arbeitsgruppe_id}
+  ORDER BY
+    personen.rufname ASC,
+    personen.nachname ASC
+  ;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+//end of arbeitsgruppen
 
 //End of Queries
 
