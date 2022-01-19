@@ -20,3 +20,6 @@ export {LerngruppenScreen} from './lerngruppen/lerngruppen_parent';
 
 export {JobSelectList} from './taetigkeit/jobSelectList';
 export {JobsScreen} from './taetigkeit/jobs_parent';
+
+export {CustomSelectList} from './customTab/customSelectList';
+export {CustomScreen} from './customTab/custom_parent';
