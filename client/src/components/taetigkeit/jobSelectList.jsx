@@ -62,7 +62,7 @@ export class JobSelectList extends Component{
       jobsToRender = this.state.jobs;
 
     }
-    console.log(jobsToRender);
+    //console.log(jobsToRender);
     
     
       return (

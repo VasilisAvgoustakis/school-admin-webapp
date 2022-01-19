@@ -64,17 +64,17 @@ export class Job extends React.Component{
     handleClick = async() => {
         this.customRender();
         this.setState({loading: true}, () => {
-        console.log(this.state.core_data.taetigkeit)
+        //console.log(this.state.core_data.taetigkeit)
         this.fetchEmployees(this.state.core_data.taetigkeit)
         .then(result => {
-            console.log(result.data)
+           // console.log(result.data)
              this.setState({
                 employees: result.data,
                  })})
         },
         this.setState({loading:false}),
         this.setState({clicked: true}),
-        console.log(this.state.employees)
+        //console.log(this.state.employees)
         )
     }
 
