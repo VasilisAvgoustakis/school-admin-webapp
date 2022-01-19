@@ -66,7 +66,7 @@ export class HausSelectList extends Component{
       hauseToRender = this.state.haushalte;
 
     }
-    console.log(hauseToRender);
+    //console.log(hauseToRender);
     
     
       return (

@@ -1,17 +1,17 @@
 import React from 'react';
-import axios,{setPost} from 'axios';
+import axios from 'axios';
 import ReactDOM from 'react-dom'
 import '../stylesheets/globalstyles.css';
-import { Mitglieder } from './mitglieder';
+import { Schuller } from './schuller';
 import dateToDEFormat from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
 
 
 
-export class Ag extends React.Component{
+export class Lg extends React.Component{
     constructor(props){
         super(props);
-        this.target = document.getElementById('ag-data');
+        this.target = document.getElementById('lg-data');
         this.fetchMitglieder = this.fetchMitglieder.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.customRender = this.customRender.bind(this);
@@ -19,20 +19,21 @@ export class Ag extends React.Component{
             clicked: false,
             loading: false,
             core_data:{
-                arbeitsgruppe_id: this.props.arbeitsgruppe_id,
+                lerngruppe_id: this.props.lerngruppe_id,
                 bezeichnung: this.props.bezeichnung,
-                beschreibung: this.props.beschreibung,
-                email: this.props.email,
+                email_eltern: this.props.email_eltern,
+                email_team: this.props.email_team,
+                telefon_team: this.props.telefon_team
             },
-            mitglieder:[],
+            schuller:[],
         }
     }
 
-    async fetchMitglieder(arbeitsgruppe_id){
+    async fetchMitglieder(lerngruppe_id){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/ag_mitglieder`, {
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lerngruppe_mitglieder`, {
             params: {
-                arbeitsgruppe_id: arbeitsgruppe_id,
+                lerngruppe_id: lerngruppe_id,
             },
           }))
       }
@@ -42,7 +43,7 @@ export class Ag extends React.Component{
         if(loading){
             ReactDOM.render(<svg className="spinner" viewBox="0 0 50 50">
                                 <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
-                            </svg>, document.getElementById('ag-data'))
+                            </svg>, document.getElementById('lg-data'))
             }else{
     
             ReactDOM.render(
@@ -52,36 +53,40 @@ export class Ag extends React.Component{
                         <table>
                             <thead>
                                 <tr>
-                                    <th colSpan="2">AG's Kerndaten</th>
+                                    <th colSpan="2">Lg's Kerndaten</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td style={{width:'30%'}}><strong>Id:</strong></td>
-                                    <td>{this.state.core_data.arbeitsgruppe_id}</td>
+                                    <td>{this.state.core_data.lerngruppe_id}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Bezeichnung:</strong></td>
                                     <td >{this.state.core_data.bezeichnung}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Beschreibung:</strong></td>
-                                    <td >{this.state.core_data.beschreibung}</td>
+                                    <td><strong>E-Mail Eltern:</strong></td>
+                                    <td >{this.state.core_data.email_eltern}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>E-Mail:</strong></td>
-                                    <td>{this.state.core_data.email}</td>
+                                    <td><strong>E-Mail Team:</strong></td>
+                                    <td>{this.state.core_data.email_team}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Telefon Team:</strong></td>
+                                    <td>{this.state.core_data.telefon_team}</td>
                                 </tr>
                             </tbody>
                         </table>
                      </div>
                         
                     <div className='entity-data-right'>
-                        <Mitglieder
-                            mietglieder= {this.state.mitglieder}/>
+                        <Schuller
+                            schuller= {this.state.schuller}/>
                     </div>
                 </div>
-                , document.getElementById('ag-data'))}
+                , document.getElementById('lg-data'))}
     }
     
 
@@ -94,16 +99,17 @@ export class Ag extends React.Component{
     handleClick = async() => {
         this.customRender();
         this.setState({loading: true}, () => {
-        this.fetchMitglieder(this.state.core_data.arbeitsgruppe_id)
+        console.log(this.state.core_data.lerngruppe_id)
+        this.fetchMitglieder(this.state.core_data.lerngruppe_id)
         .then(result => {
             console.log(result.data)
              this.setState({
-                 mitglieder: result.data,
+                schuller: result.data,
                  })})
         },
         this.setState({loading:false}),
         this.setState({clicked: true}),
-        console.log(this.state.mitglieder)
+        console.log(this.state.schuller)
         )
     }
 

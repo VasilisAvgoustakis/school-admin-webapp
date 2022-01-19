@@ -1,18 +1,18 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import {Ag} from './ag.jsx';
+import {Lg} from './lg.jsx';
 import '../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
 
 
-export class AgSelectList extends Component{
+export class LgSelectList extends Component{
   
   constructor(props) {
     super(props);
     this.fetchData = this.fetchData.bind(this);
     this.search = this.search.bind(this);
     this.state = {
-      arbeitsgruppen: [],
+      lerngruppen: [],
       searchedGruppe: []
     };
   }
@@ -20,7 +20,7 @@ export class AgSelectList extends Component{
 
   fetchData(table){
     return (
-    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/agList`, {
+    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lerngruppenList`, {
         params: {
           table: table,
         },
@@ -28,14 +28,14 @@ export class AgSelectList extends Component{
   }
   
 
-  search(agName){
+  search(lgName){
     this.setState.searchedGruppe = [];
     // console.log(this.state.searchedGruppe);
     const results = [];
-    this.state.arbeitsgruppen.forEach(function(ag){
-      const ag_credentials = ag.bezeichnung;
-      if(ag_credentials.toLowerCase().includes(agName.toLowerCase()) && agName != '' ){
-        results.push(ag);
+    this.state.lerngruppen.forEach(function(lg){
+      const lg_credentials = lg.bezeichnung;
+      if(lg_credentials.toLowerCase().includes(lgName.toLowerCase()) && lgName != '' ){
+        results.push(lg);
       }
     })
     this.state.searchedGruppe = results;
@@ -43,10 +43,10 @@ export class AgSelectList extends Component{
   }
 
   componentDidMount() {
-    this.fetchData('arbeitsgruppen').then(res => {
+    this.fetchData('lerngruppen').then(res => {
       
       this.setState({
-        arbeitsgruppen: res.data
+        lerngruppen: res.data
       })
       this.setState.searchedGruppe = [];
     });
@@ -54,15 +54,15 @@ export class AgSelectList extends Component{
   
 
   render() {
-    var agsToRender = [];
+    var lgsToRender = [];
     // console.log(this.state.haushalte)
     if(this.state.searchedGruppe.length >=1){
-      agsToRender = this.state.searchedGruppe;
+      lgsToRender = this.state.searchedGruppe;
     }else{
-      agsToRender = this.state.arbeitsgruppen;
+      lgsToRender = this.state.lerngruppen;
 
     }
-    //console.log(agsToRender);
+    //console.log(lgsToRender);
     
     
       return (
@@ -71,7 +71,7 @@ export class AgSelectList extends Component{
                 type="text"
                 className='entity-search'              
                 // id="header-search"
-                placeholder="Arbeitsgruppen Suche"
+                placeholder="Lerngruppen Suche"
                 name="s" 
                 onChange={(e) => {
                   this.search(e.target.value);
@@ -79,18 +79,19 @@ export class AgSelectList extends Component{
             />
           <div className='entity-list-scroller'>
               <ul>
-              {agsToRender.map(ag => (
-                <Ag key={uuidv4()}
-                  arbeitsgruppe_id={ag.arbeitsgruppe_id}
-                  bezeichnung={ag.bezeichnung}
-                  beschreibung={ag.beschreibung}
-                  email={ag.email} 
+              {lgsToRender.map(lg => (
+                <Lg key={uuidv4()}
+                  lerngruppe_id={lg.lerngruppe_id}
+                  bezeichnung={lg.bezeichnung}
+                  email_eltern={lg.email_eltern}
+                  email_team={lg.email_team}
+                  telefon_team={lg.telefon_team} 
                 />
               ))}
               </ul>
           </div>
-          <div className='entity-data-cont'  id='ag-data'>
-            Ag Data Container 
+          <div className='entity-data-cont'  id='lg-data'>
+            Lg Data Container 
           </div>
         </div>
 

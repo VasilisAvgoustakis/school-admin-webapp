@@ -4,7 +4,7 @@ import dateToDEFormat from '../../globalFunctions';
 import { v4 as uuidv4 } from 'uuid';
 
 
-class MitgliederRow extends React.Component{
+class SchullerRow extends React.Component{
     constructor(props){
         super(props);
         this.state = {
@@ -16,11 +16,12 @@ class MitgliederRow extends React.Component{
         //console.log(this.state.data)
         return(
             
-            this.state.data.map(mitgliederRow => (
+            this.state.data.map(schullerRow => (
                 <tr key={uuidv4()}>
-                    {mitgliederRow.person_id ? (<td>{mitgliederRow.person_id}</td>):(<td> -- </td>)}
-                    {mitgliederRow.rufname ? (<td>{mitgliederRow.rufname}</td>):(<td> -- </td>)}
-                    {mitgliederRow.nachname ? (<td>{mitgliederRow.nachname}</td>):(<td> -- </td>)}
+                    {schullerRow.person_id ? (<td>{schullerRow.person_id}</td>):(<td> -- </td>)}
+                    {schullerRow.rufname ? (<td>{schullerRow.rufname}</td>):(<td> -- </td>)}
+                    {schullerRow.nachname ? (<td>{schullerRow.nachname}</td>):(<td> -- </td>)}
+                    {schullerRow.eintrittsdatum ? (<td>{dateToDEFormat(new Date(schullerRow.eintrittsdatum))}</td>):(<td> -- </td>)}
                 </tr>
                 
             )) 
@@ -30,14 +31,14 @@ class MitgliederRow extends React.Component{
 
 
 
-export function Mitglieder(props){
+export function Schuller(props){
     
     
     return(
         
         <div>
         {/* {console.log(props.addresses)} */}
-        {props.mietglieder.length == 0 ? (<table>
+        {props.schuller.length == 0 ? (<table>
             <thead>
                 <tr>
                     <th colSpan="3">Mietglieder</th>
@@ -52,7 +53,7 @@ export function Mitglieder(props){
         <table>
             <thead>
                 <tr>
-                    <th colSpan="3">Mietglieder</th>
+                    <th colSpan="4">Mietglieder</th>
                 </tr>
             </thead>
             <tbody>
@@ -60,13 +61,14 @@ export function Mitglieder(props){
                     <td><strong>Id</strong></td>
                     <td><strong>Rufname</strong></td>
                     <td><strong>Nachname</strong></td>
+                    <td><strong>Eintrittsdatum</strong></td>
                 </tr>
                 {/* Hier comes the address row element */}
                 
-                    {props.mietglieder.map(mietglied => (
+                    {props.schuller.map(schull_kind => (
                         
-                        <MitgliederRow key={uuidv4()}
-                        data={mietglied}
+                        <SchullerRow key={uuidv4()}
+                        data={schull_kind}
                         />
                        
                     ))}

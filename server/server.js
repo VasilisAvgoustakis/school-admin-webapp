@@ -491,6 +491,115 @@ app.get('/ag_mitglieder', (req, res) => {
 
 //end of arbeitsgruppen
 
+
+//Lerngruppen
+app.get('/lerngruppenList', (req, res) => {
+  // const { person_id } = req.query;
+  const { table } = req.query;
+  pool.query(
+  `SELECT
+      *
+  FROM
+      ${table}
+  ORDER BY 
+      lerngruppe_id ASC
+  ;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+
+app.get('/lerngruppe_mitglieder', (req, res) => {
+  const { lerngruppe_id } = req.query;
+  pool.query(
+  `SELECT
+    personen.person_id,
+    personen.rufname,
+    personen.nachname,
+    kind_lerngruppe.eintrittsdatum
+  FROM
+    personen
+  INNER JOIN
+    kind_lerngruppe on personen.person_id = kind_lerngruppe.person_id
+  INNER JOIN
+    lerngruppen on kind_lerngruppe.lerngruppe_id = lerngruppen.lerngruppe_id
+  where lerngruppen.lerngruppe_id = ${lerngruppe_id}
+  ORDER BY
+    personen.rufname ASC,
+    personen.nachname ASC
+  ;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+//end of Lerngruppen
+
+//Tätigkeiten
+app.get('/jobsList', (req, res) => {
+  // const { person_id } = req.query;
+  const { table } = req.query;
+  pool.query(
+  `SELECT distinct
+      taetigkeit
+  FROM
+      ${table}
+  ORDER BY 
+      taetigkeit ASC
+  ;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+
+app.get('/job_roles', (req, res) => {
+  const { taetigkeit } = req.query;
+  pool.query(
+  `SELECT
+    personen.person_id,
+    personen.rufname,
+    personen.nachname,
+    taetigkeit.taetigkeit_beginn,
+    taetigkeit_ende,
+    taetigkeit.typ
+  FROM
+    personen
+  INNER JOIN
+    taetigkeit on personen.person_id = taetigkeit.person_id
+  where taetigkeit.taetigkeit = "${taetigkeit}"
+  ORDER BY
+    personen.rufname ASC,
+    personen.nachname ASC
+  ;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+//end of Tätigkeiten
+
 //End of Queries
 
 

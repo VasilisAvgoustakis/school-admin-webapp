@@ -4,7 +4,7 @@ import dateToDEFormat from '../../globalFunctions';
 import { v4 as uuidv4 } from 'uuid';
 
 
-class MitgliederRow extends React.Component{
+class EmployeeRow extends React.Component{
     constructor(props){
         super(props);
         this.state = {
@@ -16,11 +16,14 @@ class MitgliederRow extends React.Component{
         //console.log(this.state.data)
         return(
             
-            this.state.data.map(mitgliederRow => (
+            this.state.data.map(employeeRow => (
                 <tr key={uuidv4()}>
-                    {mitgliederRow.person_id ? (<td>{mitgliederRow.person_id}</td>):(<td> -- </td>)}
-                    {mitgliederRow.rufname ? (<td>{mitgliederRow.rufname}</td>):(<td> -- </td>)}
-                    {mitgliederRow.nachname ? (<td>{mitgliederRow.nachname}</td>):(<td> -- </td>)}
+                    {employeeRow.person_id ? (<td>{employeeRow.person_id}</td>):(<td> -- </td>)}
+                    {employeeRow.rufname ? (<td>{employeeRow.rufname}</td>):(<td> -- </td>)}
+                    {employeeRow.nachname ? (<td>{employeeRow.nachname}</td>):(<td> -- </td>)}
+                    {employeeRow.taetigkeit_beginn ? (<td>{dateToDEFormat(new Date(employeeRow.taetigkeit_beginn))}</td>):(<td> -- </td>)}
+                    {employeeRow.taetigkeit_ende ? (<td>{dateToDEFormat(new Date(employeeRow.taetigkeit_ende))}</td>):(<td> -- </td>)}
+                    {employeeRow.typ ? (<td>{employeeRow.typ}</td>):(<td> -- </td>)}
                 </tr>
                 
             )) 
@@ -30,29 +33,29 @@ class MitgliederRow extends React.Component{
 
 
 
-export function Mitglieder(props){
+export function Employee(props){
     
     
     return(
         
         <div>
         {/* {console.log(props.addresses)} */}
-        {props.mietglieder.length == 0 ? (<table>
+        {props.employees.length == 0 ? (<table>
             <thead>
                 <tr>
                     <th colSpan="3">Mietglieder</th>
                 </tr>
             </thead>
             <tbody>
-                <tr colSpan="2" style={{position:'absolute'}, {width:'80%'}}>
-                    <td><strong>Keine Mietglieder gefunden!</strong></td>
+                <tr colSpan="3" style={{position:'absolute'}, {width:'80%'}}>
+                    <td><strong>Keine Mitarbeiter gefunden!</strong></td>
                 </tr>
             </tbody>
         </table>):(
         <table>
             <thead>
                 <tr>
-                    <th colSpan="3">Mietglieder</th>
+                    <th colSpan="6">Mitarbeiter</th>
                 </tr>
             </thead>
             <tbody>
@@ -60,13 +63,16 @@ export function Mitglieder(props){
                     <td><strong>Id</strong></td>
                     <td><strong>Rufname</strong></td>
                     <td><strong>Nachname</strong></td>
+                    <td><strong>Beginn</strong></td>
+                    <td><strong>Ende</strong></td>
+                    <td><strong>Typ</strong></td>
                 </tr>
                 {/* Hier comes the address row element */}
                 
-                    {props.mietglieder.map(mietglied => (
+                    {props.employees.map(employee => (
                         
-                        <MitgliederRow key={uuidv4()}
-                        data={mietglied}
+                        <EmployeeRow key={uuidv4()}
+                        data={employee}
                         />
                        
                     ))}
