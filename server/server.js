@@ -600,6 +600,64 @@ app.get('/job_roles', (req, res) => {
 
 //end of Tätigkeiten
 
+//simple List
+app.get('/simpleList', (req, res) => {
+  const { group, date } = req.query;
+  
+  console.log(group + date)
+  pool.query(
+  `SELECT 
+  personen.rufname AS Rufname,
+  FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365) + 1 + COALESCE((SELECT 
+                  SUM(jahrgangswechsel.wert)
+              FROM
+                  jahrgangswechsel
+              WHERE
+                  jahrgangswechsel.person_id = personen.person_id),
+          0) AS Jahrgangsstufe,
+  lerngruppen.bezeichnung AS aktlLerngruppen
+FROM
+  personen
+      INNER JOIN
+  kind_schule ON personen.person_id = kind_schule.person_id
+      INNER JOIN
+  kind_lerngruppe ON personen.person_id = kind_lerngruppe.person_id
+      INNER JOIN
+  lerngruppen ON kind_lerngruppe.lerngruppe_id = lerngruppen.lerngruppe_id
+WHERE
+  kind_schule.zugangsdatum_zur_fsx <= '${date}'
+      AND (kind_schule.abgangsdatum_von_fsx IS NULL
+      OR kind_schule.abgangsdatum_von_fsx > '${date}')
+      AND kind_lerngruppe.eintrittsdatum = (SELECT 
+          MAX(kind_lerngruppe.eintrittsdatum)
+      FROM
+          kind_lerngruppe
+      WHERE
+          personen.person_id = kind_lerngruppe.person_id)
+      AND (FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365) + 1 + COALESCE((SELECT 
+                  SUM(jahrgangswechsel.wert)
+              FROM
+                  jahrgangswechsel
+              WHERE
+                  jahrgangswechsel.person_id = personen.person_id),
+          0)) < 7 AND ((FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365) + 1 + COALESCE((SELECT 
+                  SUM(jahrgangswechsel.wert)
+              FROM
+                  jahrgangswechsel
+              WHERE
+                  jahrgangswechsel.person_id = personen.person_id),
+          0)) = ${isNaN(group) ? (0):(group) } XOR lerngruppen.bezeichnung= '${group}')
+ORDER BY Jahrgangsstufe ASC , Rufname ASC;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
 //End of Queries
 
 
