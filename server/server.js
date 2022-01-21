@@ -607,16 +607,24 @@ app.get('/simpleList', (req, res) => {
   console.log(group + date)
   pool.query(
   `SELECT 
+  *
+FROM (
+select 
   personen.rufname AS Rufname,
-  FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365) + 1 + COALESCE((SELECT 
+  @jahrgang:=FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365) + 1 + COALESCE((SELECT 
                   SUM(jahrgangswechsel.wert)
               FROM
                   jahrgangswechsel
               WHERE
                   jahrgangswechsel.person_id = personen.person_id),
           0) AS Jahrgangsstufe,
-  lerngruppen.bezeichnung AS aktlLerngruppen
-FROM
+  CASE
+      WHEN @jahrgang <= 2 THEN '1/2'
+      WHEN (@jahrgang > 2 AND @jahrgang < 5) THEN '3/4'
+      WHEN @jahrgang > 4 THEN '5/6'
+  END AS Lerngruppe,
+  IF(@jahrgang <= 3, 'Unten', 'Oben') AS Etage
+  FROM
   personen
       INNER JOIN
   kind_schule ON personen.person_id = kind_schule.person_id
@@ -624,29 +632,22 @@ FROM
   kind_lerngruppe ON personen.person_id = kind_lerngruppe.person_id
       INNER JOIN
   lerngruppen ON kind_lerngruppe.lerngruppe_id = lerngruppen.lerngruppe_id
-WHERE
-  kind_schule.zugangsdatum_zur_fsx <= '${date}'
+  WHERE
+      kind_schule.zugangsdatum_zur_fsx <= '${date}'
       AND (kind_schule.abgangsdatum_von_fsx IS NULL
       OR kind_schule.abgangsdatum_von_fsx > '${date}')
       AND kind_lerngruppe.eintrittsdatum = (SELECT 
           MAX(kind_lerngruppe.eintrittsdatum)
       FROM
           kind_lerngruppe
-      WHERE
-          personen.person_id = kind_lerngruppe.person_id)
-      AND (FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365) + 1 + COALESCE((SELECT 
-                  SUM(jahrgangswechsel.wert)
-              FROM
-                  jahrgangswechsel
-              WHERE
-                  jahrgangswechsel.person_id = personen.person_id),
-          0)) < 7 AND ((FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365) + 1 + COALESCE((SELECT 
-                  SUM(jahrgangswechsel.wert)
-              FROM
-                  jahrgangswechsel
-              WHERE
-                  jahrgangswechsel.person_id = personen.person_id),
-          0)) = ${isNaN(group) ? (0):(group) } XOR lerngruppen.bezeichnung= '${group}')
+          inner join 
+          personen on personen.person_id = kind_lerngruppe.person_id)
+  ) as simpleList
+WHERE
+      Jahrgangsstufe < 7
+      AND (((Jahrgangsstufe = ${isNaN(group) ? (0):(group) }
+      XOR Lerngruppe= '${group}') XOR Etage = '${group}' XOR ${group == 'alle' ? (true):(false)}
+      ))
 ORDER BY Jahrgangsstufe ASC , Rufname ASC;`, (err, results) => {
     if (err) {
       console.log(err)
