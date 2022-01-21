@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-//import ReactPDF from '@react-pdf/renderer';
-//import { Anwesenheitsliste } from './anwesenheitsPdf';
+
+import { Anwesenheitsliste } from './anwesenheitsPdf';
 import '../stylesheets/globalstyles.css';
 import dateToDEFormat from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
@@ -59,12 +59,8 @@ export class SimpleList extends React.Component{
     }
 
     generatePDF() {
-       // ReactPDF.render(<Anwesenheitsliste />)
-        // <BlobProvider document={<Anwesenheitsliste />}>
-        //     {({ url }) => (
-        //         <a href={url} target="_blank">Open in new tab</a>
-        //     )}
-        // </BlobProvider>
+        console.log("test")
+       return( <Anwesenheitsliste />)
     }
 
 

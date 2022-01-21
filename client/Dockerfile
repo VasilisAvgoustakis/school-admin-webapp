@@ -8,5 +8,6 @@ COPY package.json /app
 COPY . /app
 
 RUN npm install
+#RUN yarn install 
 
 CMD ["npm", "start"]
