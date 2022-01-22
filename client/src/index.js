@@ -5,6 +5,7 @@ import { Outlet, Link, withRouter } from "react-router-dom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navigation} from './components';
 import * as serviceWorker from './serviceWorker';
+import PopUpPDF from './components/customTab/popUpPdf';
 
 
 
@@ -16,6 +17,7 @@ ReactDOM.render(
         <Routes>
             <Route path='/' element= {<Landing />} />
             <Route path="/dashboard" element={<Navigation />} />
+            <Route path="/popUpPDF" element={<PopUpPDF />} />
         </Routes>
     </BrowserRouter>, document.getElementById('root'));
 
