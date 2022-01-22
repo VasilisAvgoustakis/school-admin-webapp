@@ -79,7 +79,7 @@ export class SimpleList extends React.Component{
 
     generatePDF() {
         
-        const doc = new jsPDF('l', 'mm', [497, 410], false);
+        const doc = new jsPDF('l', 'mm', [297, 210], false);
         //doc.text("Hello world!", 10, 10);
        
         doc.autoTable(
@@ -91,9 +91,11 @@ export class SimpleList extends React.Component{
                     pageBrake: 'avoid',
                     border: '1px solid black',
                     borderCollapse: 'collapse',
+                    cellPadding: 0.1,
+                    valign: 'top',
                     halign: 'center', 
                     fontStyle: 'bold',
-                    fontSize: 8,
+                    fontSize: 6,
                     cellWidth: 'auto',
                     overflowColumns: 'visible',
                     overflow: 'visible',
@@ -102,6 +104,12 @@ export class SimpleList extends React.Component{
             columnStyles: {
                  0: { halign: 'center', fontStyle: 'bold'  }
             },
+
+            // createdCell: function(data) {
+            //     data.cell.styles.cellPadding = 50;
+            //   },
+
+
             didParseCell: function (data) {
 
                 if(parseInt(data.cell.raw.abbr, 10) % 2 == 0 ){
@@ -111,12 +119,9 @@ export class SimpleList extends React.Component{
                 
                 if( data.cell.raw.accessKey == 0 || data.cell.raw.accessKey == 6 ){
                      data.cell.styles.fillColor = [20, 20, 20];
-                 } 
-
-                 
-                
-
+                 }
              }
+
             }
         )
 
