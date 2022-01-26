@@ -694,7 +694,7 @@ kind_daten on personen.person_id = kind_daten.person_id) as Ueberspringen
 WHERE
   jahreInklWechsel = ${yearSum}
   AND
-  ${thirdVar} = '${thirdVar = 'geschlecht' ? (genderVal):(spracheValue)}'
+  ${thirdVar} = '${thirdVar == 'geschlecht' ? (genderVal):(spracheValue)}'
 ;`, (err, results) => {
     if (err) {
       console.log(err)
