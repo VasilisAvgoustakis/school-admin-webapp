@@ -6,6 +6,7 @@ import dateToDEFormat from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
 
 
+
 export class Schullerbewegung extends React.Component{
     constructor(props){
         super(props);
@@ -82,6 +83,8 @@ export class Schullerbewegung extends React.Component{
         
     }
 
+    
+
     render(){
         //populate lis of available years
         var availableYears = [];
@@ -94,7 +97,12 @@ export class Schullerbewegung extends React.Component{
             <div className='simple-list-cont'>
                 <div>
                     <label htmlFor='year_bewegung'>Selektiere ein Jahr für die Auswertung:</label>
-                    <select name='year_bewegung' id='year' onChange={this.updateYear} defaultValue={this.state.currentYear}>
+                    <select name='year_bewegung' id='year' onChange={this.updateYear} defaultValue={this.state.selectedYear}
+                    >
+                    <option key={uuidv4()} value={this.state.currentYear}>
+                                    YYYY
+                    </option>
+                    
                         {
                         availableYears.map(year => {
                             return(
@@ -108,6 +116,7 @@ export class Schullerbewegung extends React.Component{
                 </div>
                 <div>
                     <p>1.1 Vorzeitig Aufgerückte aus der Jahrgangsstufe 3 in die Jahrgangsstufe 4</p>
+                    <p>Aktuell selektiertes Jahr: {this.state.selectedYear}</p>
                     <label htmlFor='jumped3to4Male'>Männlich:</label>
                     <input name='jumped3to4Male' type= 'text' value={this.state.jumped3to4Male} readOnly></input>
                     <label htmlFor='jumped3to4Female'>Weiblich:</label>
