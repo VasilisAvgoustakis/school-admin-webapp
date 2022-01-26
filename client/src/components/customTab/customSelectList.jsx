@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import {SimpleList} from './simpleList.jsx';
+import { Schullerbewegung } from './schullerbewegung.jsx';
 import '../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -36,10 +37,33 @@ export class CustomSelectList extends Component{
     this.forceUpdate();
   }
 
+  componentDidMount() {
+    
+    this.setState({customQuery: ''}) 
+  }
+
   componentDidUpdate(){
+    //console.log(this.state.customQuery)
     //perhpas a switch statement will be better for later
-    if(this.state.customQuery = 'sl'){
+    // if(this.state.customQuery = 'sl'){
+    //     ReactDOM.render(<SimpleList />, document.getElementById("custom-data"));
+    // }
+    // else if(this.state.customQuery = 'sb'){
+    //   ReactDOM.render(<p>Here comes the bewegung scomponen</p>, document.getElementById("custom-data"));
+    // }
+
+    switch (this.state.customQuery) {
+      case 'sl':
+        console.log(this.state.customQuery);
         ReactDOM.render(<SimpleList />, document.getElementById("custom-data"));
+        break;
+      case 'sb':
+        console.log(this.state.customQuery);
+        ReactDOM.render(<Schullerbewegung />, document.getElementById("custom-data"));
+        break;
+      default:
+        ReactDOM.render(<p>Wähle einer der custom Anfragen von der List Links</p>, 
+          document.getElementById("custom-data"));
     }
   }
 
@@ -66,6 +90,9 @@ export class CustomSelectList extends Component{
               <ul>
                 <li onClick={() => this.handleClick('sl')}>
                     Einfache Liste
+                </li>
+                <li onClick={() => this.handleClick('sb')}>
+                    Schüllerbewegung
                 </li>
               </ul>
           </div>

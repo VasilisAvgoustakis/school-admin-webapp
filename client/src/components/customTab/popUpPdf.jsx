@@ -1,12 +1,12 @@
-import React from 'react';
-import {Anwesenheitsliste} from './anwesenheitsPdf';
+// import React from 'react';
+// import {Anwesenheitsliste} from './anwesenheitsPdf';
 
-export default function PopUpPDF() {
-    return (
+// export default function PopUpPDF() {
+//     return (
       
-        <div className='listePDF' >
-          <p>fasdf</p>
-        </div>
+//         <div className='listePDF' >
+//           <p>fasdf</p>
+//         </div>
       
-    );
-  }
+//     );
+//   }

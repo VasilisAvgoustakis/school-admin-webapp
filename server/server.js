@@ -659,6 +659,56 @@ ORDER BY Jahrgangsstufe ASC , Rufname ASC;`, (err, results) => {
   });
 });
 
+
+// Schülerbewegung an allgemein bildenden Schulen:
+
+//1.1 - 1.3
+app.get('/schullerBewegung', (req, res) => {
+  // thirdVal should either be = 'geschlecht' or 'herkunftssprache'
+  // if we are searching after gender then genderVal = 'm' or 'f'
+  var { date, thirdVar, yearSum, genderVal } = req.query;
+  // if we are searching after herkunftssprache then 
+  var spracheValue = '1';
+  pool.query(
+  `SELECT 
+  COUNT(*) AS Count
+FROM
+  (SELECT 
+personen.person_id as id,
+  kind_daten.geschlecht as geschlecht,
+  kind_daten.nichtdeutsche_herkunftssprache as herkunftssprache,
+  @seitEinschullung := FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365)+1 as seitEinschullung,
+@jahreInklJahrgangswechseln := (COALESCE((SELECT 
+    SUM(jahrgangswechsel.wert)
+   FROM
+    jahrgangswechsel
+  WHERE
+    jahrgangswechsel.person_id = personen.person_id),
+0) + @seitEinschullung) as jahreInklWechsel
+FROM
+  jahrgangswechsel
+      INNER JOIN
+  personen ON jahrgangswechsel.person_id = personen.person_id
+  inner join
+kind_daten on personen.person_id = kind_daten.person_id) as Ueberspringen
+WHERE
+  jahreInklWechsel = ${yearSum}
+  AND
+  ${thirdVar} = '${thirdVar = 'geschlecht' ? (genderVal):(spracheValue)}'
+;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(date, thirdVar, yearSum, genderVal)
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+
+
 //End of Queries
 
 
