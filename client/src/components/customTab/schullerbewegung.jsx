@@ -18,15 +18,40 @@ export class Schullerbewegung extends React.Component{
             jumped3to4Male: 0,
             jumped3to4Female: 0,
             jumped3to4nichtDE: 0,
+            jumped4to5Male: 0,
+            jumped4to5Female: 0,
+            jumped4to5nichtDE: 0,
+            jumped5to6Male: 0,
+            jumped5to6Female: 0,
+            jumped5to6nichtDE: 0,
+            jumped1to3MaleYearEnd: 0,
+            jumped1to3FemaleYearEnd: 0,
+            jumped1to3nichtDEYearEnd:0,
+            jumped2to4MaleYearEnd: 0,
+            jumped2to4FemaleYearEnd: 0,
+            jumped2to4nichtDEYearEnd: 0,
+            jumped3to5MaleYearEnd: 0,
+            jumped3to5FemaleYearEnd: 0,
+            jumped3to5nichtDEYearEnd: 0,
+            jumped4to6MaleYearEnd: 0,
+            jumped4to6FemaleYearEnd: 0,
+            jumped4to6nichtDEYearEnd: 0,
+            jumped5to7MaleYearEnd: 0,
+            jumped5to7FemaleYearEnd: 0,
+            jumped5to7nichtDEYearEnd: 0
+
+
+
+
         }
 
     }
 
-    async fetchData(year, thirdVar, genderVal, yearSum, ){
+    async fetchData(year, month, day, thirdVar, genderVal, yearSum, ){
         return (
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/schullerBewegung`, {
             params: {
-                date: year.toString() + '-3' + '-1' ,
+                date: year.toString() + '-' + month + '-' + day ,
                 thirdVar: thirdVar,
                 genderVal: genderVal,
                 yearSum: yearSum
@@ -36,7 +61,8 @@ export class Schullerbewegung extends React.Component{
 
 
     getAllData() {
-        this.fetchData(this.state.selectedYear, 'geschlecht', 'm', 4 )
+
+        this.fetchData(this.state.selectedYear, 3, 1, 'geschlecht', 'm', 4 )
         .then(result => {
            
             this.setState({
@@ -45,7 +71,7 @@ export class Schullerbewegung extends React.Component{
         }
         )
         .then(
-        this.fetchData(this.state.selectedYear, 'geschlecht', 'f', 4)
+        this.fetchData(this.state.selectedYear, 3, 1, 'geschlecht', 'f', 4)
         .then(result => {
         this.setState({
             jumped3to4Female: result.data[0].Count,
@@ -53,27 +79,117 @@ export class Schullerbewegung extends React.Component{
             })
         )
         .then(
-        this.fetchData(this.state.selectedYear, 'herkunftssprache', '', 4).then(result => {
+        this.fetchData(this.state.selectedYear, 3, 1, 'herkunftssprache', '', 4).then(result => {
             this.setState({
                 jumped3to4nichtDE: result.data[0].Count,
                 })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 3, 1, 'geschlecht', 'm', 5).then(result => {
+                this.setState({
+                    jumped4to5Male: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 3, 1, 'geschlecht', 'f', 5).then(result => {
+                this.setState({
+                    jumped4to5Female: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 3, 1, 'herkunftssprache', '', 5).then(result => {
+                this.setState({
+                    jumped4to5nichtDE: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 3, 1, 'geschlecht', 'm', 6).then(result => {
+                this.setState({
+                    jumped5to6Male: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 3, 1, 'geschlecht', 'f', 6).then(result => {
+                this.setState({
+                    jumped5to6Female: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 3, 1, 'herkunftssprache', '', 6).then(result => {
+                this.setState({
+                    jumped5to6nichtDE: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 2).then(result => {
+                this.setState({
+                    jumped1to3MaleYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 2).then(result => {
+                this.setState({
+                    jumped1to3FemaleYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 2).then(result => {
+                this.setState({
+                    jumped1to3nichtDEYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 4).then(result => {
+                this.setState({
+                    jumped2to4MaleYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 4).then(result => {
+                this.setState({
+                    jumped2to4FemaleYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 4).then(result => {
+                this.setState({
+                    jumped2to4nichtDEYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 5).then(result => {
+                this.setState({
+                    jumped3to5MaleYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 5).then(result => {
+                this.setState({
+                    jumped3to5FemaleYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 5).then(result => {
+                this.setState({
+                    jumped3to5nichtDEYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 6).then(result => {
+                this.setState({
+                    jumped4to6MaleYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 6).then(result => {
+                this.setState({
+                    jumped4to6FemaleYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 6).then(result => {
+                this.setState({
+                    jumped4to6nichtDEYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 7).then(result => {
+                this.setState({
+                    jumped5to7MaleYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 7).then(result => {
+                this.setState({
+                    jumped5to7FemaleYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 7).then(result => {
+                this.setState({
+                    jumped5to7nichtDEYearEnd: result.data[0].Count,
+                    })}))
                 
-        //         .then(
-            
-        // this.fetchAGs(this.state.core_data.personId).then(result => {
-        //     this.setState({
-                
-        //         arbeitsgruppen: result.data,
-        //         })})).then(
-
-        // this.fetchBezugspersonen(this.state.core_data.personId).then(result => {
-        //     this.setState({
-        //         bezugspersonen: result.data,
-                
-        //         })
-        //                                                         }
-        //                                                         )
-        //             )
+        
     }
     
     
@@ -115,14 +231,72 @@ export class Schullerbewegung extends React.Component{
                     <button onClick={this.getAllData}>Abrufen</button>    
                 </div>
                 <div>
-                    <p>1.1 Vorzeitig Aufgerückte aus der Jahrgangsstufe 3 in die Jahrgangsstufe 4</p>
                     <p>Aktuell selektiertes Jahr: {this.state.selectedYear}</p>
+                    <h3>1. Schülerinnen und Schüler, die im Laufe desSchuljahres (bis zum 1. März) vorzeitig in die nächsthöhere Jahrgangsstufe aufgerückt sind</h3>
+                    <p>1.1 Vorzeitig Aufgerückte aus der Jahrgangsstufe 3 in die Jahrgangsstufe 4</p>
                     <label htmlFor='jumped3to4Male'>Männlich:</label>
                     <input name='jumped3to4Male' type= 'text' value={this.state.jumped3to4Male} readOnly></input>
                     <label htmlFor='jumped3to4Female'>Weiblich:</label>
                     <input name='jumped3to4Female' type= 'text' value={this.state.jumped3to4Female} readOnly></input> 
                     <label htmlFor='jumped3to4nichtDE'>ndH insgesamt:</label>
                     <input name='jumped3to4nichtDE' type= 'text' value={this.state.jumped3to4nichtDE} readOnly></input>
+                
+                    <p>1.2 Vorzeitig Aufgerückte aus der Jahrgangsstufe 4 in die Jahrgangsstufe 5</p>
+                    <label htmlFor='jumped4to5Male'>Männlich:</label>
+                    <input name='jumped4to5Male' type= 'text' value={this.state.jumped4to5Male} readOnly></input>
+                    <label htmlFor='jumped4to5Female'>Weiblich:</label>
+                    <input name='jumped4to5Female' type= 'text' value={this.state.jumped4to5Female} readOnly></input> 
+                    <label htmlFor='jumped4to5nichtDE'>ndH insgesamt:</label>
+                    <input name='jumped4to5nichtDE' type= 'text' value={this.state.jumped4to5nichtDE} readOnly></input>
+
+                    <p>1.3 Vorzeitig Aufgerückte aus der Jahrgangsstufe 5in die Jahrgangsstufe 6</p>
+                    <label htmlFor='jumped5to6Male'>Männlich:</label>
+                    <input name='jumped5to6Male' type= 'text' value={this.state.jumped5to6Male} readOnly></input>
+                    <label htmlFor='jumped5to6Female'>Weiblich:</label>
+                    <input name='jumped5to6Female' type= 'text' value={this.state.jumped5to6Female} readOnly></input> 
+                    <label htmlFor='jumped5to6nichtDE'>ndH insgesamt:</label>
+                    <input name='jumped5to6nichtDE' type= 'text' value={this.state.jumped5to6nichtDE} readOnly></input>
+
+                    <h3>2. Am Ende des Schuljahres aufrückendeSchülerinnen und Schüler, die eine Jahrgangstufeüberspringen</h3>
+                    <p>2.1 Aufrückende aus der Jahrgangsstufe 1 in dieJahrgangsstufe 3</p>
+                    <label htmlFor='jumped1to3MaleYearEnd'>Männlich:</label>
+                    <input name='jumped1to3MaleYearEnd' type= 'text' value={this.state.jumped1to3MaleYearEnd} readOnly></input>
+                    <label htmlFor='jumped1to3FemaleYearEnd'>Weiblich:</label>
+                    <input name='jumped1to3FemaleYearEnd' type= 'text' value={this.state.jumped1to3FemaleYearEnd} readOnly></input> 
+                    <label htmlFor='jumped1to3nichtDEYearEnd'>ndH insgesamt:</label>
+                    <input name='jumped1to3nichtDEYearEnd' type= 'text' value={this.state.jumped1to3nichtDEYearEnd} readOnly></input>
+
+                    <p>2.2 Aufrückende aus der Jahrgangsstufe 2 in dieJahrgangsstufe 4</p>
+                    <label htmlFor='jumped2to4MaleYearEnd'>Männlich:</label>
+                    <input name='jumped2to4MaleYearEnd' type= 'text' value={this.state.jumped2to4MaleYearEnd} readOnly></input>
+                    <label htmlFor='jumped2to4FemaleYearEnd'>Weiblich:</label>
+                    <input name='jumped2to4FemaleYearEnd' type= 'text' value={this.state.jumped2to4FemaleYearEnd} readOnly></input> 
+                    <label htmlFor='jumped2to4nichtDEYearEnd'>ndH insgesamt:</label>
+                    <input name='jumped2to4nichtDEYearEnd' type= 'text' value={this.state.jumped2to4nichtDEYearEnd} readOnly></input>
+
+                    <p>2.3 Aufrückende aus der Jahrgangsstufe 3 in dieJahrgangsstufe 5</p>
+                    <label htmlFor='jumped3to5MaleYearEnd'>Männlich:</label>
+                    <input name='jumped3to5MaleYearEnd' type= 'text' value={this.state.jumped3to5MaleYearEnd} readOnly></input>
+                    <label htmlFor='jumped3to5FemaleYearEnd'>Weiblich:</label>
+                    <input name='jumped3to5FemaleYearEnd' type= 'text' value={this.state.jumped3to5FemaleYearEnd} readOnly></input> 
+                    <label htmlFor='jumped2to4nichtDEYearEnd'>ndH insgesamt:</label>
+                    <input name='jumped3to5nichtDEYearEnd' type= 'text' value={this.state.jumped3to5nichtDEYearEnd} readOnly></input>
+
+                    <p>2.4 Aufrückende aus der Jahrgangsstufe 4 in dieJahrgangsstufe 6</p>
+                    <label htmlFor='jumped4to6MaleYearEnd'>Männlich:</label>
+                    <input name='jumped4to6MaleYearEnd' type= 'text' value={this.state.jumped4to6MaleYearEnd} readOnly></input>
+                    <label htmlFor='jumped4to6FemaleYearEnd'>Weiblich:</label>
+                    <input name='jumped4to6FemaleYearEnd' type= 'text' value={this.state.jumped4to6FemaleYearEnd} readOnly></input> 
+                    <label htmlFor='jumped4to6nichtDEYearEnd'>ndH insgesamt:</label>
+                    <input name='jumped4to6nichtDEYearEnd' type= 'text' value={this.state.jumped4to6nichtDEYearEnd} readOnly></input>
+
+                    <p>2.5 Aufrückende aus der Jahrgangsstufe 5 in dieJahrgangsstufe 7</p>
+                    <label htmlFor='jumped5to7MaleYearEnd'>Männlich:</label>
+                    <input name='jumped5to7MaleYearEnd' type= 'text' value={this.state.jumped5to7MaleYearEnd} readOnly></input>
+                    <label htmlFor='jumped5to7FemaleYearEnd'>Weiblich:</label>
+                    <input name='jumped5to7FemaleYearEnd' type= 'text' value={this.state.jumped5to7FemaleYearEnd} readOnly></input> 
+                    <label htmlFor='jumped5to7nichtDEYearEnd'>ndH insgesamt:</label>
+                    <input name='jumped5to7nichtDEYearEnd' type= 'text' value={this.state.jumped5to7nichtDEYearEnd} readOnly></input>
                 </div>
             </div>
         )}

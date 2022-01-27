@@ -20,16 +20,29 @@ export function KindDaten(props) {
                 </tr>
             </thead>
             <tbody>
-            {props.data.geschlecht ? (
+                {props.data.geschlecht ? (
                     <tr>
                         <td><strong>Geschlecht:</strong></td>
                         <td>{props.data.geschlecht}</td>
                     </tr>) : ("") }
 
-                <tr>
-                    <td><strong>Einschulungsdatum:</strong></td>
-                    <td>{dateToDEFormat(new Date(props.data.einschulungsdatum))}</td>
-                </tr>
+                {props.data.einschulungsdatum ? (
+                    <tr>
+                        <td><strong>Einschulungsdatum:</strong></td>
+                        <td>{dateToDEFormat(new Date(props.data.einschulungsdatum))}</td>
+                    </tr>) :("")}
+                
+                {props.data.abgangsdatum_von_fsx? (
+                    <tr>
+                        <td><strong>Abgang von FSX:</strong></td>
+                        <td>{dateToDEFormat(new Date(props.data.abgangsdatum_von_fsx))}</td>
+                    </tr>) :("")}
+
+                {props.data.abgangsgrund? (
+                    <tr>
+                        <td><strong>Abgangsgrund:</strong></td>
+                        <td>{props.data.abgangsgrund}</td>
+                    </tr>) :("")}
 
                 {props.data.Jahrgangsstufe ? (
                     <tr>

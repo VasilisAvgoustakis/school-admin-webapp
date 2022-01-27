@@ -142,8 +142,9 @@ export class Person extends React.Component{
                     
                         <KontaktDaten 
                             data= {this.state.contactData}/>
-                        
+                        {console.log(this.state.data)}
                         <KindDaten 
+                            
                             data= {this.state.data}/>
 
                         
