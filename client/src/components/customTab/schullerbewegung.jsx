@@ -270,7 +270,7 @@ export class Schullerbewegung extends React.Component{
                     <input name='jumped5to6nichtDE' type= 'text' value={this.state.jumped5to6nichtDE} readOnly></input>
 
                     <h3>2. Am Ende des Schuljahres aufrückendeSchülerinnen und Schüler, die eine Jahrgangstufeüberspringen</h3>
-                    <p>2.1 Aufrückende aus der Jahrgangsstufe 1 in dieJahrgangsstufe 3</p>
+                    <p>2.1 Aufrückende aus der Jahrgangsstufe 1 in die Jahrgangsstufe 3</p>
                     <label htmlFor='jumped1to3MaleYearEnd'>Männlich:</label>
                     <input name='jumped1to3MaleYearEnd' type= 'text' value={this.state.jumped1to3MaleYearEnd} readOnly></input>
                     <label htmlFor='jumped1to3FemaleYearEnd'>Weiblich:</label>
@@ -278,7 +278,7 @@ export class Schullerbewegung extends React.Component{
                     <label htmlFor='jumped1to3nichtDEYearEnd'>ndH insgesamt:</label>
                     <input name='jumped1to3nichtDEYearEnd' type= 'text' value={this.state.jumped1to3nichtDEYearEnd} readOnly></input>
 
-                    <p>2.2 Aufrückende aus der Jahrgangsstufe 2 in dieJahrgangsstufe 4</p>
+                    <p>2.2 Aufrückende aus der Jahrgangsstufe 2 in die Jahrgangsstufe 4</p>
                     <label htmlFor='jumped2to4MaleYearEnd'>Männlich:</label>
                     <input name='jumped2to4MaleYearEnd' type= 'text' value={this.state.jumped2to4MaleYearEnd} readOnly></input>
                     <label htmlFor='jumped2to4FemaleYearEnd'>Weiblich:</label>
@@ -286,7 +286,7 @@ export class Schullerbewegung extends React.Component{
                     <label htmlFor='jumped2to4nichtDEYearEnd'>ndH insgesamt:</label>
                     <input name='jumped2to4nichtDEYearEnd' type= 'text' value={this.state.jumped2to4nichtDEYearEnd} readOnly></input>
 
-                    <p>2.3 Aufrückende aus der Jahrgangsstufe 3 in dieJahrgangsstufe 5</p>
+                    <p>2.3 Aufrückende aus der Jahrgangsstufe 3 in die Jahrgangsstufe 5</p>
                     <label htmlFor='jumped3to5MaleYearEnd'>Männlich:</label>
                     <input name='jumped3to5MaleYearEnd' type= 'text' value={this.state.jumped3to5MaleYearEnd} readOnly></input>
                     <label htmlFor='jumped3to5FemaleYearEnd'>Weiblich:</label>
@@ -294,7 +294,7 @@ export class Schullerbewegung extends React.Component{
                     <label htmlFor='jumped2to4nichtDEYearEnd'>ndH insgesamt:</label>
                     <input name='jumped3to5nichtDEYearEnd' type= 'text' value={this.state.jumped3to5nichtDEYearEnd} readOnly></input>
 
-                    <p>2.4 Aufrückende aus der Jahrgangsstufe 4 in dieJahrgangsstufe 6</p>
+                    <p>2.4 Aufrückende aus der Jahrgangsstufe 4 in die Jahrgangsstufe 6</p>
                     <label htmlFor='jumped4to6MaleYearEnd'>Männlich:</label>
                     <input name='jumped4to6MaleYearEnd' type= 'text' value={this.state.jumped4to6MaleYearEnd} readOnly></input>
                     <label htmlFor='jumped4to6FemaleYearEnd'>Weiblich:</label>
@@ -302,7 +302,7 @@ export class Schullerbewegung extends React.Component{
                     <label htmlFor='jumped4to6nichtDEYearEnd'>ndH insgesamt:</label>
                     <input name='jumped4to6nichtDEYearEnd' type= 'text' value={this.state.jumped4to6nichtDEYearEnd} readOnly></input>
 
-                    <p>2.5 Aufrückende aus der Jahrgangsstufe 5 in dieJahrgangsstufe 7</p>
+                    <p>2.5 Aufrückende aus der Jahrgangsstufe 5 in die Jahrgangsstufe 7</p>
                     <label htmlFor='jumped5to7MaleYearEnd'>Männlich:</label>
                     <input name='jumped5to7MaleYearEnd' type= 'text' value={this.state.jumped5to7MaleYearEnd} readOnly></input>
                     <label htmlFor='jumped5to7FemaleYearEnd'>Weiblich:</label>
