@@ -616,8 +616,11 @@ select
               FROM
                   jahrgangswechsel
               WHERE
-                  jahrgangswechsel.person_id = personen.person_id),
-          0) AS Jahrgangsstufe,
+                  jahrgangswechsel.person_id = personen.person_id
+                  AND
+                  jahrgangswechsel.datum <= '${date}'
+                  
+                  ),0) AS Jahrgangsstufe,
   CASE
       WHEN @jahrgang <= 2 THEN '1/2'
       WHEN (@jahrgang > 2 AND @jahrgang < 5) THEN '3/4'
@@ -662,13 +665,82 @@ ORDER BY Jahrgangsstufe ASC , Rufname ASC;`, (err, results) => {
 
 // Schülerbewegung an allgemein bildenden Schulen:
 
-//1.1 - 2.5
+//1.1 - 1.3
 app.get('/schullerBewegung', (req, res) => {
   // thirdVal should either be = 'geschlecht' or 'herkunftssprache'
   // if we are searching after gender then genderVal = 'm' or 'f'
   var { date, thirdVar, yearSum, genderVal } = req.query;
   // if we are searching after herkunftssprache then 
   var spracheValue = '1';
+  var year = new Date(date).getFullYear();
+  var month = new Date(date).getMonth();
+  var day = new Date(date).getDay();
+  pool.query(
+  `SELECT 
+  COUNT(*) AS Count
+FROM
+  (SELECT 
+personen.person_id as id,
+  kind_daten.geschlecht as geschlecht,
+  kind_daten.nichtdeutsche_herkunftssprache as herkunftssprache,
+  @seitEinschullung := FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365)+1 as seitEinschullung,
+@jahreInklJahrgangswechseln := (COALESCE((SELECT 
+    SUM(jahrgangswechsel.wert)
+   FROM
+    jahrgangswechsel
+  WHERE
+    jahrgangswechsel.person_id = personen.person_id
+    AND jahrgangswechsel.datum <= (SELECT 
+      MAX(jahrgangswechsel.datum) AS Datum
+  FROM
+      jahrgangswechsel
+  WHERE
+      Datum <= '${date}'
+      )),
+0) + @seitEinschullung) as jahreInklWechsel
+FROM
+  jahrgangswechsel
+      INNER JOIN
+  personen ON jahrgangswechsel.person_id = personen.person_id
+  inner join
+kind_daten on personen.person_id = kind_daten.person_id
+WHERE
+    Datum = (SELECT 
+            MAX(jahrgangswechsel.datum)
+        FROM
+            jahrgangswechsel
+        WHERE
+            Datum <= '${date}'
+            AND
+            Datum  > '${year-1}-7-31'
+            )) as Ueberspringen
+WHERE
+  jahreInklWechsel = ${yearSum}
+  AND
+  ${thirdVar} = '${thirdVar == 'geschlecht' ? (genderVal):(spracheValue)}'
+;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(date, thirdVar, yearSum, genderVal)
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+
+//2.1 - 2.5
+app.get('/schullerBewegung2', (req, res) => {
+  // thirdVal should either be = 'geschlecht' or 'herkunftssprache'
+  // if we are searching after gender then genderVal = 'm' or 'f'
+  var { date, thirdVar, yearSum, genderVal } = req.query;
+  // if we are searching after herkunftssprache then 
+  var spracheValue = '1';
+  // console.log(date)
+  var year = new Date(date).getFullYear();
+  // console.log(year-1 + '-7'+ '-31')
   pool.query(
   `SELECT 
   COUNT(*) AS Count
@@ -689,7 +761,9 @@ personen.person_id as id,
   FROM
       jahrgangswechsel
   WHERE
-      Datum <= '${date}')),
+      Datum <= '${date}'
+      
+      )),
 0) + @seitEinschullung) as jahreInklWechsel
 FROM
   jahrgangswechsel
@@ -703,7 +777,10 @@ WHERE
         FROM
             jahrgangswechsel
         WHERE
-            Datum <= '${date}')) as Ueberspringen
+            Datum <= '${date}'
+            AND
+            Datum  > '${year-1}-7-31'
+            )) as Ueberspringen
 WHERE
   jahreInklWechsel = ${yearSum}
   AND
@@ -721,7 +798,7 @@ WHERE
 });
 
 //4.
-app.get('/schullerBewegung2', (req, res) => {
+app.get('/schullerBewegung3', (req, res) => {
   // thirdVal should either be = 'geschlecht' or 'herkunftssprache'
   // if we are searching after gender then genderVal = 'm' or 'f'
   var { date, thirdVar, yearSum, genderVal } = req.query;

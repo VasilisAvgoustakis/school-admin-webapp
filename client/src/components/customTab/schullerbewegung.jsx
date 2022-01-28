@@ -59,6 +59,18 @@ export class Schullerbewegung extends React.Component{
           }))
       }
 
+    async fetchData2(year, month, day, thirdVar, genderVal, yearSum, ){
+    return (
+    await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/schullerBewegung2`, {
+        params: {
+            date: year.toString() + '-' + month + '-' + day ,
+            thirdVar: thirdVar,
+            genderVal: genderVal,
+            yearSum: yearSum
+        },
+        }))
+    }
+
 
     getAllData() {
 
@@ -114,77 +126,77 @@ export class Schullerbewegung extends React.Component{
                     jumped5to6nichtDE: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 2).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 3).then(result => {
                 this.setState({
                     jumped1to3MaleYearEnd: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 2).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 3).then(result => {
                 this.setState({
                     jumped1to3FemaleYearEnd: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 2).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 3).then(result => {
                 this.setState({
                     jumped1to3nichtDEYearEnd: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 4).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 4).then(result => {
                 this.setState({
                     jumped2to4MaleYearEnd: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 4).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 4).then(result => {
                 this.setState({
                     jumped2to4FemaleYearEnd: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 4).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 4).then(result => {
                 this.setState({
                     jumped2to4nichtDEYearEnd: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 5).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 5).then(result => {
                 this.setState({
                     jumped3to5MaleYearEnd: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 5).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 5).then(result => {
                 this.setState({
                     jumped3to5FemaleYearEnd: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 5).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 5).then(result => {
                 this.setState({
                     jumped3to5nichtDEYearEnd: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 6).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 6).then(result => {
                 this.setState({
                     jumped4to6MaleYearEnd: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 6).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 6).then(result => {
                 this.setState({
                     jumped4to6FemaleYearEnd: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 6).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 6).then(result => {
                 this.setState({
                     jumped4to6nichtDEYearEnd: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 7).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'geschlecht', 'm', 7).then(result => {
                 this.setState({
                     jumped5to7MaleYearEnd: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 7).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'geschlecht', 'f', 7).then(result => {
                 this.setState({
                     jumped5to7FemaleYearEnd: result.data[0].Count,
                     })}))
         .then(
-            this.fetchData(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 7).then(result => {
+            this.fetchData2(this.state.selectedYear, 7, 31, 'herkunftssprache', '', 7).then(result => {
                 this.setState({
                     jumped5to7nichtDEYearEnd: result.data[0].Count,
                     })}))
