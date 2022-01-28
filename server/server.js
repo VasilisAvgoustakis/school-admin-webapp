@@ -508,7 +508,7 @@ app.get('/lerngruppenList', (req, res) => {
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      // console.log(results)
       return res.send(results);
     }
   });
@@ -538,7 +538,7 @@ app.get('/lerngruppe_mitglieder', (req, res) => {
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      // console.log(results)
       return res.send(results);
     }
   });
@@ -562,7 +562,7 @@ app.get('/jobsList', (req, res) => {
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      // console.log(results)
       return res.send(results);
     }
   });
@@ -592,7 +592,7 @@ app.get('/job_roles', (req, res) => {
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      // console.log(results)
       return res.send(results);
     }
   });
@@ -656,7 +656,7 @@ ORDER BY Jahrgangsstufe ASC , Rufname ASC;`, (err, results) => {
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      // console.log(results)
       return res.send(results);
     }
   });
@@ -723,8 +723,8 @@ WHERE
       console.log(err)
       return res.send(err);
     } else {
-      console.log(date, thirdVar, yearSum, genderVal)
-      console.log(results)
+      // console.log(date, thirdVar, yearSum, genderVal)
+      // console.log(results)
       return res.send(results);
     }
   });
@@ -790,72 +790,135 @@ WHERE
       console.log(err)
       return res.send(err);
     } else {
-      console.log(date, thirdVar, yearSum, genderVal)
-      console.log(results)
+      // console.log(date, thirdVar, yearSum, genderVal)
+      // console.log(results)
       return res.send(results);
     }
   });
 });
 
 //4.
-app.get('/schullerBewegung3', (req, res) => {
+app.get('/sekundarvon4', (req, res) => {
   // thirdVal should either be = 'geschlecht' or 'herkunftssprache'
   // if we are searching after gender then genderVal = 'm' or 'f'
-  var { date, thirdVar, yearSum, genderVal } = req.query;
+  var { date, thirdVar, genderVal } = req.query;
   // if we are searching after herkunftssprache then 
   var spracheValue = '1';
   pool.query(
   `SELECT 
-  COUNT(*) AS Count
-FROM
-  (SELECT 
-personen.person_id as id,
-  kind_daten.geschlecht as geschlecht,
-  kind_daten.nichtdeutsche_herkunftssprache as herkunftssprache,
-  kind_schule.abgangsgrund as Grund,
-  @seitEinschullung := FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365)+1 as seitEinschullung,
-@jahreInklJahrgangswechseln := (COALESCE((SELECT 
-    SUM(jahrgangswechsel.wert)
-   FROM
-    jahrgangswechsel
-  WHERE
-    jahrgangswechsel.person_id = personen.person_id
-    AND jahrgangswechsel.datum = (SELECT 
-      MAX(jahrgangswechsel.datum) AS Datum
+    COUNT(*) AS Count
   FROM
-      jahrgangswechsel
-  WHERE
-      Datum <= '${date}')),
-0) + @seitEinschullung) as jahreInklWechsel
-FROM
-  jahrgangswechsel
-      INNER JOIN
-  personen ON jahrgangswechsel.person_id = personen.person_id
-  inner join
-kind_daten on personen.person_id = kind_daten.person_id
-WHERE
-    Datum = (SELECT 
-            MAX(jahrgangswechsel.datum)
-        FROM
-            jahrgangswechsel
-        WHERE
-            Datum <= '${date}')) as Ueberspringen
-WHERE
-  jahreInklWechsel = 4
-  AND
-  Grund = 'Uebergang Sekundarstufe'
+  (SELECT 
+      SekundarStufe.person_id,
+      kind_daten.geschlecht AS geschlecht,
+      kind_daten.nichtdeutsche_herkunftssprache AS herkunftssprache
+    FROM
+      (SELECT 
+      personen.einschulungsdatum AS einschullungsdatum,
+      kind_schule.*
+      FROM
+      personen
+      INNER JOIN kind_schule ON personen.person_id = kind_schule.person_id
+      WHERE
+      kind_schule.abgangsgrund = 'Uebergang Sekundarstufe'
+      ) AS SekundarStufe
+    INNER JOIN personen ON SekundarStufe.person_id = personen.person_id
+    INNER JOIN kind_daten ON SekundarStufe.person_id = kind_daten.person_id
+    WHERE
+      COALESCE((SELECT 
+              SUM(jahrgangswechsel.wert)
+          FROM
+              jahrgangswechsel
+          WHERE
+              jahrgangswechsel.person_id = personen.person_id
+                  AND jahrgangswechsel.datum = (SELECT 
+                      MAX(jahrgangswechsel.datum) AS Datum
+                  FROM
+                      jahrgangswechsel
+                  WHERE
+                      Datum <= '${date}')), 0) 
+                      + 
+                      (FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365) + 1) = 5
+           
+          
+          ) AS SekundarVon4
+          WHERE
+          ${thirdVar} = '${thirdVar == 'geschlecht' ? (genderVal):(spracheValue)}'
+
 ;`, (err, results) => {
     if (err) {
       console.log(err)
       return res.send(err);
     } else {
-      console.log(date, thirdVar, yearSum, genderVal)
-      console.log(results)
+      
+      //console.log(results)
       return res.send(results);
     }
   });
 });
 
+//5.3
+app.get('/absolventen', (req, res) => {
+  // thirdVal should either be = 'geschlecht' or 'herkunftssprache'
+  // if we are searching after gender then genderVal = 'm' or 'f'
+  var { date, thirdVar, genderVal } = req.query;
+  // if we are searching after herkunftssprache then 
+  var spracheValue = '1';
+  var year = new Date(date).getFullYear();
+  pool.query(
+  `SELECT 
+  COUNT(*) AS Count
+FROM
+  (SELECT 
+      SekundarStufe.person_id,
+  kind_daten.geschlecht AS geschlecht,
+  kind_daten.nichtdeutsche_herkunftssprache AS herkunftssprache
+  FROM
+      (SELECT 
+      personen.einschulungsdatum AS einschullungsdatum,
+  kind_schule.*
+  FROM
+      personen
+  INNER JOIN 
+  kind_schule ON personen.person_id = kind_schule.person_id
+  WHERE
+      kind_schule.abgangsgrund = 'Uebergang Sekundarstufe'
+      AND
+      kind_schule.abgangsdatum_von_fsx <= '${date}'
+      
+      )
+      AS SekundarStufe
+  INNER JOIN personen ON SekundarStufe.person_id = personen.person_id
+  INNER JOIN kind_daten ON SekundarStufe.person_id = kind_daten.person_id
+   WHERE
+       COALESCE((SELECT 
+               SUM(jahrgangswechsel.wert)
+           FROM
+             jahrgangswechsel
+           WHERE
+               jahrgangswechsel.person_id = personen.person_id
+                   AND jahrgangswechsel.datum = (SELECT 
+                       MAX(jahrgangswechsel.datum) AS Datum
+                   FROM
+                       jahrgangswechsel
+                   WHERE
+                       Datum <= '${date}')), 0)
+                       + (FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365) + 1) = 7
+          ) AS SekundarVon4
+          WHERE
+           ${thirdVar} = '${thirdVar == 'geschlecht' ? (genderVal):(spracheValue)}';`,
+    (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(thirdVar)
+      
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
 
 
 //End of Queries

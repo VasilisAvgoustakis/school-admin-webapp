@@ -38,9 +38,13 @@ export class Schullerbewegung extends React.Component{
             jumped4to6nichtDEYearEnd: 0,
             jumped5to7MaleYearEnd: 0,
             jumped5to7FemaleYearEnd: 0,
-            jumped5to7nichtDEYearEnd: 0
-
-
+            jumped5to7nichtDEYearEnd: 0,
+            jumped4toGymMaleYearEnd: 0,
+            jumped4toGymFemaleYearEnd: 0,
+            jumped4toGymnichtDEYearEnd: 0,
+            absolventenMale: 0,
+            absolventenFemale: 0,
+            absolventenNichtDE: 0
 
 
         }
@@ -71,24 +75,44 @@ export class Schullerbewegung extends React.Component{
         }))
     }
 
+    async fetchData3(year, month, day, thirdVar, genderVal ){
+        return (
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/sekundarvon4`, {
+            params: {
+                date: year.toString() + '-' + month + '-' + day ,
+                thirdVar: thirdVar,
+                genderVal: genderVal,
+                //yearSum: yearSum
+            },
+            }))
+        }
+
+    async fetchData4(year, month, day, thirdVar, genderVal ){
+        return (
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/absolventen`, {
+            params: {
+                date: year.toString() + '-' + month + '-' + day ,
+                thirdVar: thirdVar,
+                genderVal: genderVal,
+                //yearSum: yearSum
+            },
+            }))
+        }
+
 
     getAllData() {
 
         this.fetchData(this.state.selectedYear, 3, 1, 'geschlecht', 'm', 4 )
         .then(result => {
-           
             this.setState({
                 jumped3to4Male: result.data[0].Count,
-                })
-        }
-        )
+                })})
         .then(
         this.fetchData(this.state.selectedYear, 3, 1, 'geschlecht', 'f', 4)
         .then(result => {
         this.setState({
             jumped3to4Female: result.data[0].Count,
-            })
-            })
+            })})
         )
         .then(
         this.fetchData(this.state.selectedYear, 3, 1, 'herkunftssprache', '', 4).then(result => {
@@ -200,6 +224,36 @@ export class Schullerbewegung extends React.Component{
                 this.setState({
                     jumped5to7nichtDEYearEnd: result.data[0].Count,
                     })}))
+        .then(
+            this.fetchData3(this.state.selectedYear, 7, 31, 'geschlecht', 'm').then(result => {
+                this.setState({
+                    jumped4toGymMaleYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData3(this.state.selectedYear, 7, 31, 'geschlecht', 'f').then(result => {
+                this.setState({
+                    jumped4toGymFemaleYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData3(this.state.selectedYear, 7, 31, 'herkunftssprache', '').then(result => {
+                this.setState({
+                    jumped4toGymnichtDEYearEnd: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData4(this.state.selectedYear, 7, 31, 'geschlecht', 'm').then(result => {
+                this.setState({
+                    absolventenMale: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData4(this.state.selectedYear, 7, 31, 'geschlecht', 'f').then(result => {
+                this.setState({
+                    absolventenFemale: result.data[0].Count,
+                    })}))
+        .then(
+            this.fetchData4(this.state.selectedYear, 7, 31, 'herkunftssprache', '').then(result => {
+                this.setState({
+                    absolventenNichtDE: result.data[0].Count,
+                    })}))
                 
         
     }
@@ -219,8 +273,8 @@ export class Schullerbewegung extends React.Component{
         for(var i = 2010; i <= this.state.currentYear; i++ ){
             availableYears.push(i);
         }
-        console.log(availableYears)
-        console.log(this.state.selectedYear)
+        // console.log(availableYears)
+        // console.log(this.state.selectedYear)
         return(
             <div className='simple-list-cont'>
                 <div>
@@ -309,6 +363,23 @@ export class Schullerbewegung extends React.Component{
                     <input name='jumped5to7FemaleYearEnd' type= 'text' value={this.state.jumped5to7FemaleYearEnd} readOnly></input> 
                     <label htmlFor='jumped5to7nichtDEYearEnd'>ndH insgesamt:</label>
                     <input name='jumped5to7nichtDEYearEnd' type= 'text' value={this.state.jumped5to7nichtDEYearEnd} readOnly></input>
+
+                    <h3>4. Schülerinnen und Schüler der Jahrgangsstufe 4,die in einen mit Jahrgangsstufe 5beginnenden Zug eines Gymnasiums oder einerintegrierten Sekundarschule übergehen</h3>
+                    <label htmlFor='jumped4toGymMaleYearEnd'>Männlich:</label>
+                    <input name='jumped4togymMaleYearEnd' type= 'text' value={this.state.jumped4toGymMaleYearEnd} readOnly></input>
+                    <label htmlFor='jumped4toGymFemaleYearEnd'>Weiblich:</label>
+                    <input name='jumped4toGymFemaleYearEnd' type= 'text' value={this.state.jumped4toGymFemaleYearEnd} readOnly></input> 
+                    <label htmlFor='jumped4toGymnichtDEYearEnd'>ndH insgesamt:</label>
+                    <input name='jumped4toGymnichtDEYearEnd' type= 'text' value={this.state.jumped4toGymnichtDEYearEnd} readOnly></input>
+
+                    <h3>5 Von den in die Jahrgangsstufe 7 aufrückendenSchülerinnen und Schülernerhielten eine Förderprognose mit dem Ergebnis:</h3>
+                    <p>5.3 keine oder sonstige Förderprognose</p>
+                    <label htmlFor='absolventenMale'>Männlich:</label>
+                    <input name='absolventenMale' type= 'text' value={this.state.absolventenMale} readOnly></input>
+                    <label htmlFor='absolventenFemale'>Weiblich:</label>
+                    <input name='absolventenFemale' type= 'text' value={this.state.absolventenFemale} readOnly></input> 
+                    <label htmlFor='absolventenNichtDe'>ndH insgesamt:</label>
+                    <input name='absolventenNichtDe' type= 'text' value={this.state.absolventenNichtDE} readOnly></input>
                 </div>
             </div>
         )}
