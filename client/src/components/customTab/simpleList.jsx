@@ -21,11 +21,13 @@ export class SimpleList extends React.Component{
         this.fetchData = this.fetchData.bind(this);
         this.showData = this.showData.bind(this);
         this.generatePDF = this.generatePDF.bind(this);
+        this.calculateStatistik = this.calculateStatistik.bind(this);
         this.state = {
             showData: false,
             group:'alle',
             selectedDate: this.defaultDateValue,
-            data:[]
+            data:[],
+            statistik:[]
         }
 
     }
@@ -54,12 +56,13 @@ export class SimpleList extends React.Component{
         
     }
 
-    showData(){
-        this.fetchData(this.state.group, this.state.selectedDate).then(res => {
+    async showData(){
+        await this.fetchData(this.state.group, this.state.selectedDate).then(res => {
             this.setState({
               data: res.data
             })
-          })
+          }).then(await this.calculateStatistik(), console.log(this.state.statistik))
+
           .then(this.setState({showData: true})).then( () => 
             ReactDOM.render(
             <Anwesenheitsliste 
@@ -70,6 +73,36 @@ export class SimpleList extends React.Component{
 
           
     }
+
+    calculateStatistik() {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                //reset statistik in state
+                this.setState({statistik: []})
+                // create variables for Klassenstatistik
+                let sumMale = 0, sumFemale = 0, sumNoDeLangMale = 0, sumNoDeLangFemale = 0;
+                //iterate through the data for each student
+                this.state.data.forEach(student => {
+                //console.log(student)
+                if(student.geschlecht == 'm') sumMale += 1;
+                else if (student.geschlecht == 'f') sumFemale +=1;
+                if (student.geschlecht == 'm' && student.nichtdeutsche_herkunftssprache == '1') sumNoDeLangMale +=1;
+                else if (student.geschlecht == 'f' && student.nichtdeutsche_herkunftssprache == '1') sumNoDeLangFemale +=1;
+
+            })
+            this.state.statistik.push(sumMale, sumFemale, sumNoDeLangMale, sumNoDeLangFemale)
+            resolve('resolved')
+            }, 500)
+    })
+}
+       
+    resolveAfter2Seconds() {
+        return new Promise(resolve => {
+          setTimeout(() => {
+            resolve('resolved');
+          }, 2000);
+        });
+      }
 
     componentDidUpdate(){
         ReactDOM.render(
@@ -125,24 +158,12 @@ export class SimpleList extends React.Component{
             }
         )
 
-        // style={{border:'1px solid black', borderCollapse: 'collapse'}}
-        // doc.autoTable({
-        //     head: [['Rufname', 'Jahrg.', 'Lerngr.', 'Etage']],
-        //     body: [
-        //       ['David', 'david@example.com', 'Sweden'],
-        //       ['Castille', 'castille@example.com', 'Spain'],
-        //       // ...
-        //     ],
-        //   })
         var string = doc.output('datauristring');
         var embed = "<embed width='100%' height='100%' src='" + string + "'/>"
         var x = window.open();
         x.document.open();
         x.document.write(embed);
         x.document.close();
-
-
-        //window.open(doc.output('test'))
     }
 
 
@@ -207,7 +228,37 @@ export class SimpleList extends React.Component{
                     ) :
                     ('')}
                 </div>
-                <div id='hiddenTable' style={{display:'none'}}>test</div>
+                <div id='hiddenTable' style={{display:'none'}}></div>
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colSpan= '6'><strong>Lerngruppe Statistik</strong></th>
+                            </tr>
+                            <tr>
+                                <th colSpan= '2'><strong>Schüller insgesamt</strong></th>
+                                <th colSpan= '2'><strong>nicht DE herkunftssprache</strong></th>
+                                <th colSpan= '2'><strong>davon Ausländer</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Männlich</strong></td>
+                                <td><strong>Weiblich</strong></td>
+                                <td><strong>Männlich</strong></td>
+                                <td><strong>Weiblich</strong></td>
+                                <td><strong>Männlich</strong></td>
+                                <td><strong>Weiblich</strong></td>
+                            </tr>
+                            <tr>
+                                <td>{this.state.statistik[0]}</td>
+                                <td>{this.state.statistik[1]}</td>
+                                <td>{this.state.statistik[2]}</td>
+                                <td>{this.state.statistik[3]}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         )}
 }

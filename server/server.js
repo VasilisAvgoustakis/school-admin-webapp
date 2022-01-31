@@ -606,9 +606,9 @@ app.get('/simpleList', (req, res) => {
   
   console.log(group + date)
   pool.query(
-  `SELECT 
+  `SELECT DISTINCT
   *
-FROM (
+  FROM (
 select 
   personen.rufname AS Rufname,
   @jahrgang:=FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365) + 1 + COALESCE((SELECT 
@@ -626,7 +626,8 @@ select
       WHEN (@jahrgang > 2 AND @jahrgang < 5) THEN '3/4'
       WHEN @jahrgang > 4 THEN '5/6'
   END AS Lerngruppe,
-  IF(@jahrgang <= 3, 'Unten', 'Oben') AS Etage
+  IF(@jahrgang <= 3, 'Unten', 'Oben') AS Etage,
+  kind_daten.*
   FROM
   personen
       INNER JOIN
@@ -635,17 +636,13 @@ select
   kind_lerngruppe ON personen.person_id = kind_lerngruppe.person_id
       INNER JOIN
   lerngruppen ON kind_lerngruppe.lerngruppe_id = lerngruppen.lerngruppe_id
+      INNER JOIN
+  kind_daten ON personen.person_id = kind_daten.person_id
   WHERE
       kind_schule.zugangsdatum_zur_fsx <= '${date}'
       AND (kind_schule.abgangsdatum_von_fsx IS NULL
       OR kind_schule.abgangsdatum_von_fsx > '${date}')
-      AND kind_lerngruppe.eintrittsdatum = (SELECT 
-          MAX(kind_lerngruppe.eintrittsdatum)
-      FROM
-          kind_lerngruppe
-          inner join 
-          personen on personen.person_id = kind_lerngruppe.person_id)
-  ) as simpleList
+      ) as simpleList
 WHERE
       Jahrgangsstufe < 7
       AND (((Jahrgangsstufe = ${isNaN(group) ? (0):(group) }

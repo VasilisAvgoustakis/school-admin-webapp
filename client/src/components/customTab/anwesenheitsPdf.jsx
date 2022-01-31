@@ -75,9 +75,9 @@ export class Anwesenheitsliste extends React.Component {
         
     
     render() {
-        console.log(this.state.data)
-        console.log(new Date(this.state.selectedDate))
-        console.log(this.getDaysInMonth(new Date(this.state.selectedDate)))
+        // console.log(this.state.data)
+        // console.log(new Date(this.state.selectedDate))
+        // console.log(this.getDaysInMonth(new Date(this.state.selectedDate)))
         return(
             <div >
                 <table id='anwesenheitsPDF' >
