@@ -21,7 +21,7 @@ export class SimpleList extends React.Component{
         this.fetchData = this.fetchData.bind(this);
         this.showData = this.showData.bind(this);
         this.generatePDF = this.generatePDF.bind(this);
-        this.calculateStatistik = this.calculateStatistik.bind(this);
+        
         this.state = {
             showData: false,
             group:'alle',
@@ -61,7 +61,7 @@ export class SimpleList extends React.Component{
             this.setState({
               data: res.data
             })
-          }).then(await this.calculateStatistik(), console.log(this.state.statistik))
+          })
 
           .then(this.setState({showData: true})).then( () => 
             ReactDOM.render(
@@ -74,27 +74,27 @@ export class SimpleList extends React.Component{
           
     }
 
-    calculateStatistik() {
-        return new Promise(resolve => {
-            setTimeout(() => {
-                //reset statistik in state
-                this.setState({statistik: []})
-                // create variables for Klassenstatistik
-                let sumMale = 0, sumFemale = 0, sumNoDeLangMale = 0, sumNoDeLangFemale = 0;
-                //iterate through the data for each student
-                this.state.data.forEach(student => {
-                //console.log(student)
-                if(student.geschlecht == 'm') sumMale += 1;
-                else if (student.geschlecht == 'f') sumFemale +=1;
-                if (student.geschlecht == 'm' && student.nichtdeutsche_herkunftssprache == '1') sumNoDeLangMale +=1;
-                else if (student.geschlecht == 'f' && student.nichtdeutsche_herkunftssprache == '1') sumNoDeLangFemale +=1;
+//     calculateStatistik() {
+//         return new Promise(resolve => {
+//             setTimeout(() => {
+//                 //reset statistik in state
+//                 this.setState({statistik: []})
+//                 // create variables for Klassenstatistik
+//                 let sumMale = 0, sumFemale = 0, sumNoDeLangMale = 0, sumNoDeLangFemale = 0;
+//                 //iterate through the data for each student
+//                 this.state.data.forEach(student => {
+//                 //console.log(student)
+//                 if(student.geschlecht == 'm') sumMale += 1;
+//                 else if (student.geschlecht == 'f') sumFemale +=1;
+//                 if (student.geschlecht == 'm' && student.nichtdeutsche_herkunftssprache == '1') sumNoDeLangMale +=1;
+//                 else if (student.geschlecht == 'f' && student.nichtdeutsche_herkunftssprache == '1') sumNoDeLangFemale +=1;
 
-            })
-            this.state.statistik.push(sumMale, sumFemale, sumNoDeLangMale, sumNoDeLangFemale)
-            resolve('resolved')
-            }, 500)
-    })
-}
+//             })
+//             this.state.statistik.push(sumMale, sumFemale, sumNoDeLangMale, sumNoDeLangFemale)
+//             resolve('resolved')
+//             }, 500)
+//     })
+// }
        
     resolveAfter2Seconds() {
         return new Promise(resolve => {
@@ -229,7 +229,7 @@ export class SimpleList extends React.Component{
                     ('')}
                 </div>
                 <div id='hiddenTable' style={{display:'none'}}></div>
-                <div>
+                {/* <div>
                     <table>
                         <thead>
                             <tr>
@@ -258,7 +258,7 @@ export class SimpleList extends React.Component{
                             </tr>
                         </tbody>
                     </table>
-                </div>
+                </div> */}
             </div>
         )}
 }

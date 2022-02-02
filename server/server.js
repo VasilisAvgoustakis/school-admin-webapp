@@ -621,19 +621,28 @@ select
                   jahrgangswechsel.datum <= '${date}'
                   
                   ),0) AS Jahrgangsstufe,
-  CASE
-      WHEN @jahrgang <= 2 THEN '1/2'
-      WHEN (@jahrgang > 2 AND @jahrgang < 5) THEN '3/4'
-      WHEN @jahrgang > 4 THEN '5/6'
-  END AS Lerngruppe,
-  IF(@jahrgang <= 3, 'Unten', 'Oben') AS Etage,
+                  COALESCE((SELECT 
+                    lerngruppen.bezeichnung
+                FROM
+                    lerngruppen
+                        LEFT OUTER JOIN
+                    kind_lerngruppe ON kind_lerngruppe.lerngruppe_id = lerngruppen.lerngruppe_id
+                        AND kind_lerngruppe.eintrittsdatum = (SELECT 
+                            MAX(kind_lerngruppe.eintrittsdatum)
+                        FROM
+                            kind_lerngruppe
+                                LEFT OUTER JOIN
+                            personen ON personen.person_id = kind_lerngruppe.person_id)
+                WHERE
+                    personen.person_id = kind_lerngruppe.person_id),
+            0) AS Lerngruppe,
   kind_daten.*
   FROM
   personen
       INNER JOIN
   kind_schule ON personen.person_id = kind_schule.person_id
       INNER JOIN
-  kind_lerngruppe ON personen.person_id = kind_lerngruppe.person_id
+  kind_lerngruppe ON personen.person_id = kind_lerngruppe.person_id 
       INNER JOIN
   lerngruppen ON kind_lerngruppe.lerngruppe_id = lerngruppen.lerngruppe_id
       INNER JOIN
@@ -642,18 +651,19 @@ select
       kind_schule.zugangsdatum_zur_fsx <= '${date}'
       AND (kind_schule.abgangsdatum_von_fsx IS NULL
       OR kind_schule.abgangsdatum_von_fsx > '${date}')
+      
       ) as simpleList
 WHERE
       Jahrgangsstufe < 7
       AND (((Jahrgangsstufe = ${isNaN(group) ? (0):(group) }
-      XOR Lerngruppe= '${group}') XOR Etage = '${group}' XOR ${group == 'alle' ? (true):(false)}
+      XOR Lerngruppe= '${group}') XOR ${group == 'alle' ? (true):(false)}
       ))
 ORDER BY Jahrgangsstufe ASC , Rufname ASC;`, (err, results) => {
     if (err) {
       console.log(err)
       return res.send(err);
     } else {
-      // console.log(results)
+      console.log(results)
       return res.send(results);
     }
   });
