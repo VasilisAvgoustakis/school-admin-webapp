@@ -211,13 +211,14 @@ export class SimpleList extends React.Component{
                         </thead>
                         <tbody>
                             {this.state.data.map((student, index) => {
-                                const { Rufname, Jahrgangsstufe, Lerngruppe, Etage} = student
+                                const { Rufname, Jahrgangsstufe, Lerngruppe} = student
+                                console.log(student)
                                 return (
                                     <tr key={uuidv4+Rufname}>
                                         <td style={{width:'10%'}}>{Rufname}</td>
                                         <td>{Jahrgangsstufe}</td>
                                         <td>{Lerngruppe}</td>
-                                        <td>{Etage}</td>
+                            
                                     </tr>
                                 )
                             })}
