@@ -11,7 +11,7 @@ export function KindDaten(props) {
     return (
     
     <div>
-        {/* {console.log(props.data)} */}
+        
         {props.data.einschulungsdatum ? (
         <table>
             <thead>

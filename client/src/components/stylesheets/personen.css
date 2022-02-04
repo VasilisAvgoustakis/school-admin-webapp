@@ -1,4 +1,9 @@
 
+.personInField{
+  width: '50%';
+  position: 'relative';
+  left: '100%';
+}
 
 /* .personen-main{
   height:88vh;

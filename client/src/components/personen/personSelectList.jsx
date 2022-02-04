@@ -34,7 +34,7 @@ export class PersonSelectList extends Component{
     // console.log(this.state.searchedPersons);
     const results = [];
     this.state.persons.forEach(function(person){
-      const person_name_credentials = person.rufname + ' '+ person.amtlicher_vorname + person.nachname;
+      const person_name_credentials = person.person_id + person.rufname + ' '+ person.amtlicher_vorname + person.nachname;
       // if(person_name_credentials.includes(name) && name != '' ){
       //   results.push(person);
       // }

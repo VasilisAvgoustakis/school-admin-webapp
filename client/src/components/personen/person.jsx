@@ -24,6 +24,8 @@ export class Person extends React.Component{
         this.fetchBezugspersonen = this.fetchBezugspersonen.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.customRender = this.customRender.bind(this);
+        this.handleEdit = this.handleEdit.bind(this);
+        this.getInputName = this.getInputName.bind(this);
         this.state = {
             clicked: false,
             loading: false,
@@ -90,6 +92,16 @@ export class Person extends React.Component{
             }))
         }
 
+    handleEdit(e){
+        this.state.core_data.rufname = ''
+        console.log(this.state.core_data.rufname)
+        this.state.core_data.rufname += e.target.value
+        
+    }
+    getInputName(element){
+        console.log(element.name)
+        //return(element.name)
+    }
 
     customRender(loading){
         if(loading){
@@ -114,8 +126,17 @@ export class Person extends React.Component{
                                     <td>{this.state.core_data.personId}</td>
                                 </tr>
                                 <tr>
-                                    <td style={{width:'10%'}}><strong>Rufname:</strong></td>
-                                    <td >{this.state.core_data.rufname}</td>
+                                    <td colSpan='2' style={{width:'10%'}}><strong>Rufname:</strong>
+                                        <input name='rufname' className='personInField' 
+                                            type='text' 
+                                            value={this.state.core_data.rufname} 
+                                            onChange={
+                                                this.handleEdit
+                                            }
+                                        >
+                                            {this.value}
+                                        </input>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td style={{width:'10%'}}><strong>Amt.Vorname:</strong></td>
@@ -154,8 +175,10 @@ export class Person extends React.Component{
                     <div className='entity-data-right'>
                         <AddressData
                             addresses= {this.state.addresses}/>
-                        {/* {console.log(this.state.arbeitsgruppen)} */}
-                        {!this.state.core_data.einschulungsdatum ? 
+                        
+                        {(!this.state.core_data.einschulungsdatum 
+                            || 
+                          this.state.data.abgangsdatum_von_fsx) ? 
                             (<AGData
                                 ags={this.state.arbeitsgruppen} />)
                                 :
