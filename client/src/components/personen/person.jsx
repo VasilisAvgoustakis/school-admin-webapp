@@ -8,6 +8,7 @@ import { KindDaten } from './kindDaten';
 import { AddressData } from './adressData';
 import {AGData} from './arbeitsgruppen_data';
 import { Bezugspersonen } from './bezugsperson_liste';
+import { EditPerson } from './editPerson';
 import dateToDEFormat from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
 
@@ -26,7 +27,9 @@ export class Person extends React.Component{
         this.customRender = this.customRender.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
         this.getInputName = this.getInputName.bind(this);
+        this.onEdit = this.onEdit.bind(this);
         this.state = {
+            editing: false,
             clicked: false,
             loading: false,
             core_data:{
@@ -103,16 +106,29 @@ export class Person extends React.Component{
         //return(element.name)
     }
 
+    onEdit(){
+        this.state.editing ? (this.setState({editing: false})):(this.setState({editing:true}))
+    }
+
+    
+
     customRender(loading){
         if(loading){
             ReactDOM.render(<svg className="spinner" viewBox="0 0 50 50">
                                 <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
                             </svg>, document.getElementById('person-data'))
             }else{
-    
+            this.state.editing ? (ReactDOM.render(
+                    <div>
+                        <button onClick={this.onEdit}>Switch to Edit view</button>
+                        <EditPerson person_id={this.state.core_data.personId} 
+                                    rufname={this.state.core_data.rufname}/>
+                    </div>
+                , document.getElementById('person-data'))):(
             ReactDOM.render(
     
                 <div>
+                    <button onClick={this.onEdit}>Switch to Edit</button>
                     <div className='entity-data-left'>
                         <table>
                             <thead>
@@ -126,17 +142,8 @@ export class Person extends React.Component{
                                     <td>{this.state.core_data.personId}</td>
                                 </tr>
                                 <tr>
-                                    <td colSpan='2' style={{width:'10%'}}><strong>Rufname:</strong>
-                                        <input name='rufname' className='personInField' 
-                                            type='text' 
-                                            value={this.state.core_data.rufname} 
-                                            onChange={
-                                                this.handleEdit
-                                            }
-                                        >
-                                            {this.value}
-                                        </input>
-                                    </td>
+                                    <td style={{width:'10%'}}><strong>Rufname:</strong></td>
+                                    <td>{this.state.core_data.rufname}</td>
                                 </tr>
                                 <tr>
                                     <td style={{width:'10%'}}><strong>Amt.Vorname:</strong></td>
@@ -160,16 +167,12 @@ export class Person extends React.Component{
                                 </tr>):(<tr></tr>)}
                             </tbody>
                         </table>
-                    
+    
                         <KontaktDaten 
                             data= {this.state.contactData}/>
                         {console.log(this.state.data)}
                         <KindDaten 
-                            
                             data= {this.state.data}/>
-
-                        
-
                      </div>
                         
                     <div className='entity-data-right'>
@@ -192,7 +195,7 @@ export class Person extends React.Component{
                         
                     </div>
                 </div>
-                , document.getElementById('person-data'))}
+                , document.getElementById('person-data')))}
     }
     
     // componentDidMount() {

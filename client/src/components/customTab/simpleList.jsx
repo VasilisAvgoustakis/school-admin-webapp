@@ -10,7 +10,9 @@ import { useWindowDimensions } from 'react-native';
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 
-
+//Since the edits that allow the Lerngruppen to be dynamically fetched from the kind_lerngruppe table depending 
+// on the selected date, the form only works for dates in 2022 since no other records exist in the kind_lerngruppe table
+// inside the current db
 export class SimpleList extends React.Component{
     constructor(props){
         super(props);

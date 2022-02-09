@@ -14,7 +14,7 @@ const PORT = process.env.REACT_APP_SERVER_PORT
 
 
 
-//connection pooll to db
+//connection pool to db
 const pool = mysql.createPool({
   host: process.env.MYSQL_HOST_IP,
   user: process.env.MYSQL_USER,
@@ -190,19 +190,18 @@ app.post('/logout', (req, res)=>{
   })
 
 })
-
-
-
 //End of Authentication
 
+
 //Personen
+  //GETS
 app.get('/personsList', (req, res) => {
   const { table } = req.query;
   pool.query(`SELECT person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum FROM ${table} ORDER BY rufname, nachname`, (err, results) => {
     if (err) {
       return res.send(err);
     } else {
-      console.log(results)
+      //console.log(results)
       return res.send(results);
     }
   });
@@ -272,7 +271,7 @@ personen.person_id = ${ person_id }`,
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      //console.log(results)
       return res.send(results[0]);
       //return res.json(results[0]);
     }
@@ -292,7 +291,7 @@ WHERE
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      //console.log(results)
       return res.send(results);
     }
   });
@@ -320,7 +319,7 @@ FROM
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      //console.log(results)
       return res.send(results);
     }
   });
@@ -351,7 +350,7 @@ WHERE
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      //console.log(results)
       return res.send(results);
     }
   });
@@ -374,11 +373,40 @@ WHERE
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      //console.log(results)
       return res.send(results);
     }
   });
 });
+  //END OF GETS
+
+  //POSTS
+
+app.patch('/editPerson',(q, r)=>{
+  let {person_id, rufname} = q.core_data;
+  console.log("fsdfs")
+  pool.patch(
+    `UPDATE personen 
+    SET personen.rufname = ${rufname}
+    WHERE personen.person_id = ${person_id};`,(err, results) =>{
+
+  if(err){
+    console.log(err);
+  }else {
+    console.log(results)
+    //return res.send(results);
+  }
+    })
+})
+
+
+
+  //END OF POSTS
+
+
+
+
+
 //end of Personen queries
 
 
@@ -400,7 +428,7 @@ app.get('/hausList', (req, res) => {
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      //console.log(results)
       return res.send(results);
     }
   });
@@ -429,7 +457,7 @@ app.get('/anwohner', (req, res) => {
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      //console.log(results)
       return res.send(results);
     }
   });
@@ -454,7 +482,7 @@ app.get('/agList', (req, res) => {
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      //console.log(results)
       return res.send(results);
     }
   });
@@ -483,7 +511,7 @@ app.get('/ag_mitglieder', (req, res) => {
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      //console.log(results)
       return res.send(results);
     }
   });
@@ -508,7 +536,7 @@ app.get('/lerngruppenList', (req, res) => {
       console.log(err)
       return res.send(err);
     } else {
-      // console.log(results)
+      // //console.log(results)
       return res.send(results);
     }
   });
@@ -538,7 +566,7 @@ app.get('/lerngruppe_mitglieder', (req, res) => {
       console.log(err)
       return res.send(err);
     } else {
-      // console.log(results)
+      // //console.log(results)
       return res.send(results);
     }
   });
@@ -562,7 +590,7 @@ app.get('/jobsList', (req, res) => {
       console.log(err)
       return res.send(err);
     } else {
-      // console.log(results)
+      // //console.log(results)
       return res.send(results);
     }
   });
@@ -592,7 +620,7 @@ app.get('/job_roles', (req, res) => {
       console.log(err)
       return res.send(err);
     } else {
-      // console.log(results)
+      // //console.log(results)
       return res.send(results);
     }
   });
@@ -648,7 +676,7 @@ ORDER BY Jahrgangsstufe ASC , Rufname ASC;`, (err, results) => {
       console.log(err)
       return res.send(err);
     } else {
-      console.log(results)
+      //console.log(results)
       return res.send(results);
     }
   });
@@ -715,7 +743,7 @@ WHERE
       return res.send(err);
     } else {
       // console.log(date, thirdVar, yearSum, genderVal)
-      // console.log(results)
+      // //console.log(results)
       return res.send(results);
     }
   });
@@ -782,7 +810,7 @@ WHERE
       return res.send(err);
     } else {
       // console.log(date, thirdVar, yearSum, genderVal)
-      // console.log(results)
+      // //console.log(results)
       return res.send(results);
     }
   });
@@ -842,7 +870,7 @@ app.get('/sekundarvon4', (req, res) => {
       return res.send(err);
     } else {
       
-      //console.log(results)
+      ////console.log(results)
       return res.send(results);
     }
   });
@@ -905,7 +933,7 @@ FROM
     } else {
       console.log(thirdVar)
       
-      console.log(results)
+      //console.log(results)
       return res.send(results);
     }
   });

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import axios,{setPost} from 'axios';
+import axios from 'axios';
 import {Person} from './person';
 import '../stylesheets/personen.css';
 import '../stylesheets/globalstyles.css';
