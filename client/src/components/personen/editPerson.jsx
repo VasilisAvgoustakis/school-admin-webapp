@@ -81,14 +81,15 @@ export class EditPerson extends React.Component{
 
                     <label >Geburtsdatum:</label>
                     <input type='date' id='geburtsdatum' value={
-                        dateToENFormat(new Date(this.state.geburtsdatum))} 
+                        this.state.geburtsdatum ?
+                        (dateToENFormat(new Date(this.state.geburtsdatum))):('NULL')} 
                     onChange= {this.handleChange} ></input>
                     <br></br>
 
                     <label >Einschulungsdatum:</label>
-                    <input type='text' id='einschulungsdatum' value={
+                    <input type='date' id='einschulungsdatum' value={
                         this.state.einschulungsdatum ? 
-                        (dateToDEFormat(new Date(this.state.einschulungsdatum))):('NULL')} 
+                        (dateToENFormat(new Date(this.state.einschulungsdatum))):('NULL')} 
                     onChange= {this.handleChange} ></input>
                     <br></br>
 

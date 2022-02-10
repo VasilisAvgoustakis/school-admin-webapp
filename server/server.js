@@ -383,14 +383,17 @@ WHERE
   //POSTS
 
 app.get('/editPerson', (req, res) => {
-  let [person_id, rufname, amtlicher_vorname] = req.query.state
+  let [person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum, nicht_auf_listen] = req.query.state
   console.log(req.query.state)
   pool.query (
     `UPDATE personen 
     SET 
     rufname = '${rufname}',
-    amtlicher_vorname = '${amtlicher_vorname}'
-
+    amtlicher_vorname = '${amtlicher_vorname}',
+    nachname = '${nachname}',
+    geburtsdatum = '${geburtsdatum ? (geburtsdatum.toString()):('NULL')}',
+    einschulungsdatum = ${einschulungsdatum ? (einschulungsdatum.toString()):('NULL')},
+    nicht_auf_listen = '${nicht_auf_listen}'
 
     WHERE person_id = ${person_id};`,(err, results) =>{
 
