@@ -5,9 +5,10 @@ import axios from 'axios';
 export class EditPerson extends React.Component{
     constructor(props){
         super(props);
-        this.patchData = this.patchData.bind(this);
+        this.updateQuery = this.updateQuery.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.editData = this.editData.bind(this);
+        
         this.state = {
             personId: this.props.person_id,
             rufname: this.props.rufname
@@ -21,7 +22,7 @@ export class EditPerson extends React.Component{
         console.log(this.state.rufname)
     }
 
-    async patchData(){
+    async updateQuery(){
         var stateObj = this.state;
         var dataArr = Object.values(stateObj);
         console.log(dataArr)
@@ -35,12 +36,15 @@ export class EditPerson extends React.Component{
     }
 
     editData(){
-        
-        this.patchData().then(result=>{
+        var confirm = window.confirm('Diese Aktion wird die Daten direkt in der Datenbank bearbeiten!!! Bist du sicher dass diese Korrekt sind?')
+        if(confirm){
+        this.updateQuery().then(result=>{
             console.log(result)
         }).catch(err =>{console.error(err)})
-
     }
+    }
+
+   
 
 
     render(){
@@ -55,7 +59,8 @@ export class EditPerson extends React.Component{
                     <label >Rufname:</label>
                     <input type='text' name='rufname' value={this.state.rufname} 
                     onChange= {this.handleChange} ></input>
-                    <button type='button' onClick={this.editData}>Submit Changes</button>
+                    <br></br>
+                    <button type='button' onClick={this.editData}>Speichern</button>
                 </form>
             </div>
         )

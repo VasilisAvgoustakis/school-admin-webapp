@@ -26,9 +26,10 @@ export class Person extends React.Component{
         this.handleClick = this.handleClick.bind(this);
         this.customRender = this.customRender.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
-        // this.getInputName = this.getInputName.bind(this);
         this.onEdit = this.onEdit.bind(this);
+        
         this.state = {
+            forceRemount:'',
             editing: false,
             clicked: false,
             loading: false,
@@ -103,8 +104,11 @@ export class Person extends React.Component{
     
 
     onEdit(){
+        //this.props.updateStateAfterEdit();
         this.state.editing ? (this.setState({editing: false})):(this.setState({editing:true}))
     }
+
+    
 
     
 
@@ -116,7 +120,7 @@ export class Person extends React.Component{
             }else{
             this.state.editing ? (ReactDOM.render(
                     <div>
-                        <button onClick={this.onEdit}>Switch to Edit view</button>
+                        <button onClick={this.onEdit}>Switch to Data view</button>
                         <EditPerson person_id={this.state.core_data.personId} 
                                     rufname={this.state.core_data.rufname}/>
                     </div>
@@ -124,7 +128,7 @@ export class Person extends React.Component{
             ReactDOM.render(
     
                 <div>
-                    <button onClick={this.onEdit}>Switch to Edit</button>
+                    <button onClick={this.onEdit}>Switch to Edit View</button>
                     <div className='entity-data-left'>
                         <table>
                             <thead>

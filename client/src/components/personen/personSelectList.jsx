@@ -12,7 +12,9 @@ export class PersonSelectList extends Component{
     super(props);
     this.fetchData = this.fetchData.bind(this);
     this.search = this.search.bind(this);
+    this.updateStateAfterEdit = this.updateStateAfterEdit.bind(this);
     this.state = {
+      forceRemount:'',
       persons: [],
       searchedPersons: []
     };
@@ -58,6 +60,12 @@ export class PersonSelectList extends Component{
       this.setState.searchedPersons = [];
     });
   }
+
+  updateStateAfterEdit(){
+    this.setState({forceRemount: ''})
+    this.setState({forceRemount: 'remount now'})
+    console.log("forcing")
+}
   
 
   render() {
@@ -88,6 +96,7 @@ export class PersonSelectList extends Component{
               <ul id='person-list'  >
               {personsToRender.map(person => (
                 <Person key={uuidv4()}
+                  handler= {this.updateStateAfterEdit}
                   person_id={person.person_id}
                   rufname={person.rufname}
                   amtlicher_vorname={person.amtlicher_vorname}
