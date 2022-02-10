@@ -9,7 +9,7 @@ import { AddressData } from './adressData';
 import {AGData} from './arbeitsgruppen_data';
 import { Bezugspersonen } from './bezugsperson_liste';
 import { EditPerson } from './editPerson';
-import dateToDEFormat from '../../globalFunctions'
+import {dateToDEFormat} from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -39,7 +39,8 @@ export class Person extends React.Component{
                 amtlicher_vorname: this.props.amtlicher_vorname,
                 nachname: this.props.nachname,
                 geburtsdatum: this.props.geburtsdatum,
-                einschulungsdatum: this.props.einschulungsdatum
+                einschulungsdatum: this.props.einschulungsdatum,
+                nicht_auf_listen: this.props.nicht_auf_listen
             },
             data:[],
             contactData: [],
@@ -122,7 +123,13 @@ export class Person extends React.Component{
                     <div>
                         <button onClick={this.onEdit}>Switch to Data view</button>
                         <EditPerson person_id={this.state.core_data.personId} 
-                                    rufname={this.state.core_data.rufname}/>
+                                    rufname={this.state.core_data.rufname}
+                                    amtlicher_vorname={this.state.core_data.amtlicher_vorname}
+                                    nachname={this.state.core_data.nachname}
+                                    geburtsdatum={this.state.core_data.geburtsdatum}
+                                    einschulungsdatum={this.state.core_data.einschulungsdatum}
+                                    nicht_auf_listen={this.state.core_data.nicht_auf_listen}
+                                    />
                     </div>
                 , document.getElementById('person-data'))):(
             ReactDOM.render(

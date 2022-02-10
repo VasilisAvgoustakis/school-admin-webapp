@@ -77,7 +77,7 @@ export class PersonSelectList extends Component{
       personsToRender = this.state.persons;
 
     }
-    //console.log(personsToRender);
+    console.log(personsToRender[0]);
     
     
       return (
@@ -103,6 +103,7 @@ export class PersonSelectList extends Component{
                   nachname={person.nachname} 
                   geburtsdatum={person.geburtsdatum}
                   einschulungsdatum={person.einschulungsdatum}
+                  nicht_auf_listen={person.nicht_auf_listen}
                 />
               ))}
               </ul>

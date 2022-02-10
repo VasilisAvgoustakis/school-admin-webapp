@@ -197,7 +197,7 @@ app.post('/logout', (req, res)=>{
   //GETS
 app.get('/personsList', (req, res) => {
   const { table } = req.query;
-  pool.query(`SELECT person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum FROM ${table} ORDER BY rufname, nachname`, (err, results) => {
+  pool.query(`SELECT * FROM ${table} ORDER BY rufname, nachname`, (err, results) => {
     if (err) {
       return res.send(err);
     } else {
@@ -383,11 +383,15 @@ WHERE
   //POSTS
 
 app.get('/editPerson', (req, res) => {
-  let [person_id, rufname] = req.query.state
+  let [person_id, rufname, amtlicher_vorname] = req.query.state
   console.log(req.query.state)
   pool.query (
     `UPDATE personen 
-    SET rufname = '${rufname}'
+    SET 
+    rufname = '${rufname}',
+    amtlicher_vorname = '${amtlicher_vorname}'
+
+
     WHERE person_id = ${person_id};`,(err, results) =>{
 
   if(err){

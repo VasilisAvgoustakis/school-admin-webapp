@@ -2,7 +2,7 @@ import React, {useState, useEffect, setRole} from 'react';
 import { PersonSelectList } from '..';
 import axios from 'axios';
 import '../stylesheets/globalstyles.css';
-import dateToDEFormat from '../../globalFunctions'
+import {dateToDEFormat} from '../../globalFunctions'
 
 
 export function KindDaten(props) {

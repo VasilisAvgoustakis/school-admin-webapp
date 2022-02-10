@@ -3,7 +3,7 @@ import axios,{setPost} from 'axios';
 import ReactDOM from 'react-dom'
 import '../stylesheets/globalstyles.css';
 import { Mitglieder } from './mitglieder';
-import dateToDEFormat from '../../globalFunctions'
+import {dateToDEFormat} from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
 
 

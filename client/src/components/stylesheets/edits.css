@@ -1,0 +1,8 @@
+.editInputs{
+    background: rgb(151, 151, 233); 
+            width: 50%;
+            position: relative;
+            padding: 10px; 
+            border: 2px solid #000000; 
+            margin: 10px;
+}
