@@ -26,7 +26,7 @@ export class Person extends React.Component{
         this.handleClick = this.handleClick.bind(this);
         this.customRender = this.customRender.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
-        this.getInputName = this.getInputName.bind(this);
+        // this.getInputName = this.getInputName.bind(this);
         this.onEdit = this.onEdit.bind(this);
         this.state = {
             editing: false,
@@ -97,14 +97,10 @@ export class Person extends React.Component{
 
     handleEdit(e){
         this.state.core_data.rufname = ''
-        console.log(this.state.core_data.rufname)
         this.state.core_data.rufname += e.target.value
         
     }
-    getInputName(element){
-        console.log(element.name)
-        //return(element.name)
-    }
+    
 
     onEdit(){
         this.state.editing ? (this.setState({editing: false})):(this.setState({editing:true}))
@@ -170,7 +166,7 @@ export class Person extends React.Component{
     
                         <KontaktDaten 
                             data= {this.state.contactData}/>
-                        {console.log(this.state.data)}
+                        
                         <KindDaten 
                             data= {this.state.data}/>
                      </div>
@@ -198,27 +194,6 @@ export class Person extends React.Component{
                 , document.getElementById('person-data')))}
     }
     
-    // componentDidMount() {
-    //     this.setState({loading : true })
-    //     this.fetchAddresses(this.state.core_data.personId).then(result => {
-    //         this.setState({
-    //             loading: false,
-    //             addresses: result.data,
-    //             })})
-            
-    //     this.fetchAGs(this.state.core_data.personId).then(result => {
-    //         this.setState({
-    //             loading: false,
-    //             arbeitsgruppen: result.data,
-    //             })})
-
-    //     this.fetchBezugspersonen(this.state.core_data.personId).then(result => {
-    //         this.setState({
-    //             loading: false,
-    //             bezugspersonen: result.data,
-    //             })})
-        
-    //     }
     
     componentDidUpdate() {
         if(this.state.clicked){
@@ -260,10 +235,10 @@ export class Person extends React.Component{
                 })}))},
         this.setState({loading:false}),
         this.setState({clicked: true}),
-        //console.log(this.state.bezugspersonen)
+        ////console.log(this.state.bezugspersonen)
         
         
-        // console.log(this.state.loading + ' :after fetching')
+        // //console.log(this.state.loading + ' :after fetching')
         );
 
         

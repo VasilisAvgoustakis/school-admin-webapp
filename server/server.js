@@ -186,7 +186,7 @@ app.post('/logout', (req, res)=>{
       sessionStore.close()
       res.clearCookie("test session")
       res.send({message: "Loged out succesfully!"})
-      //res.redirect('/login')
+      
   })
 
 })
@@ -382,19 +382,20 @@ WHERE
 
   //POSTS
 
-app.patch('/editPerson',(q, r)=>{
-  let {person_id, rufname} = q.core_data;
-  console.log("fsdfs")
-  pool.patch(
+app.get('/editPerson', (req, res) => {
+  let [person_id, rufname] = req.query.state
+  console.log(req.query.state)
+  pool.query (
     `UPDATE personen 
-    SET personen.rufname = ${rufname}
-    WHERE personen.person_id = ${person_id};`,(err, results) =>{
+    SET rufname = '${rufname}'
+    WHERE person_id = ${person_id};`,(err, results) =>{
 
   if(err){
     console.log(err);
+    return res.send("err");
   }else {
     console.log(results)
-    //return res.send(results);
+    return res.send("results");
   }
     })
 })
