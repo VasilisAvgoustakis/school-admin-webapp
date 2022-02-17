@@ -7,6 +7,8 @@ COPY package.json /app
 
 COPY . /app
 
+RUN npm install --global nodemon
+
 RUN npm install
 
 CMD ["npm", "start"]

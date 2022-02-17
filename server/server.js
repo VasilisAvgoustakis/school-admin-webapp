@@ -383,19 +383,40 @@ WHERE
   //POSTS
 
 app.get('/editPerson', (req, res) => {
-  let [person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum, nicht_auf_listen] = req.query.state
+  let [person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum, nicht_auf_listen,
+      email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2, mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx
+  ] = req.query.state
   console.log(req.query.state)
   pool.query (
-    `UPDATE personen 
-    SET 
-    rufname = '${rufname}',
-    amtlicher_vorname = '${amtlicher_vorname}',
-    nachname = '${nachname}',
-    geburtsdatum = '${geburtsdatum ? (geburtsdatum.toString()):('NULL')}',
-    einschulungsdatum = ${einschulungsdatum ? (einschulungsdatum.toString()):('NULL')},
-    nicht_auf_listen = '${nicht_auf_listen}'
+    `UPDATE personen, kontakt_daten
 
-    WHERE person_id = ${person_id};`,(err, results) =>{
+    SET 
+
+    
+
+    personen.rufname = '${rufname}',
+    personen.amtlicher_vorname = '${amtlicher_vorname}',
+    personen.nachname = '${nachname}',
+    personen.geburtsdatum = ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
+    personen.einschulungsdatum = ${einschulungsdatum ? ("'" + einschulungsdatum.toString() + "'"):(null)},
+    personen.nicht_auf_listen = '${nicht_auf_listen}',
+
+    kontakt_daten.email_1 = '${email_1}',
+    kontakt_daten.email_2 = '${email_2}',
+    kontakt_daten.email_fsx = '${email_fsx}',
+    kontakt_daten.mobil_telefon_1 = '${mobil_telefon_1}',
+    kontakt_daten.mobil_telefon_2 = '${mobil_telefon_2}',
+    kontakt_daten.mobil_telefon_fsx = '${mobil_telefon_fsx}',
+    kontakt_daten.telefon_1 = '${telefon_1}',
+    kontakt_daten.telefon_2 = '${telefon_2}',
+    kontakt_daten.telefon_fsx = '${telefon_fsx}'
+
+    WHERE 
+    personen.person_id = ${person_id}
+    AND
+    kontakt_daten.person_id = ${person_id}
+   
+    ;`,(err, results) =>{
 
   if(err){
     console.log(err);

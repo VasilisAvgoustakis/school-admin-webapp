@@ -77,7 +77,7 @@ export class PersonSelectList extends Component{
       personsToRender = this.state.persons;
 
     }
-    console.log(personsToRender[0]);
+    
     
     
       return (
@@ -109,7 +109,8 @@ export class PersonSelectList extends Component{
               </ul>
           </div>
           <div className='entity-data-cont'  id='person-data'>
-            Person Data Container in personen_parent
+            <p className='info-text' >
+              Klicke auf eine Person von der Liste links um seine/ihre Daten anzusehen!</p>
           </div>
         </div>
 

@@ -69,7 +69,7 @@ export function KontaktDaten(props) {
                 {props.data[0].email_2 ? (
                     <tr>
                         <td style={{width:'31.5%'}}><strong>Email 2:</strong></td>
-                        <td>{props[0].data.email_2}</td>
+                        <td>{props.data[0].email_2}</td>
                     </tr>) : ("") }
                 {props.data[0].email_fsx ? (
                     <tr>

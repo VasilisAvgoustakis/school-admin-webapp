@@ -9,7 +9,7 @@ import { AddressData } from './adressData';
 import {AGData} from './arbeitsgruppen_data';
 import { Bezugspersonen } from './bezugsperson_liste';
 import { EditPerson } from './editPerson';
-import {dateToDEFormat} from '../../globalFunctions'
+import {dateToDEFormat, dateToENFormat} from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -122,13 +122,37 @@ export class Person extends React.Component{
             this.state.editing ? (ReactDOM.render(
                     <div>
                         <button onClick={this.onEdit}>Switch to Data view</button>
-                        <EditPerson person_id={this.state.core_data.personId} 
-                                    rufname={this.state.core_data.rufname}
-                                    amtlicher_vorname={this.state.core_data.amtlicher_vorname}
-                                    nachname={this.state.core_data.nachname}
-                                    geburtsdatum={this.state.core_data.geburtsdatum}
-                                    einschulungsdatum={this.state.core_data.einschulungsdatum}
-                                    nicht_auf_listen={this.state.core_data.nicht_auf_listen}
+                        <EditPerson 
+                            //Kerndaten to edit passed as props
+                            person_id={this.state.core_data.personId} 
+                            rufname={this.state.core_data.rufname}
+                            amtlicher_vorname={this.state.core_data.amtlicher_vorname}
+                            nachname={this.state.core_data.nachname}
+                            geburtsdatum={
+                                this.state.core_data.geburtsdatum ?
+                                (dateToENFormat(new Date(this.state.core_data.geburtsdatum)))
+                                :
+                                ('')}
+                            einschulungsdatum={
+                                this.state.core_data.einschulungsdatum ?
+                                (dateToENFormat(new Date(this.state.core_data.einschulungsdatum)))
+                                    :
+                                ('')}
+                            nicht_auf_listen={this.state.core_data.nicht_auf_listen}
+
+                            //KontaktDaten to edit passed as props
+                            email_1={this.state.contactData[0].email_1}
+                            email_2={this.state.contactData[0].email_2}
+                            email_fsx={this.state.contactData[0].email_fsx}
+                            mobil_telefon_1={this.state.contactData[0].mobil_telefon_1}
+                            mobil_telefon_2={this.state.contactData[0].mobil_telefon_2}
+                            mobil_telefon_fsx={this.state.contactData[0].mobil_telefon_fsx}
+                            telefon_1={this.state.contactData[0].telefon_1}
+                            telefon_2={this.state.contactData[0].telefon_2}
+                            telefon_fsx={this.state.contactData[0].telefon_fsx}
+
+
+
                                     />
                     </div>
                 , document.getElementById('person-data'))):(
@@ -210,6 +234,7 @@ export class Person extends React.Component{
         if(this.state.clicked){
             this.customRender();
         }
+        
     }
     
     handleClick = async() => {

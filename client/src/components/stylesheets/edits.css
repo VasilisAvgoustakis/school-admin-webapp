@@ -1,4 +1,10 @@
 .editInputs{
+    display: flex;
+    flex-direction: column;
+    
+    align-content:flex-start;
+    
+
     background: rgb(151, 151, 233); 
             width: 50%;
             position: relative;
