@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import '../stylesheets/globalstyles.css'
 import '../stylesheets/edits.css';
 import {dateToDEFormat, dateToENFormat} from '../../globalFunctions'
 
@@ -32,6 +33,24 @@ export class EditPerson extends React.Component{
             telefon_1: this.props.telefon_1,
             telefon_2: this.props.telefon_2,
             telefon_fsx: this.props.telefon_fsx,
+
+            //kind_daten
+            staatsangehoerigkeit: this.props.staatsangehoerigkeit,
+            geburtsort: this.props.geburtsort,
+            geschlecht: this.props.geschlecht,
+            nichtdeutsche_herkunftssprache: this.props.nichtdeutsche_herkunftssprache,
+
+            //kind_schule
+            zugangsdatum_zur_fsx: this.props.zugangsdatum_zur_fsx,
+            abgangsdatum_von_fsx: this.props.abgangsdatum_von_fsx,
+            abgangsgrund:this.props.abgangsgrund,
+            mittag: this.props.mittag,
+
+            //kind_betreuung
+            betreuung_beginn:this.props.betreuung_beginn,
+            betreuung_ende:this.props.betreuung_ende,
+            betreuung_umfang:this.props.betreuung_umfang,
+            betreuung_ferien:this.props.betreuung_ferien,
 
 
         }
@@ -83,7 +102,8 @@ export class EditPerson extends React.Component{
         return(
             //Kerndaten
             <div>
-                <div className='editInputs'>
+                <button type='button' onClick={this.editData}>Speichern</button>
+                <div className='entity-data-left' id='editInputs'>
                     <h4>Edit Kerndaten</h4>
                 
                     <label >Person ID:</label>
@@ -130,7 +150,7 @@ export class EditPerson extends React.Component{
 
                 {/* Contact Data */}
 
-                <div className='editInputs'>
+                <div className='entity-data-left' id='editInputs'>
                     <h4>Kontaktdaten</h4>
 
                     <label>E-Mail 1: </label>
@@ -180,7 +200,62 @@ export class EditPerson extends React.Component{
 
                 </div>
 
-                <button type='button' onClick={this.editData}>Speichern</button>
+                <div className='entity-data-right' id='editInputs'>
+                    <h4>Kindesdaten</h4>
+
+                    <label>Staatsangehörigkeit: </label>
+                    <input type='text' id='staatsangehoerigkeit' value={this.state.staatsangehoerigkeit} 
+                    onChange= {this.handleChange} ></input>
+                    <br></br>
+
+                    <label>Geburtsort: </label>
+                    <input type='text' id='geburtsort' value={this.state.geburtsort} 
+                    onChange= {this.handleChange} ></input>
+                    <br></br>
+
+                    <label>Geschlecht: </label>
+                    <select id='geschlecht' value={this.state.geschlecht} 
+                    onChange= {this.handleChange} >
+                        <option value='m'>m</option>
+                        <option value='f'>f</option>
+                        <option value='n'>n</option>
+                    </select>
+                    <br></br>
+
+                    <label>nicht deutsche Herkunftssprache: </label>
+                    <input type='text' id='nichtdeutsche_herkunftssprache' value={this.state.nichtdeutsche_herkunftssprache} 
+                    onChange= {this.handleChange} ></input>
+                    <br></br>
+
+                    <label >Zugang zu FSX:</label>
+                    <input type='date' id='zugangsdatum_zur_fsx' value={
+                        this.state.zugangsdatum_zur_fsx ? 
+                        (dateToENFormat(new Date(this.state.zugangsdatum_zur_fsx))):('')} 
+                    onChange= {this.handleChange} ></input>
+                    <br></br>
+
+                    <label >Abgang vom FSX:</label>
+                    <input type='date' id='abgangsdatum_von_fsx' value={
+                        this.state.abgangsdatum_von_fsx ? 
+                        (dateToENFormat(new Date(this.state.abgangsdatum_von_fsx))):('')} 
+                    onChange= {this.handleChange} ></input>
+                    <br></br>
+
+                    <label>Abgangsgrund: </label>
+                    <select id='abgangsgrund' value={this.state.abgangsgrund} 
+                    onChange= {this.handleChange} >
+                        <option value='Elternwunsch'>Elternwunsch</option>
+                        <option value='Wegzug'>Wegzug</option>
+                        <option value='Umzug'>Umzug</option>
+                        <option value='Uebergang Sekundarstufe'>Übergang Sekundarstufe</option>
+                        <option value='Sonstiges'>Sonstiges</option>
+                    </select>
+                    <br></br>
+
+
+                </div>
+
+                
             </div>
         )
     }

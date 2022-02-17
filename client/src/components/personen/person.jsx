@@ -139,19 +139,36 @@ export class Person extends React.Component{
                                     :
                                 ('')}
                             nicht_auf_listen={this.state.core_data.nicht_auf_listen}
-
+                            
+                            
                             //KontaktDaten to edit passed as props
-                            email_1={this.state.contactData[0].email_1}
-                            email_2={this.state.contactData[0].email_2}
-                            email_fsx={this.state.contactData[0].email_fsx}
-                            mobil_telefon_1={this.state.contactData[0].mobil_telefon_1}
-                            mobil_telefon_2={this.state.contactData[0].mobil_telefon_2}
-                            mobil_telefon_fsx={this.state.contactData[0].mobil_telefon_fsx}
-                            telefon_1={this.state.contactData[0].telefon_1}
-                            telefon_2={this.state.contactData[0].telefon_2}
-                            telefon_fsx={this.state.contactData[0].telefon_fsx}
+                            email_1={this.state.contactData[0] ? (this.state.contactData[0].email_1):('')}
+                            email_2={this.state.contactData[0] ? (this.state.contactData[0].email_2):('')}
+                            email_fsx={this.state.contactData[0] ? (this.state.contactData[0].email_fsx):('')}
+                            mobil_telefon_1={this.state.contactData[0] ? (this.state.contactData[0].mobil_telefon_1):('')}
+                            mobil_telefon_2={this.state.contactData[0] ? (this.state.contactData[0].mobil_telefon_2):('')}
+                            mobil_telefon_fsx={this.state.contactData[0] ? (this.state.contactData[0].mobil_telefon_fsx):('')}
+                            telefon_1={this.state.contactData[0] ? (this.state.contactData[0].telefon_1):('')}
+                            telefon_2={this.state.contactData[0] ? (this.state.contactData[0].telefon_2):('')}
+                            telefon_fsx={this.state.contactData[0] ? (this.state.contactData[0].telefon_fsx):('')}
 
+                            //kind_daten
+                            staatsangehoerigkeit={this.state.data.staatsangehoerigkeit}
+                            geburtsort={this.state.data.geburtsort}
+                            geschlecht={this.state.data.geschlecht}
+                            nichtdeutsche_herkunftssprache={this.state.data.nichtdeutsche_herkunftssprache}
 
+                            //kind_schule
+                            zugangsdatum_zur_fsx={this.state.data.zugangsdatum_zur_fsx}
+                            abgangsdatum_von_fsx={this.state.data.abgangsdatum_von_fsx}
+                            abgangsgrund={this.state.data.abgangsgrund}
+                            mittag={this.state.data.mittag}
+
+                            //kind_betreuung
+                            betreuung_beginn={this.state.data.betreuung_beginn}
+                            betreuung_ende={this.state.data.betreuung_ende}
+                            betreuung_umfang={this.state.data.betreuung_umfang}
+                            betreuung_ferien={this.state.data.betreuung_ferien}
 
                                     />
                     </div>
@@ -234,7 +251,7 @@ export class Person extends React.Component{
         if(this.state.clicked){
             this.customRender();
         }
-        
+        console.log(this.state.data)
     }
     
     handleClick = async() => {
