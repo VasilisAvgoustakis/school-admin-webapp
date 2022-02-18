@@ -215,9 +215,12 @@ export class Person extends React.Component{
                                 </tr>):(<tr></tr>)}
                             </tbody>
                         </table>
-    
-                        <KontaktDaten 
-                            data= {this.state.contactData}/>
+                        
+                        {!this.state.core_data.einschulungsdatum || 
+                        (this.state.core_data.einschulungsdatum && 
+                        this.state.data.abgangsdatum_von_fsx) ? 
+                        (<KontaktDaten 
+                            data= {this.state.contactData}/>):('')}
                         
                         <KindDaten 
                             data= {this.state.data}/>
