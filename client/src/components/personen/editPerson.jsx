@@ -103,7 +103,7 @@ export class EditPerson extends React.Component{
             //Kerndaten
             <div>
                 <button type='button' onClick={this.editData}>Speichern</button>
-                <div className='entity-data-left' id='editInputs'>
+                <div  id='editInputs-left'>
                     <h4>Edit Kerndaten</h4>
                 
                     <label >Person ID:</label>
@@ -150,7 +150,7 @@ export class EditPerson extends React.Component{
 
                 {/* Contact Data */}
 
-                <div className='entity-data-left' id='editInputs'>
+                <div  id='editInputs-left'>
                     <h4>Kontaktdaten</h4>
 
                     <label>E-Mail 1: </label>
@@ -200,8 +200,8 @@ export class EditPerson extends React.Component{
 
                 </div>
 
-                <div className='entity-data-right' id='editInputs'>
-                    <h4>Kindesdaten</h4>
+                <div className='entity-data-right' id='editInputs-right'>
+                    <h4>Kindsdaten</h4>
 
                     <label>Staatsangehörigkeit: </label>
                     <input type='text' id='staatsangehoerigkeit' value={this.state.staatsangehoerigkeit} 
@@ -249,6 +249,44 @@ export class EditPerson extends React.Component{
                         <option value='Umzug'>Umzug</option>
                         <option value='Uebergang Sekundarstufe'>Übergang Sekundarstufe</option>
                         <option value='Sonstiges'>Sonstiges</option>
+                    </select>
+                    <br></br>
+
+                    <label >Mittag:</label>
+                    <select id='mittag' value={this.state.mittag} 
+                    onChange= {this.handleChange} >
+                        <option value='0'>0</option>
+                        <option value='1'>1</option>
+                    </select>
+                    <br></br>
+
+                    <label >Betreuung Beginn:</label>
+                    <input type='date' id='betreuung_beginn' value={
+                        this.state.betreuung_beginn ? 
+                        (dateToENFormat(new Date(this.state.betreuung_beginn))):('')} 
+                    onChange= {this.handleChange} ></input>
+                    <br></br>
+
+                    <label >Betreuung Ende:</label>
+                    <input type='date' id='betreuung_ende' value={
+                        this.state.betreuung_ende ? 
+                        (dateToENFormat(new Date(this.state.betreuung_ende))):('')} 
+                    onChange= {this.handleChange} ></input>
+                    <br></br>
+
+                    <label >Betreuung Umfang:</label>
+                    <select id='betreuung_umfang' value={this.state.betreuung_umfang} 
+                    onChange= {this.handleChange} >
+                        <option value='16:00'>16:00</option>
+                        <option value='18:00'>18:00</option>
+                    </select>
+                    <br></br>
+
+                    <label >Betreuung Ferien:</label>
+                    <select id='betreuung_ferien' value={this.state.betreuung_ferien} 
+                    onChange= {this.handleChange} >
+                        <option value='0'>0</option>
+                        <option value='1'>1</option>
                     </select>
                     <br></br>
 
