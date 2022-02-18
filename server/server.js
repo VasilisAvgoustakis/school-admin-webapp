@@ -386,33 +386,83 @@ app.get('/editPerson', (req, res) => {
   let [person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum, nicht_auf_listen,
       email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2, mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx
   ] = req.query.state
-  console.log(req.query.state)
-  pool.query (
-    `REPLACE INTO personen INNER JOIN kontakt_daten On personen.person_id = kontakt_daten.person_id(personen.person_id, personen.rufname, personen.amtlicher_vorname, personen.nachname, 
-      personen.geburtsdatum, personen.einschulungsdatum, nicht_auf_listen kontakt_daten.person_id, kontakt_daten.email_1, kontakt_daten.email_2, kontakt_daten.email_fsx, kontakt_daten.mobil_telefon_1, kontakt_daten.mobil_telefon_2,
-      kontakt_daten.mobil_telefon_fsx, kontakt_daten.telefon_1, kontakt_daten.telefon_2, telefon_fsx)
+  console.log(rufname)
 
-    VALUES(
-    ${person_id}, '${rufname}' , '${amtlicher_vorname}', '${nachname}', ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
-     ${einschulungsdatum ? ("'" + einschulungsdatum.toString() + "'"):(null)},
-     ${nicht_auf_listen}, ${person_id}, '${email_1}', '${email_2}', '${email_fsx}', '${mobil_telefon_1}', '${mobil_telefon_2}', '${mobil_telefon_fsx}',
-     '${telefon_1}', '${telefon_2}', '${telefon_fsx}'
-    );
-    `
-    
-    ,(err, results) =>{
+  pool.getConnection((err, connection) =>{
+    connection.beginTransaction((err) => {
+      if (err){   //Transaction Error (Rollback and release connection)
+        connection.rollback(()=>{
+          connection.release();
+        })
+      }
+      else {
+        connection.query(`INSERT INTO personen(person_id, rufname, amtlicher_vorname, nachname, 
+          geburtsdatum, einschulungsdatum, nicht_auf_listen) 
+          VALUES (${person_id}, '${rufname}', '${amtlicher_vorname}', '${nachname}', 
+          ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
+          ${einschulungsdatum ? ("'" + einschulungsdatum.toString() + "'"):(null)},
+          ${nicht_auf_listen}) 
+          ON DUPLICATE KEY UPDATE 
+          rufname='${rufname}',
+          amtlicher_vorname = '${amtlicher_vorname}',
+          nachname = '${nachname}',
+          geburtsdatum = ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
+          einschulungsdatum = ${einschulungsdatum ? ("'" + einschulungsdatum.toString() + "'"):(null)},
+          nicht_auf_listen = '${nicht_auf_listen}';`,(err, results) =>{
 
-  if(err){
-    console.log(err);
-    return res.send("err");
-  }else {
-    console.log(results)
-    return res.send("results");
-  }
+            if(err){ //Query Error (Rollback and release connection)
+              console.log(err);
+              connection.rollback(() => {
+                connection.release();
+                //Failure
+            });
+              return res.send(err);
+            }else {
+              
+        connection.query(
+        `INSERT INTO kontakt_daten(person_id, email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2,
+                          mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx)
+          VALUES(${person_id}, '${email_1}', '${email_2}', '${email_fsx}', '${mobil_telefon_1}', 
+          '${mobil_telefon_2}', '${mobil_telefon_fsx}', '${telefon_1}', '${telefon_2}', '${telefon_fsx}')
+          ON DUPLICATE KEY UPDATE
+          email_1 = '${email_1}',
+          email_2 = '${email_2}',
+          email_fsx = '${email_fsx}',
+          mobil_telefon_1 = '${mobil_telefon_1}',
+          mobil_telefon_2 = '${mobil_telefon_2}',
+          mobil_telefon_fsx = '${mobil_telefon_fsx}',
+          telefon_1 = '${telefon_1}',
+          telefon_2 = '${telefon_2}',
+          telefon_fsx = '${telefon_fsx}';`
+          ,(err, results) =>{
+
+            if(err){ //Query Error (Rollback and release connection)
+              console.log(err);
+              connection.rollback(() => {
+                connection.release();
+                //Failure
+            });
+              return res.send(err);
+            }else {
+              connection.commit((err) => {
+                if (err) {
+                    connection.rollback(() => {
+                        connection.release();
+                        //Failure
+                    });
+                } else {
+                    connection.release();
+                    //Success
+                    console.log(results)
+                    return res.send(results);
+                  }
+                })
+            } 
+          })
+        }})
+      }})
     })
-})
-
-
+  });   
 
   //END OF POSTS
 
