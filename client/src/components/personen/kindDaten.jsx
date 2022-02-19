@@ -60,7 +60,10 @@ export function KindDaten(props) {
                 <tr>
                     <td><strong>Mittag:</strong></td>
                     <td>JA</td>
-                </tr>) : (<tr><td>Nein</td></tr>) }
+                </tr>) : (<tr>
+                            <td><strong>Mittag:</strong></td>
+                            <td>Nein</td>
+                    </tr>) }
 
                 {props.data.betreuung_umfang ? (
                 <tr>
@@ -95,6 +98,15 @@ export function KindDaten(props) {
                     <td>{props.data.staatsangehoerigkeit}</td>
                 </tr>) : (<tr>
                             <td><strong>Staatsangehörigkeit:</strong></td>
+                            <td>--</td>
+                        </tr>) }
+
+                {props.data.geburtsort ? (
+                <tr>
+                    <td><strong>Geburtsort:</strong></td>
+                    <td>{props.data.geburtsort}</td>
+                </tr>) : (<tr>
+                            <td><strong>Geburtsort:</strong></td>
                             <td>--</td>
                         </tr>) }
 

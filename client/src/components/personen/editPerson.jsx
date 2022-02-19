@@ -12,6 +12,8 @@ export class EditPerson extends React.Component{
         this.updateQuery = this.updateQuery.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.editData = this.editData.bind(this);
+        this.deleteQuery = this.deleteQuery.bind(this);
+        this.deleteRow = this.deleteRow.bind(this);
         
         this.state = {
             //Kerndaten
@@ -68,11 +70,23 @@ export class EditPerson extends React.Component{
     async updateQuery(){
         var stateObj = this.state;
         var dataArr = Object.values(stateObj);
+
         console.log(dataArr)
         return(
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/editPerson`, {
            params: {
                state: dataArr
+           } 
+      })
+       )
+    }
+
+    async deleteQuery(table){
+        return(
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteKindsdaten`, {
+           params: {
+               table: table,
+               person_id: this.state.personId
            } 
       })
        )
@@ -91,6 +105,10 @@ export class EditPerson extends React.Component{
         
         })
     }
+    }
+
+    deleteRow(){
+
     }
 
    
@@ -202,6 +220,7 @@ export class EditPerson extends React.Component{
 
                 <div className='entity-data-right' id='editInputs-right'>
                     <h4>Kindsdaten</h4>
+                    <button type='button' onClick={this.deleteRow}>Entfernen</button>
 
                     <label>Staatsangehörigkeit: </label>
                     <input type='text' id='staatsangehoerigkeit' value={this.state.staatsangehoerigkeit} 
@@ -216,6 +235,7 @@ export class EditPerson extends React.Component{
                     <label>Geschlecht: </label>
                     <select id='geschlecht' value={this.state.geschlecht} 
                     onChange= {this.handleChange} >
+                        <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                         <option value='m'>m</option>
                         <option value='f'>f</option>
                         <option value='n'>n</option>
@@ -223,8 +243,12 @@ export class EditPerson extends React.Component{
                     <br></br>
 
                     <label>nicht deutsche Herkunftssprache: </label>
-                    <input type='text' id='nichtdeutsche_herkunftssprache' value={this.state.nichtdeutsche_herkunftssprache} 
-                    onChange= {this.handleChange} ></input>
+                    <select id='nichtdeutsche_herkunftssprache' value={this.state.nichtdeutsche_herkunftssprache} 
+                    onChange= {this.handleChange} >
+                        <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                        <option value='0'>0</option>
+                        <option value='1'>1</option>
+                    </select>
                     <br></br>
 
                     <label >Zugang zu FSX:</label>
@@ -244,6 +268,7 @@ export class EditPerson extends React.Component{
                     <label>Abgangsgrund: </label>
                     <select id='abgangsgrund' value={this.state.abgangsgrund} 
                     onChange= {this.handleChange} >
+                        <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                         <option value='Elternwunsch'>Elternwunsch</option>
                         <option value='Wegzug'>Wegzug</option>
                         <option value='Umzug'>Umzug</option>
@@ -255,6 +280,7 @@ export class EditPerson extends React.Component{
                     <label >Mittag:</label>
                     <select id='mittag' value={this.state.mittag} 
                     onChange= {this.handleChange} >
+                        <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                         <option value='0'>0</option>
                         <option value='1'>1</option>
                     </select>
@@ -277,6 +303,7 @@ export class EditPerson extends React.Component{
                     <label >Betreuung Umfang:</label>
                     <select id='betreuung_umfang' value={this.state.betreuung_umfang} 
                     onChange= {this.handleChange} >
+                        <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                         <option value='16:00'>16:00</option>
                         <option value='18:00'>18:00</option>
                     </select>
@@ -285,6 +312,7 @@ export class EditPerson extends React.Component{
                     <label >Betreuung Ferien:</label>
                     <select id='betreuung_ferien' value={this.state.betreuung_ferien} 
                     onChange= {this.handleChange} >
+                        <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                         <option value='0'>0</option>
                         <option value='1'>1</option>
                     </select>

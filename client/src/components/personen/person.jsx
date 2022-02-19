@@ -159,8 +159,16 @@ export class Person extends React.Component{
                             nichtdeutsche_herkunftssprache={this.state.data.nichtdeutsche_herkunftssprache}
 
                             //kind_schule
-                            zugangsdatum_zur_fsx={this.state.data.zugangsdatum_zur_fsx}
-                            abgangsdatum_von_fsx={this.state.data.abgangsdatum_von_fsx}
+                            zugangsdatum_zur_fsx=
+                                {this.state.data.zugangsdatum_zur_fsx ?
+                                (dateToENFormat(new Date(this.state.data.zugangsdatum_zur_fsx)))
+                                :
+                                ('')}
+                            abgangsdatum_von_fsx=
+                                {this.state.data.abgangsdatum_von_fsx ?
+                                (dateToENFormat(new Date(this.state.data.abgangsdatum_von_fsx)))
+                                :
+                                ('')}
                             abgangsgrund={this.state.data.abgangsgrund}
                             mittag={this.state.data.mittag}
 
