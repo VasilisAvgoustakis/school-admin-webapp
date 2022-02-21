@@ -119,6 +119,7 @@ export class Person extends React.Component{
                                 <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
                             </svg>, document.getElementById('person-data'))
             }else{
+                
             this.state.editing ? (ReactDOM.render(
                     <div>
                         <button onClick={this.onEdit}>Switch to Data view</button>
@@ -169,12 +170,20 @@ export class Person extends React.Component{
                                 (dateToENFormat(new Date(this.state.data.abgangsdatum_von_fsx)))
                                 :
                                 ('')}
-                            abgangsgrund={this.state.data.abgangsgrund}
-                            mittag={this.state.data.mittag}
+                            abgangsgrund={this.state.data.abgangsgrund ? (this.state.data.abgangsgrund):('')}
+                            mittag={this.state.data.mittag ? (this.state.mittag):('')}
 
                             //kind_betreuung
-                            betreuung_beginn={this.state.data.betreuung_beginn}
-                            betreuung_ende={this.state.data.betreuung_ende}
+                            betreuung_beginn=
+                                {this.state.data.betreuung_beginn ?
+                                (dateToENFormat(new Date(this.state.data.betreuung_beginn)))
+                                :
+                                ('')}
+                            betreuung_ende=
+                            {this.state.data.betreuung_ende ?
+                                (dateToENFormat(new Date(this.state.data.betreuung_ende)))
+                                :
+                                ('')}
                             betreuung_umfang={this.state.data.betreuung_umfang}
                             betreuung_ferien={this.state.data.betreuung_ferien}
 
@@ -264,7 +273,7 @@ export class Person extends React.Component{
         if(this.state.clicked){
             this.customRender();
         }
-        console.log(this.state.data)
+        //console.log(this.state.data)
     }
     
     handleClick = async() => {
