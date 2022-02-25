@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../stylesheets/globalstyles.css'
 import '../stylesheets/edits.css';
 import {dateToDEFormat, dateToENFormat} from '../../globalFunctions'
+import { TouchableNativeFeedbackBase } from 'react-native';
 
 
 
@@ -13,7 +14,7 @@ export class EditPerson extends React.Component{
         this.handleChange = this.handleChange.bind(this);
         this.editData = this.editData.bind(this);
         this.deleteQuery = this.deleteQuery.bind(this);
-        this.deleteRow = this.deleteRow.bind(this);
+        this.deleteKindData = this.deleteKindData.bind(this);
         
         this.state = {
             //Kerndaten
@@ -83,7 +84,7 @@ export class EditPerson extends React.Component{
 
     async deleteQuery(table){
         return(
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteKindsdaten`, {
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deletePersonData`, {
            params: {
                table: table,
                person_id: this.state.personId
@@ -96,21 +97,32 @@ export class EditPerson extends React.Component{
         var confirm = window.confirm('Diese Aktion wird die Daten direkt in der Datenbank bearbeiten!!! Bist du sicher dass diese Korrekt sind?')
         if(confirm){
         this.updateQuery().then(result=>{
-            console.log(result)
-        }).catch(err =>{console.error(err)})
-        .then(() => {
-
+            console.log("confirm")
             confirm = false;
             if(!confirm)window.location.reload()
+            console.log(result)
+        }).catch(err =>{console.error(err)})
+    }
+    }
+
+    deleteKindData(){
+        var confirm = window.confirm("ACHTUNG!!! Diese Aktion wird alle Kind bezogene Daten fpr diese Person löschen!")
         
-        })
-    }
-    }
+        if(confirm){
 
-    deleteRow(){
+            this.deleteQuery('kind_schule');
 
+            this.deleteQuery('kind_daten');
+
+            this.deleteQuery('kind_betreuung').then(result=>{
+                console.log("confirm")
+                confirm = false;
+                //last delete query refreshes the page
+                if(!confirm)window.location.reload()
+                console.log(result)
+            });
+        }
     }
-
    
 
 
@@ -217,10 +229,10 @@ export class EditPerson extends React.Component{
                     <br></br>
 
                 </div>
-
+                {/* Kind bezogene Daten */}
                 <div className='entity-data-right' id='editInputs-right'>
                     <h4>Kindsdaten</h4>
-                    <button type='button' onClick={this.deleteRow}>Entfernen</button>
+                    <button className='delete-buttons' type='button' onClick={this.deleteKindData}>Kindbezogene Daten löschen</button>
 
                     <label>Staatsangehörigkeit: </label>
                     <input type='text' id='staatsangehoerigkeit' value={this.state.staatsangehoerigkeit} 
@@ -268,7 +280,7 @@ export class EditPerson extends React.Component{
                     <label>Abgangsgrund: </label>
                     <select id='abgangsgrund' value={this.state.abgangsgrund} 
                     onChange= {this.handleChange} >
-                        <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                        <option selected="true" value=''>-</option> {/*default option when no data from database for selected person*/}
                         <option value='Elternwunsch'>Elternwunsch</option>
                         <option value='Wegzug'>Wegzug</option>
                         <option value='Umzug'>Umzug</option>

@@ -71,6 +71,11 @@ Tab and are thus relevant globaly. */
             margin: 10px;
 }
 
+.delete-buttons{
+  background-color: rgb(214, 63, 63);  
+  border-radius: 6px;
+}
+
 
 table{
   

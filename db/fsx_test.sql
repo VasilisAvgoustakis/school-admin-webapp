@@ -174,6 +174,7 @@ CREATE TABLE `kind_betreuung` (
   `betreuung_ende` date DEFAULT NULL,
   `betreuung_umfang` enum('16:00','18:00') DEFAULT NULL,
   `betreuung_ferien` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`person_id`,`betreuung_beginn`,`betreuung_ende`),
   KEY `fk_Kind_Finanzierung` (`person_id`),
   CONSTRAINT `fk_Kind_Finanzierung` FOREIGN KEY (`person_id`) REFERENCES `personen` (`person_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

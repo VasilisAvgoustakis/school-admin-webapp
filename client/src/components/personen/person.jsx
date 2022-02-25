@@ -171,7 +171,7 @@ export class Person extends React.Component{
                                 :
                                 ('')}
                             abgangsgrund={this.state.data.abgangsgrund ? (this.state.data.abgangsgrund):('')}
-                            mittag={this.state.data.mittag ? (this.state.mittag):('')}
+                            mittag={this.state.data.mittag}
 
                             //kind_betreuung
                             betreuung_beginn=
