@@ -535,12 +535,16 @@ WHERE
 
 
   app.get('/editPerson', (req, res) => {
+    //array containg all variables passed in with the request
     let [person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum, nicht_auf_listen,
         email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2, mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx,
         staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache,
         zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag,
         betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien
         ] = req.query.state
+
+    //array to put all results and return them at the end of the querry
+    let sumResults = [];
     
     // see that no empty '' values are send in with the data, instead values that should remain empty or null are handled by the query 
     // here in the server and their value is turned into null
@@ -551,11 +555,18 @@ WHERE
 
     // check that at least on of the values is relevant for saving (not null or '')
     let validCoreData = 0;
-    coreData.forEach(element=> {if(element !== '')validCoreData++;})
+    coreData.forEach(element=> {
+      if(element === '' || element === null || element === 'null'){
+        return;
+        
+      }else{
+        validCoreData++;
+      }
+      })
 
     //execute query    
     if(validCoreData > 0){    
-      pool.query(`INSERT INTO personen(person_id, rufname, amtlicher_vorname, nachname, 
+     pool.query(`INSERT INTO personen(person_id, rufname, amtlicher_vorname, nachname, 
         geburtsdatum, einschulungsdatum, nicht_auf_listen) 
         VALUES (${person_id}, '${rufname}', '${amtlicher_vorname}', '${nachname}', 
         ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
@@ -572,12 +583,12 @@ WHERE
 
           if(err){ //Query Error (Rollback and release connection)
             console.log(err);
-            connection.rollback(() => {
-              connection.release();
-              //Failure
-          });
             return res.send(err);
-          }else {}})
+          }else {
+            console.log(results)
+            //return res.send(results)
+            //console.log(sumResults)
+          }})
       }
     
     //make array only with the relevant data of coming query
@@ -586,7 +597,14 @@ WHERE
 
     // check that at least on of the values is relevant for saving (not null or '')
     validCoreData = 0;
-    contactData.forEach(element=> {if((element !== '')){validCoreData++; console.log(validCoreData);}})
+    contactData.forEach(element=> {
+      if(element === '' || element === null || element === 'null'){
+        return;
+         
+      }else{
+        validCoreData++;
+      }
+      })
     
     //execute query 
     if(validCoreData > 0){
@@ -608,21 +626,26 @@ WHERE
 
         ,(err, results) =>{
           if(err){ //Query Error (Rollback and release connection)
-            console.log(err);
-            connection.rollback(() => {
-              connection.release();
-              //Failure
-          });
             return res.send(err);
-          }else{ }})
+          }else{
+            sumResults.push(results);
+          }})
       }
     //make array only with the relevant data of coming query
     let kind_schule_data = [zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag]
     
     // check that at least on of the values is relevant for saving (not null or '')
     validCoreData = 0;
-    kind_schule_data.forEach(element=> {if((element !== '')){validCoreData++; console.log(validCoreData);}})
-
+    console.log('validCoreData before iteration: '+ validCoreData);
+    kind_schule_data.forEach(element=> {
+      if(element === '' || element === null || element === 'null'){
+        return;
+      }else{
+        validCoreData++; 
+        console.log(validCoreData);
+      }
+    })
+    console.log(kind_schule_data, 'validCoreData after iteration: '+ validCoreData)
     if(validCoreData > 0){
       pool.query(
         `INSERT INTO kind_schule(person_id, zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag)
@@ -636,13 +659,10 @@ WHERE
 
           ,(err, results) =>{
             if(err){ //Query Error (Rollback and release connection)
-              console.log(err);
-              connection.rollback(() => {
-                connection.release();
-                //Failure
-            });
               return res.send(err);
-            }else{}})
+            }else{
+              sumResults.push(results);
+            }})
     }
 
      //make array only with the relevant data of coming query
@@ -650,7 +670,13 @@ WHERE
     
      // check that at least on of the values is relevant for saving (not null or '')
      validCoreData = 0;
-     kind_data.forEach(element=> {if((element !== '')){validCoreData++; console.log(validCoreData);}})
+     kind_data.forEach(element=> {
+       if(element === '' || element === null || element === 'null'){
+          return;
+      }else{
+        validCoreData++;
+      }
+      });
   
 
     if(validCoreData > 0){
@@ -665,13 +691,10 @@ WHERE
 
           ,(err, results) =>{
             if(err){ //Query Error (Rollback and release connection)
-              console.log(err);
-              connection.rollback(() => {
-                connection.release();
-                //Failure
-            });
               return res.send(err);
-            }else{}})
+            }else{
+              sumResults.push(results);
+            }})
     }
 
     //make array only with the relevant data of coming query
@@ -679,7 +702,13 @@ WHERE
     
     // check that at least on of the values is relevant for saving (not null or '')
     validCoreData = 0;
-    kind_betreuung.forEach(element=> {if((element !== '')){validCoreData++; console.log(validCoreData);}})
+    kind_betreuung.forEach(element=> {
+      if(element === '' || element === null || element === 'null'){
+        return;
+      }else{
+        validCoreData++;
+      }
+      })
  
     if(validCoreData > 0){
       pool.query(
@@ -695,14 +724,14 @@ WHERE
 
         ,(err, results) =>{
           if(err){ //Query Error (Rollback and release connection)
-            console.log(err);
-            connection.rollback(() => {
-              connection.release();
-              //Failure
-          });
             return res.send(err);
-          }else {res.send(results)}})
+          }else {
+            sumResults.push(results)
+            return res.send(results);
+          }})
     }
+    // console.log(sumResults)
+    
 
       }); 
 

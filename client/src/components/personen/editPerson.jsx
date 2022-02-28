@@ -96,12 +96,17 @@ export class EditPerson extends React.Component{
     editData(){
         var confirm = window.confirm('Diese Aktion wird die Daten direkt in der Datenbank bearbeiten!!! Bist du sicher dass diese Korrekt sind?')
         if(confirm){
-        this.updateQuery().then(result=>{
+        this.updateQuery().then((err,result)=>{
+            if(err){
+                console.log(err)
+                window.alert(err.data.sqlMessage)
+            }else{
             console.log("confirm")
             confirm = false;
             if(!confirm)window.location.reload()
             console.log(result)
-        }).catch(err =>{console.error(err)})
+            }
+        }).catch(err =>{console.log(err)})
     }
     }
 
