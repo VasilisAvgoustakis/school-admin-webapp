@@ -64,7 +64,7 @@ export class PersonSelectList extends Component{
   updateStateAfterEdit(){
     this.setState({forceRemount: ''})
     this.setState({forceRemount: 'remount now'})
-    console.log("forcing")
+    //console.log("forcing")
 }
   
 

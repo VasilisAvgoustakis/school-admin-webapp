@@ -72,7 +72,7 @@ export class EditPerson extends React.Component{
         var stateObj = this.state;
         var dataArr = Object.values(stateObj);
 
-        console.log(dataArr)
+        //console.log(dataArr)
         return(
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/editPerson`, {
            params: {
@@ -96,15 +96,16 @@ export class EditPerson extends React.Component{
     editData(){
         var confirm = window.confirm('Diese Aktion wird die Daten direkt in der Datenbank bearbeiten!!! Bist du sicher dass diese Korrekt sind?')
         if(confirm){
-        this.updateQuery().then((err,result)=>{
-            if(err){
-                console.log(err)
-                window.alert(err.data.sqlMessage)
+        this.updateQuery().then(res =>{
+            if(res.data.sqlMessage){
+                console.log("This is the Err: ")
+                console.log(res)
+                window.alert(res.data.sqlMessage);
             }else{
-            console.log("confirm")
-            confirm = false;
-            if(!confirm)window.location.reload()
-            console.log(result)
+                console.log("confirm")
+                confirm = false;
+                if(!confirm)window.location.reload();
+                console.log(res);
             }
         }).catch(err =>{console.log(err)})
     }
@@ -297,7 +298,7 @@ export class EditPerson extends React.Component{
                     <label >Mittag:</label>
                     <select id='mittag' value={this.state.mittag} 
                     onChange= {this.handleChange} >
-                        <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                        <option selected="true">-</option> {/*default option when no data from database for selected person*/}
                         <option value='0'>0</option>
                         <option value='1'>1</option>
                     </select>

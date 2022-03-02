@@ -534,7 +534,7 @@ WHERE
 //   });   
 
 
-  app.get('/editPerson', (req, res) => {
+  app.get('/editPerson', async (req, res) => {
     //array containg all variables passed in with the request
     let [person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum, nicht_auf_listen,
         email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2, mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx,
@@ -543,12 +543,15 @@ WHERE
         betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien
         ] = req.query.state
 
+    // this variable will be true if the error case in one of the queries has already send headers
+    let freeOfErrors = true;
+
     //array to put all results and return them at the end of the querry
     let sumResults = [];
     
     // see that no empty '' values are send in with the data, instead values that should remain empty or null are handled by the query 
     // here in the server and their value is turned into null
-    console.log(req.query.state)
+    //console.log(req.query.state)
     //make array only with the relevant data of coming query
     let coreData = [person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum];
     //console.log(coreData)
@@ -566,7 +569,7 @@ WHERE
 
     //execute query    
     if(validCoreData > 0){    
-     pool.query(`INSERT INTO personen(person_id, rufname, amtlicher_vorname, nachname, 
+      pool.query(`INSERT INTO personen(person_id, rufname, amtlicher_vorname, nachname, 
         geburtsdatum, einschulungsdatum, nicht_auf_listen) 
         VALUES (${person_id}, '${rufname}', '${amtlicher_vorname}', '${nachname}', 
         ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
@@ -581,19 +584,17 @@ WHERE
         nicht_auf_listen = '${nicht_auf_listen}';`
         ,(err, results) =>{
 
-          if(err){ //Query Error (Rollback and release connection)
-            console.log(err);
+          if(err){ //Query Error 
+            freeOfErrors = false;
             return res.send(err);
           }else {
-            console.log(results)
-            //return res.send(results)
-            //console.log(sumResults)
+            sumResults.push(results);
           }})
       }
     
     //make array only with the relevant data of coming query
     let contactData = [email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2, mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx];
-    console.log(contactData)
+    //console.log(contactData)
 
     // check that at least on of the values is relevant for saving (not null or '')
     validCoreData = 0;
@@ -626,6 +627,7 @@ WHERE
 
         ,(err, results) =>{
           if(err){ //Query Error (Rollback and release connection)
+            freeOfErrors = false;
             return res.send(err);
           }else{
             sumResults.push(results);
@@ -645,7 +647,10 @@ WHERE
         console.log(validCoreData);
       }
     })
-    console.log(kind_schule_data, 'validCoreData after iteration: '+ validCoreData)
+    
+    
+    //console.log(kind_schule_data, 'validCoreData after iteration: '+ validCoreData)
+    
     if(validCoreData > 0){
       pool.query(
         `INSERT INTO kind_schule(person_id, zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag)
@@ -659,6 +664,7 @@ WHERE
 
           ,(err, results) =>{
             if(err){ //Query Error (Rollback and release connection)
+              freeOfErrors = false;
               return res.send(err);
             }else{
               sumResults.push(results);
@@ -691,6 +697,7 @@ WHERE
 
           ,(err, results) =>{
             if(err){ //Query Error (Rollback and release connection)
+              freeOfErrors = false;
               return res.send(err);
             }else{
               sumResults.push(results);
@@ -724,14 +731,31 @@ WHERE
 
         ,(err, results) =>{
           if(err){ //Query Error (Rollback and release connection)
+            console.log("Sending err!!!!")
+            freeOfErrors = false;
             return res.send(err);
           }else {
             sumResults.push(results)
-            return res.send(results);
           }})
     }
-    // console.log(sumResults)
     
+    // this query's role is just as workaround soolution to send a valid response 
+    //that makes client refresh the page
+    pool.query("SELECT * from personen;",(err, results) =>{
+      if(err){ //Query Error (Rollback and release connection)
+        console.log("Sending err!!!!")
+        return res.send(err);
+      }else {
+
+        // only send results headers to client if none of the queries above has returned an error
+        // which would mean that freeOfErrors == false
+        while(freeOfErrors){
+          // sumResults.push(results)
+          console.log("sending...")
+          console.log(results)
+          return res.send(results);
+        }
+      }})   
 
       }); 
 
