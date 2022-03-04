@@ -31,6 +31,13 @@ export function KindDaten(props) {
                         <td><strong>Einschulungsdatum:</strong></td>
                         <td>{dateToDEFormat(new Date(props.data.einschulungsdatum))}</td>
                     </tr>) :("")}
+
+
+                {props.data.zugangsdatum_zur_fsx ? (
+                <tr>
+                    <td><strong>Zugang zur FSX:</strong></td>
+                    <td>{dateToDEFormat(new Date(props.data.zugangsdatum_zur_fsx))}</td>
+                </tr>) :("")}
                 
                 {props.data.abgangsdatum_von_fsx? (
                     <tr>

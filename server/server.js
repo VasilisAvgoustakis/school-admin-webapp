@@ -776,6 +776,61 @@ WHERE
       })
 
     });
+
+    app.get('/deleteKindData', (req, res) => {
+      let table = req.query.table;
+      let id = req.query.id;
+      let columnNames = req.query.columnNames;
+      let numIdColumns = id.length;
+
+      console.log(table, id, numIdColumns, columnNames)
+      
+      if(numIdColumns === 2){
+        pool.query(`DELETE FROM ${table} 
+                      WHERE 
+                        person_id = ${id[0]}
+                        AND
+                        ${columnNames[0]} = '${id[1].toString()}'
+                        ;`,
+      (err, result)=>{
+        if(err){
+          console.log(err);
+          return res.send(err);
+        }else{
+          console.log(result)
+          return res.send(result);
+        }
+      })
+      }
+
+      if(numIdColumns === 3){
+        pool.query(`DELETE FROM ${table} 
+                      WHERE 
+                        person_id = ${id[0]}
+                        AND
+                        ${columnNames[0]} = '${id[1].toString()}'
+                        AND
+                        ${columnNames[1]} = '${id[2].toString()}'
+                        ;`,
+      (err, result)=>{
+        if(err){
+          console.log(err);
+          return res.send(err);
+        }else{
+          console.log(result)
+          return res.send(result);
+        }
+      })
+      }
+      
+      
+      
+
+    });
+
+
+
+
   //END OF POSTS
 
 

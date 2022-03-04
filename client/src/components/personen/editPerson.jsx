@@ -13,12 +13,14 @@ export class EditPerson extends React.Component{
         this.updateQuery = this.updateQuery.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.editData = this.editData.bind(this);
-        this.deleteQuery = this.deleteQuery.bind(this);
+        this.deleteQueryPerson = this.deleteQueryPerson.bind(this);
+        this.deleteQueryKind = this.deleteQueryKind.bind(this);
+        this.deletePersonData = this.deletePersonData.bind(this);
         this.deleteKindData = this.deleteKindData.bind(this);
         
         this.state = {
             //Kerndaten
-            personId: this.props.person_id,
+            person_id: this.props.person_id,
             rufname: this.props.rufname,
             amtlicher_vorname: this.props.amtlicher_vorname,
             nachname: this.props.nachname,
@@ -82,12 +84,31 @@ export class EditPerson extends React.Component{
        )
     }
 
-    async deleteQuery(table){
+    //deletes all records from a table with the given id
+    async deleteQueryPerson(table){
+        console.log(table)
         return(
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deletePersonData`, {
            params: {
                table: table,
-               person_id: this.state.personId
+               person_id: this.state.person_id
+           } 
+      })
+       )
+    }
+
+
+    //the 2nd parameter is an array containing all values which are part of the primary key
+    //of the given table in the 1st parameter
+    //the 3rd parameter contains an array with names of the columns part of the PM except that of perso_id
+    // which always the same for each table
+    async deleteQueryKind(table, id, columnNames){
+        return(
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteKindData`, {
+           params: {
+               table: table,
+               id: id,
+               columnNames: columnNames 
            } 
       })
        )
@@ -111,16 +132,27 @@ export class EditPerson extends React.Component{
     }
     }
 
+    //delete Kindbezogenen Daten
     deleteKindData(){
         var confirm = window.confirm("ACHTUNG!!! Diese Aktion wird alle Kind bezogene Daten fpr diese Person löschen!")
         
         if(confirm){
 
-            this.deleteQuery('kind_schule');
+            this.deleteQueryKind(
+                'kind_schule',
+                [this.state.person_id, this.state.zugangsdatum_zur_fsx],
+                ['zugangsdatum_zur_fsx']
+                );
 
-            this.deleteQuery('kind_daten');
+            this.deleteQueryPerson('kind_daten')
 
-            this.deleteQuery('kind_betreuung').then(result=>{
+            this.deleteQueryKind(
+                'kind_betreuung',
+                [this.state.person_id, this.state.betreuung_beginn, this.state.betreuung_ende],
+                ['betreuung_beginn', 'betreuung_ende']
+                )
+            
+            .then(result=>{
                 console.log("confirm")
                 confirm = false;
                 //last delete query refreshes the page
@@ -129,11 +161,37 @@ export class EditPerson extends React.Component{
             });
         }
     }
+
+    deletePersonData(e){
+        //console.log(e.target.id)
+        let table = e.target.id;
+        console.log(table);
+
+        var confirm = window.confirm(
+            `ACHTUNG!!! Diese Aktion wird ${table === 'personen' ? 
+            ('dieser Person und alle seine Daten von allen Tabellen komplett vom DB')
+            :("die " + table + " dieser Person")} löschen!`)
+        
+        if(confirm){
+            
+            
+
+            this.deleteQueryPerson(table)
+
+            .then(result=>{
+                console.log("confirm")
+                confirm = false;
+                //last delete query refreshes the page
+                if(!confirm)window.location.reload()
+                console.log(result)
+            });
+    }
+    }
    
 
 
     render(){
-        console.log(this.state)
+        //console.log(this.state)
         //console.log(dateToENFormat(new Date(this.state.geburtsdatum)))
         return(
             //Kerndaten
@@ -141,9 +199,14 @@ export class EditPerson extends React.Component{
                 <button type='button' onClick={this.editData}>Speichern</button>
                 <div  id='editInputs-left'>
                     <h4>Edit Kerndaten</h4>
+                    <button 
+                        className='delete-buttons' 
+                        id='personen' type='button'
+                        onClick={this.deletePersonData}
+                     >Person löschen</button>
                 
                     <label >Person ID:</label>
-                    <input type='text' name='person_id' value={this.state.personId}readOnly></input>
+                    <input type='text' name='person_id' value={this.state.person_id}readOnly></input>
                     <br></br>
 
                     <label >Rufname:</label>
@@ -188,6 +251,11 @@ export class EditPerson extends React.Component{
 
                 <div  id='editInputs-left'>
                     <h4>Kontaktdaten</h4>
+                    <button 
+                        className='delete-buttons' 
+                        id='kontakt_daten' type='button'
+                        onClick={this.deletePersonData}
+                     >Kontaktdaten löschen</button>
 
                     <label>E-Mail 1: </label>
                     <input type='email' id='email_1' value={this.state.email_1} 
