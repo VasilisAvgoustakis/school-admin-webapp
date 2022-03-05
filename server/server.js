@@ -365,6 +365,7 @@ WHERE
 app.get('/bezugspersonen', (req, res) => {
   const { person_id } = req.query;
   pool.query(`SELECT
+  personen.person_id,
   personen.rufname,
   personen.nachname
 FROM
@@ -540,7 +541,8 @@ WHERE
         email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2, mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx,
         staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache,
         zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag,
-        betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien
+        betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien,
+        bezugspersonen, probableBezugspersonen, bezugsPersonToBeAdded, bezugsPersonToBeDeleted
         ] = req.query.state
 
     // this variable will be true if the error case in one of the queries has already send headers
@@ -638,7 +640,7 @@ WHERE
     
     // check that at least on of the values is relevant for saving (not null or '')
     validCoreData = 0;
-    console.log('validCoreData before iteration: '+ validCoreData);
+    //console.log('validCoreData before iteration: '+ validCoreData);
     kind_schule_data.forEach(element=> {
       if(element === '' || element === null || element === 'null'){
         return;
@@ -738,6 +740,34 @@ WHERE
             sumResults.push(results)
           }})
     }
+
+    
+    if(bezugsPersonToBeAdded){
+
+      console.log(bezugsPersonToBeAdded)
+      pool.query(
+        `INSERT INTO bezugsperson_kind (person_id_1, person_id_2, beziehung_zu_person2, recht_gegenueber_person_2) 
+          VALUES(${bezugsPersonToBeAdded}, ${person_id}, NULL, NULL);`
+          ,(err,results) => {
+            if(err){ //Query Error (Rollback and release connection)
+              console.log(err)
+              freeOfErrors = false;
+              return res.send(err);
+            }else {
+              sumResults.push(results)
+            }
+          }
+      )
+    }
+
+
+
+
+
+
+
+
+
     
     // this query's role is just as workaround soolution to send a valid response 
     //that makes client refresh the page
@@ -756,6 +786,8 @@ WHERE
           return res.send(results);
         }
       }})   
+
+      
 
       }); 
 

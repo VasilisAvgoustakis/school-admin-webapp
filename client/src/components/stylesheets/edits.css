@@ -1,36 +1,31 @@
 #editInputs-left{
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-    /* align-content:flex-start; */
-    
-
-    background: rgb(151, 151, 233); 
-            
-    
-    padding: 10px; 
-    border: 2px solid #000000; 
-    margin: 10px;
-
-    position: relative;
+    position: absolute;
     left: 0%;
     width:30%;  
 }
 
+
+#editInputs-middle{
+    position: absolute;
+    right:40%;
+    width:30%;  
+}
+
 #editInputs-right{
+    position: absolute;
+    right: 0%;
+    width:30%;  
+}
+
+.edit-person-cont{
     display: flex;
     flex-direction: column;
     border-radius: 10px;
     background: rgb(151, 151, 233); 
-            
-    
+
     padding: 10px; 
     border: 2px solid #000000; 
     margin: 10px;
 
-    position: absolute;
-    top:5.55%;
-    left: 32%;
-    width:30%;  
 }
 
