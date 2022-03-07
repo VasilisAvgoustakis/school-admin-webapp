@@ -324,7 +324,7 @@ export class Person extends React.Component{
 
 
     render() {
-        
+        //console.log(this.state.bezugspersonen)
       return (
 
         <li key={uuidv4()} onClick={this.handleClick} >

@@ -367,7 +367,9 @@ app.get('/bezugspersonen', (req, res) => {
   pool.query(`SELECT
   personen.person_id,
   personen.rufname,
-  personen.nachname
+  personen.nachname,
+  bezugsperson_kind.beziehung_zu_person2,
+  bezugsperson_kind.recht_gegenueber_person_2
 FROM
   bezugsperson_kind
       INNER JOIN
@@ -387,152 +389,7 @@ WHERE
 });
   //END OF GETS
 
-  //POSTS
-
-// app.get('/editPerson', (req, res) => {
-//   let [person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum, nicht_auf_listen,
-//       email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2, mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx,
-//       staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache,
-//       zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag,
-//       betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien
-//   ] = req.query.state
-//   console.log(rufname)
-
-//   pool.getConnection((err, connection) =>{
-//     connection.beginTransaction((err) => {
-//       if (err){   //Transaction Error (Rollback and release connection)
-//         connection.rollback(()=>{
-//           connection.release();
-//         })
-//       }
-//       else {
-//         connection.query(`INSERT INTO personen(person_id, rufname, amtlicher_vorname, nachname, 
-//           geburtsdatum, einschulungsdatum, nicht_auf_listen) 
-//           VALUES (${person_id}, '${rufname}', '${amtlicher_vorname}', '${nachname}', 
-//           ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
-//           ${einschulungsdatum ? ("'" + einschulungsdatum.toString() + "'"):(null)},
-//           ${nicht_auf_listen}) 
-//           ON DUPLICATE KEY UPDATE 
-//           rufname='${rufname}',
-//           amtlicher_vorname = '${amtlicher_vorname}',
-//           nachname = '${nachname}',
-//           geburtsdatum = ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
-//           einschulungsdatum = ${einschulungsdatum ? ("'" + einschulungsdatum.toString() + "'"):(null)},
-//           nicht_auf_listen = '${nicht_auf_listen}';`,(err, results) =>{
-
-//             if(err){ //Query Error (Rollback and release connection)
-//               console.log(err);
-//               connection.rollback(() => {
-//                 connection.release();
-//                 //Failure
-//             });
-//               return res.send(err);
-//             }else {
-              
-//               connection.query(
-//               `INSERT INTO kontakt_daten(person_id, email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2,
-//                                 mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx)
-//                 VALUES(${person_id}, '${email_1}', '${email_2}', '${email_fsx}', '${mobil_telefon_1}', 
-//                 '${mobil_telefon_2}', '${mobil_telefon_fsx}', '${telefon_1}', '${telefon_2}', '${telefon_fsx}')
-//                 ON DUPLICATE KEY UPDATE
-//                 email_1 = '${email_1}',
-//                 email_2 = '${email_2}',
-//                 email_fsx = '${email_fsx}',
-//                 mobil_telefon_1 = '${mobil_telefon_1}',
-//                 mobil_telefon_2 = '${mobil_telefon_2}',
-//                 mobil_telefon_fsx = '${mobil_telefon_fsx}',
-//                 telefon_1 = '${telefon_1}',
-//                 telefon_2 = '${telefon_2}',
-//                 telefon_fsx = '${telefon_fsx}';`
-
-//                 ,(err, results) =>{
-//                   if(err){ //Query Error (Rollback and release connection)
-//                     console.log(err);
-//                     connection.rollback(() => {
-//                       connection.release();
-//                       //Failure
-//                   });
-//                     return res.send(err);
-//                   }else{
-//                     console.log(abgangsgrund)
-//                     connection.query(
-//                       `INSERT INTO kind_schule(person_id, zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag)
-//                         VALUES(${person_id}, ${zugangsdatum_zur_fsx ? ("'" + zugangsdatum_zur_fsx.toString() + "'"):(null)}, ${abgangsdatum_von_fsx ? ("'" + abgangsdatum_von_fsx.toString() + "'"):(null)},
-//                                ${abgangsgrund !== 'null' ? ("'"+abgangsgrund+"'"):(null)}, '${mittag}')
-//                         ON DUPLICATE KEY UPDATE
-//                         zugangsdatum_zur_fsx = ${zugangsdatum_zur_fsx ? ("'" + zugangsdatum_zur_fsx.toString() + "'"):(null)},
-//                         abgangsdatum_von_fsx = ${abgangsdatum_von_fsx ? ("'" + abgangsdatum_von_fsx.toString() + "'"):(null)},
-//                         abgangsgrund = ${abgangsgrund !== 'null' ? ("'"+abgangsgrund+"'"):(null)},
-//                         mittag = '${mittag}';`
-        
-//                         ,(err, results) =>{
-//                           if(err){ //Query Error (Rollback and release connection)
-//                             console.log(err);
-//                             connection.rollback(() => {
-//                               connection.release();
-//                               //Failure
-//                           });
-//                             return res.send(err);
-//                           }else{
-//                             connection.query(
-//                             `INSERT INTO kind_daten(person_id, staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache)
-//                               VALUES(${person_id}, '${staatsangehoerigkeit}', '${geburtsort}', '${geschlecht}', '${nichtdeutsche_herkunftssprache}')
-//                               ON DUPLICATE KEY UPDATE
-//                               staatsangehoerigkeit = '${staatsangehoerigkeit}',
-//                               geburtsort = '${geburtsort}',
-//                               geschlecht = '${geschlecht}',
-//                               nichtdeutsche_herkunftssprache = '${nichtdeutsche_herkunftssprache}';`
-              
-//                               ,(err, results) =>{
-//                                 if(err){ //Query Error (Rollback and release connection)
-//                                   console.log(err);
-//                                   connection.rollback(() => {
-//                                     connection.release();
-//                                     //Failure
-//                                 });
-//                                   return res.send(err);
-//                                 }else{
-//                                   connection.query(
-//                                   `INSERT INTO kind_betreuung(person_id, betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien)
-//                                     VALUES(${person_id}, ${betreuung_beginn ? ("'" + betreuung_beginn.toString() + "'"):(null)}, 
-//                                           ${betreuung_ende ? ("'" + betreuung_ende.toString() + "'"):(null)}, 
-//                                           '${betreuung_umfang}', '${betreuung_ferien}')
-//                                     ON DUPLICATE KEY UPDATE
-//                                     betreuung_beginn = ${betreuung_beginn ? ("'" + betreuung_beginn.toString() + "'"):(null)},
-//                                     betreuung_ende = ${betreuung_ende ? ("'" + betreuung_ende.toString() + "'"):(null)},
-//                                     betreuung_umfang = '${betreuung_umfang}',
-//                                     betreuung_ferien = '${betreuung_ferien}';`
-                    
-//                                     ,(err, results) =>{
-//                                       if(err){ //Query Error (Rollback and release connection)
-//                                         console.log(err);
-//                                         connection.rollback(() => {
-//                                           connection.release();
-//                                           //Failure
-//                                       });
-//                                         return res.send(err);
-//                                       }else {
-//                             connection.commit((err) => {
-//                               if (err) {
-//                                   connection.rollback(() => {
-//                                       connection.release();
-//                                       //Failure
-//                                   });
-//                               } else {
-//                                   connection.release();
-//                                   //Success
-//                                   console.log(results)
-//                                   return res.send(results);
-//                                 }
-//                               })
-//                           } 
-//                           })}
-//                         })
-//                   }}
-//         )}})}})
-//       }})
-//     })
-//   });   
+ 
 
 
   app.get('/editPerson', async (req, res) => {
@@ -542,12 +399,12 @@ WHERE
         staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache,
         zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag,
         betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien,
-        bezugspersonen, probableBezugspersonen, bezugsPersonToBeAdded, bezugsPersonToBeDeleted
+        bezugspersonen, probableBezugspersonen, bezugsPersonToBeAdded, bezugsPersonToBeDeleted, beziehung_zu_person2, recht_gegenueber_person2
         ] = req.query.state
 
     // this variable will be true if the error case in one of the queries has already send headers
     let freeOfErrors = true;
-
+   
     //array to put all results and return them at the end of the querry
     let sumResults = [];
     
@@ -646,7 +503,7 @@ WHERE
         return;
       }else{
         validCoreData++; 
-        console.log(validCoreData);
+        //console.log(validCoreData);
       }
     })
     
@@ -741,13 +598,16 @@ WHERE
           }})
     }
 
-    
+    //adds selected person as Bezugsperson for this Pupil
     if(bezugsPersonToBeAdded){
-
-      console.log(bezugsPersonToBeAdded)
+      //console.log("BZPADD: "+bezugsPersonToBeAdded)
       pool.query(
-        `INSERT INTO bezugsperson_kind (person_id_1, person_id_2, beziehung_zu_person2, recht_gegenueber_person_2) 
-          VALUES(${bezugsPersonToBeAdded}, ${person_id}, NULL, NULL);`
+        `INSERT IGNORE INTO bezugsperson_kind (person_id_1, person_id_2, beziehung_zu_person2, recht_gegenueber_person_2) 
+          VALUES(${bezugsPersonToBeAdded}, 
+                  ${person_id}, 
+                  ${beziehung_zu_person2 ? ("'"+beziehung_zu_person2+"'"):(null)}, 
+                  ${recht_gegenueber_person2 ? ("'"+recht_gegenueber_person2+"'"):(null)})
+          ;`
           ,(err,results) => {
             if(err){ //Query Error (Rollback and release connection)
               console.log(err)
@@ -760,14 +620,28 @@ WHERE
       )
     }
 
+    //removes selected person as Bezugsperson for this Pupil
+    if(bezugsPersonToBeDeleted){
+      console.log("BZPADD: "+bezugsPersonToBeDeleted)
+      pool.query(
+        `DELETE FROM bezugsperson_kind 
+            WHERE person_id_1=${bezugsPersonToBeDeleted}
+            AND person_id_2=${person_id}
+          ;`
+          ,(err,results) => {
+            if(err){ //Query Error (Rollback and release connection)
+              console.log(err)
+              freeOfErrors = false;
+              return res.send(err);
+            }else {
+              sumResults.push(results)
+            }
+          }
+      )
+    }
 
-
-
-
-
-
-
-
+   
+    
     
     // this query's role is just as workaround soolution to send a valid response 
     //that makes client refresh the page
@@ -780,16 +654,32 @@ WHERE
         // only send results headers to client if none of the queries above has returned an error
         // which would mean that freeOfErrors == false
         while(freeOfErrors){
-          // sumResults.push(results)
-          console.log("sending...")
-          console.log(results)
-          return res.send(results);
+          //sumResults.push(results)
+          //console.log("sending...")
+          //console.log(results)
+          return res.send("Results");
         }
       }})   
 
-      
 
       }); 
+    
+
+      app.get('/deleteBezugspersonen', (req, res) => {
+        let table = req.query.table;
+        let person_id = req.query.person_id;
+        pool.query(`DELETE FROM bezugsperson_kind WHERE person_id_2= ${person_id};`,
+        (err, result)=>{
+          if(err){
+            console.log(err);
+            return res.send(err);
+          }else{
+            console.log(result)
+            return res.send("Results");
+          }
+        })
+  
+      });
 
 
 
@@ -803,7 +693,7 @@ WHERE
           return res.send(err);
         }else{
           console.log(result)
-          return res.send(result);
+          return res.send("Results");
         }
       })
 
@@ -815,7 +705,7 @@ WHERE
       let columnNames = req.query.columnNames;
       let numIdColumns = id.length;
 
-      console.log(table, id, numIdColumns, columnNames)
+      //console.log(table, id, numIdColumns, columnNames)
       
       if(numIdColumns === 2){
         pool.query(`DELETE FROM ${table} 

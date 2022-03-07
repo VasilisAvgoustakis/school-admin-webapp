@@ -16,6 +16,7 @@ export class EditPerson extends React.Component{
         this.editData = this.editData.bind(this);
         this.deleteQueryPerson = this.deleteQueryPerson.bind(this);
         this.deleteQueryKind = this.deleteQueryKind.bind(this);
+        this.deleteBezugspersonen = this.deleteBezugspersonen.bind(this);
         this.deletePersonData = this.deletePersonData.bind(this);
         this.deleteKindData = this.deleteKindData.bind(this);
 
@@ -62,8 +63,10 @@ export class EditPerson extends React.Component{
             //bezugsperson_kind
             bezugspersonen:this.props.bezugspersonen,
             probableBezugspersonen: [],
-            bezugsPersonToBeAdded: [],
-            bezugsPersonToBeDeleted: []
+            bezugsPersonToBeAdded: '',
+            bezugsPersonToBeDeleted: '',
+            beziehung_zu_person2: '',
+            recht_gegenueber_person2: ''
 
 
         }
@@ -92,11 +95,22 @@ export class EditPerson extends React.Component{
         var stateObj = this.state;
         var dataArr = Object.values(stateObj);
 
-        console.log(dataArr.bezugsPersonToBeAdded)
+        
         return(
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/editPerson`, {
            params: {
                state: dataArr
+           } 
+      })
+       )
+    }
+
+    //deletes all Bezugspersonen for this kid
+    async deleteQueryBezugspersonen(){
+        return(
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteBezugspersonen`, {
+           params: {
+               person_id: this.state.person_id
            } 
       })
        )
@@ -153,10 +167,10 @@ export class EditPerson extends React.Component{
         var confirm = window.confirm('Diese Aktion wird die Daten direkt in der Datenbank bearbeiten!!! Bist du sicher dass diese Korrekt sind?')
         if(confirm){
         this.updateQuery().then(res =>{
-            if(res.data.sqlMessage){
+            if(typeof(res.data) !== 'string'){
                 console.log("This is the Err: ")
-                console.log(res)
-                window.alert(res.data.sqlMessage);
+                console.log(res.data)
+                window.alert(res.data);
             }else{
                 console.log("confirm")
                 confirm = false;
@@ -197,6 +211,24 @@ export class EditPerson extends React.Component{
         }
     }
 
+    deleteBezugspersonen(){
+        var confirm = window.confirm("ACHTUNG!!! Diese Aktion wird alle Bezugspersonen für dieses Kind löschen!")
+        
+        if(confirm){
+
+            this.deleteQueryBezugspersonen()
+            
+            .then(result=>{
+                console.log("confirm")
+                confirm = false;
+                //last delete query refreshes the page
+                if(!confirm)window.location.reload()
+                console.log(result)
+            });
+        }
+
+    }
+
     deletePersonData(e){
         //console.log(e.target.id)
         let table = e.target.id;
@@ -226,7 +258,7 @@ export class EditPerson extends React.Component{
 
 
     render(){
-        console.log(this.state.bezugsPersonToBeAdded)
+        //console.log(this.state.bezugsPersonToBeAdded)
         console.log(this.state.bezugsPersonToBeDeleted)
         //console.log(dateToENFormat(new Date(this.state.geburtsdatum)))
         return(
@@ -454,22 +486,37 @@ export class EditPerson extends React.Component{
                             <button 
                                 className='delete-buttons' 
                                 id='kontakt_daten' type='button'
-                                
+                                onClick={this.deleteBezugspersonen}
                             >Alle Bezugspersonen löschen</button>
 
                             <label>Neue Person für dieses Kind addieren: </label>
                             <select id='bezugsPersonToBeAdded' onChange= {this.handleChange}>
-                                <option selected="true">-</option>
+                                <option selected="true" value=''>-</option>
 
                                 {this.state.probableBezugspersonen.map((person) => 
                                 <option value={person.person_id}>{person.rufname + " " + person.nachname}</option>)}
                                 
                             </select>
+                            <label>Beziehung zum Kind: </label>
+                            <select id='beziehung_zu_person2' onChange= {this.handleChange}>
+                                <option selected="true" value={null}>-</option>
+                                <option value='Elternteil'>Elternteil</option>
+                                <option value='Andere'>Andere</option>
+                            </select>
+
+                            <label>Recht gegenüber Kind: </label>
+                            <select id='recht_gegenueber_person2' onChange= {this.handleChange}>
+                                <option selected="true" value={null}>-</option>
+                                <option value='Sorgerecht'>Sorgerecht</option>
+                                <option value='Umgangsrecht/Abholen'>Umgangsrecht/Abholen</option>
+                                <option value='Keine'>Keine</option>
+                            </select>
                             <br></br>
+                            
 
                             <label>Existierende Bezugspersonen fürs Kind entfernen: </label>
                             <select id='bezugsPersonToBeDeleted' onChange= {this.handleChange}>
-                                <option selected="true">-</option>
+                                <option selected="true" value=''>-</option>
 
                                 {this.state.bezugspersonen.map((person) => 
                                 <option value={person.person_id}>{person.rufname + " " + person.nachname}</option>)}

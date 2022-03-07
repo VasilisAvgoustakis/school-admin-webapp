@@ -22,6 +22,8 @@ class ListRow extends React.Component{
                 <tr key={uuidv4()}>
                     {bezugspersonenRow.rufname ? (<td>{bezugspersonenRow.rufname}</td>):(<td> -- </td>)}
                     {bezugspersonenRow.nachname ? (<td>{bezugspersonenRow.nachname}</td>):(<td> -- </td>)}
+                    {bezugspersonenRow.beziehung_zu_person2 ? (<td>{bezugspersonenRow.beziehung_zu_person2}</td>):(<td> -- </td>)}
+                    {bezugspersonenRow.recht_gegenueber_person_2 ? (<td>{bezugspersonenRow.recht_gegenueber_person_2}</td>):(<td> -- </td>)}
                 </tr>
                 
             )) 
@@ -53,13 +55,15 @@ export function Bezugspersonen(props){
         <table>
             <thead>
                 <tr>
-                    <th colSpan="2">Bezugspersonen</th>
+                    <th colSpan="4">Bezugspersonen</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td><strong>Rufname</strong></td>
                     <td><strong>Nachname</strong></td>
+                    <td><strong>Beziehung zum Kind</strong></td>
+                    <td><strong>recht gegenüber Kind</strong></td>
                 </tr>
                 {/* Hier comes the address row element */}
                 
