@@ -234,6 +234,21 @@ app.get('/personsData', (req, res) => {
               WHERE
                   personen.person_id = kind_lerngruppe.person_id),
           0) AS Lerngruppe,
+  COALESCE((SELECT 
+            kind_lerngruppe.eintrittsdatum
+        FROM
+            lerngruppen
+                LEFT OUTER JOIN
+            kind_lerngruppe ON kind_lerngruppe.lerngruppe_id = lerngruppen.lerngruppe_id
+                AND kind_lerngruppe.eintrittsdatum = (SELECT 
+                    MAX(kind_lerngruppe.eintrittsdatum)
+                FROM
+                    kind_lerngruppe
+                        LEFT OUTER JOIN
+                    personen ON personen.person_id = kind_lerngruppe.person_id)
+        WHERE
+            personen.person_id = kind_lerngruppe.person_id),
+    0) AS Lerngruppe_eintrittsdatum,
 COALESCE((SELECT 
   MAX(kind_but.but_ende)
 FROM
@@ -400,7 +415,8 @@ WHERE
         zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag,
         betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien,
         bezugspersonen, probableBezugspersonen, bezugsPersonToBeAdded, bezugsPersonToBeDeleted, beziehung_zu_person2, recht_gegenueber_person2,
-        haushalte, probableHaushalte, haushalteToBeAdded, haushaltToBeDeleted, meldeanschrift, datum_einzug
+        haushalte, probableHaushalte, haushalteToBeAdded, haushaltToBeDeleted, meldeanschrift, datum_einzug,
+        lerngruppen, probableLerngruppen, lerngruppeToBeAdded, eintrittsdatum, lerngruppeToBeDeleted,
         ] = req.query.state
 
     // this variable will be true if the error case in one of the queries has already send headers
@@ -684,6 +700,48 @@ WHERE
       )
     }
 
+    //adds a new lerngruppe record for this person
+    if(lerngruppeToBeAdded){
+      console.log("BZPADD: "+lerngruppeToBeAdded)
+      pool.query(
+        `INSERT IGNORE INTO kind_lerngruppe (person_id, lerngruppe_id, eintrittsdatum) 
+          VALUES(${person_id}, 
+                  ${lerngruppeToBeAdded},  
+                  ${eintrittsdatum ? ("'"+eintrittsdatum.toString()+"'"):(null)})
+          ;`
+          ,(err,results) => {
+            if(err){
+              console.log(err)
+              freeOfErrors = false;
+              return res.send(err);
+            }else {
+              sumResults.push(results)
+            }
+          }
+      )
+    }
+
+
+    //removes selected Lerngruppe Record for this Kid
+    if(lerngruppeToBeDeleted){
+      console.log("BZPADD: "+lerngruppeToBeDeleted)
+      pool.query(
+        `DELETE FROM kind_lerngruppe 
+            WHERE lerngruppe_id=${lerngruppeToBeDeleted}
+            AND person_id=${person_id}
+          ;`
+          ,(err,results) => {
+            if(err){
+              console.log(err)
+              freeOfErrors = false;
+              return res.send(err);
+            }else {
+              sumResults.push(results)
+            }
+          }
+      )
+    }
+
    
     
     
@@ -739,6 +797,22 @@ WHERE
       })
 
     });
+
+  //deletes all Lerngruppe Records for a given Child
+  app.get('/deleteLerngruppen', (req, res) => {
+    let person_id = req.query.person_id;
+    pool.query(`DELETE FROM kind_lerngruppe WHERE person_id= ${person_id};`,
+    (err, result)=>{
+      if(err){
+        console.log(err);
+        return res.send(err);
+      }else{
+        console.log(result)
+        return res.send("Results");
+      }
+    })
+
+  });
 
     app.get('/deletePersonData', (req, res) => {
       let table = req.query.table;
@@ -938,6 +1012,35 @@ app.get('/lerngruppenList', (req, res) => {
     }
   });
 });
+
+
+app.get('/lerngruppenPerson', (req, res) => {
+  const { person_id } = req.query;
+  const { table } = req.query;
+  pool.query(
+  `SELECT
+      lerngruppen.lerngruppe_id,
+      lerngruppen.bezeichnung,
+      kind_lerngruppe.eintrittsdatum
+  FROM
+      ${table}
+      INNER JOIN
+      lerngruppen ON lerngruppen.lerngruppe_id = kind_lerngruppe.lerngruppe_id
+  WHERE
+    kind_lerngruppe.person_id = ${person_id}
+  ORDER BY 
+      eintrittsdatum ASC
+  ;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      // //console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
 
 
 app.get('/lerngruppe_mitglieder', (req, res) => {

@@ -14,15 +14,19 @@ export class EditPerson extends React.Component{
         this.defaultDateValue = this.today.getFullYear()+'-'+(this.today.getMonth()+1)+'-'+ this.today.getDate();
         this.fetchProbableBezugspersonen = this.fetchProbableBezugspersonen.bind(this);
         this.fetchProbableHaushalte = this.fetchProbableHaushalte.bind(this);
+        this.fetchPersonsLerngruppen = this.fetchPersonsLerngruppen.bind(this);
+        this.fetchProbableLerngruppen = this.fetchProbableLerngruppen.bind(this);
         this.updateQuery = this.updateQuery.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.editData = this.editData.bind(this);
         this.deleteQueryBezugspersonen = this.deleteQueryBezugspersonen.bind(this);
         this.deleteQueryHaushalte = this.deleteQueryHaushalte.bind(this);
+        this.deleteQueryLerngruppen = this.deleteQueryLerngruppen.bind(this);
         this.deleteQueryPerson = this.deleteQueryPerson.bind(this);
         this.deleteQueryKind = this.deleteQueryKind.bind(this);
         this.deleteBezugspersonen = this.deleteBezugspersonen.bind(this);
         this.deleteHaushalte = this.deleteHaushalte.bind(this);
+        this.deleteLerngruppen = this.deleteLerngruppen.bind(this);
         this.deletePersonData = this.deletePersonData.bind(this);
         this.deleteKindData = this.deleteKindData.bind(this);
 
@@ -80,7 +84,14 @@ export class EditPerson extends React.Component{
             haushalteToBeAdded: '',
             haushaltToBeDeleted: '',
             meldeanschrift:null,
-            datum_einzug:this.defaultDateValue
+            datum_einzug:this.defaultDateValue,
+
+            //lerngruppen
+            lerngruppen:[],
+            probableLerngruppen:[],
+            lerngruppeToBeAdded: '',
+            eintrittsdatum:this.defaultDateValue,
+            lerngruppeToBeDeleted:'',
 
 
         }
@@ -105,14 +116,35 @@ export class EditPerson extends React.Component{
           }))
       }
 
-      async fetchProbableHaushalte(){
+    async fetchProbableHaushalte(){
         return (
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/hausList`, {
             params: {
                 table: 'haushalte',
-              },
-          }))
-      }
+                },
+            }))
+    }
+
+    async fetchProbableLerngruppen(){
+        return (
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lerngruppenList`, {
+            params: {
+                table: 'lerngruppen',
+                },
+            }))
+    }
+
+    async fetchPersonsLerngruppen(){
+        return (
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lerngruppenPerson`, {
+            params: {
+                table: 'kind_lerngruppe',
+                person_id: this.state.person_id
+                },
+            }))
+    }
+
+
 
     async updateQuery(){
         var stateObj = this.state;
@@ -142,6 +174,18 @@ export class EditPerson extends React.Component{
     async deleteQueryHaushalte(){
         return(
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteHaushalte`, {
+           params: {
+               person_id: this.state.person_id
+           } 
+      })
+       )
+    }
+
+
+    //deletes all Lerngruppen for this Child
+    async deleteQueryLerngruppen(){
+        return(
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteLerngruppen`, {
            params: {
                person_id: this.state.person_id
            } 
@@ -193,6 +237,40 @@ export class EditPerson extends React.Component{
               probableHaushalte: haushalte
             })
           });
+
+        this.fetchProbableLerngruppen().then(res => {
+          
+            let lerngruppen = [];
+            res.data.forEach(gruppe => {
+                //console.log(gruppe.bezeichnung)
+                lerngruppen.push(
+                    Object.create({lerngruppe_id:gruppe.lerngruppe_id, 
+                                bezeichnung:gruppe.bezeichnung,
+                                }))
+                
+            });
+            this.setState({
+              probableLerngruppen: lerngruppen
+            })
+          });
+
+        this.fetchPersonsLerngruppen().then(res => {
+        
+            let lerngruppen = [];
+            res.data.forEach(gruppe => {
+                //console.log(gruppe.bezeichnung)
+                lerngruppen.push(
+                    Object.create({ 
+                                lerngruppe_id: gruppe.lerngruppe_id,
+                                bezeichnung:gruppe.bezeichnung,
+                                eintrittsdatum: gruppe.eintrittsdatum
+                                }))
+                
+            });
+            this.setState({
+                lerngruppen: lerngruppen
+            })
+        });
 
 
       }
@@ -298,6 +376,24 @@ export class EditPerson extends React.Component{
 
     }
 
+    deleteLerngruppen(){
+        var confirm = window.confirm("ACHTUNG!!! Diese Aktion wird alle Lerngruppen Einträge dieses Kindes löschen!")
+        
+        if(confirm){
+
+            this.deleteQueryLerngruppen()
+            
+            .then(result=>{
+                console.log("confirm")
+                confirm = false;
+                //last delete query refreshes the page
+                if(!confirm)window.location.reload()
+                console.log(result)
+            });
+        }
+
+    }
+
     deletePersonData(e){
         //console.log(e.target.id)
         let table = e.target.id;
@@ -327,7 +423,7 @@ export class EditPerson extends React.Component{
 
 
     render(){
-        //console.log(this.state.bezugsPersonToBeAdded)
+        console.log(this.state.eintrittsdatum)
         //console.log(this.state.bezugsPersonToBeDeleted)
         //console.log(dateToENFormat(new Date(this.state.geburtsdatum)))
         return(
@@ -548,7 +644,48 @@ export class EditPerson extends React.Component{
 
 
                         </div>
+                        
+                        {/* Lerngruppen */}
+                        <div className='edit-person-data-cont'>
+                            <h4>Lerngruppen</h4>
+                                <button 
+                                    className='delete-buttons' 
+                                    id='kind_lerngruppe' type='button'
+                                    onClick={this.deleteLerngruppen}
+                                    
+                                >Alle Lerngruppe Einträge dieser Person löschen</button>
 
+                                <label>Neuer Lerngruppe Eintrag für diese Person hinzufügen: </label>
+                                <select id='lerngruppeToBeAdded' onChange= {this.handleChange}>
+                                    <option selected="true" value=''>-</option>
+
+                                    {this.state.probableLerngruppen.map((gruppe) => 
+                                    <option value={gruppe.lerngruppe_id}>{gruppe.bezeichnung}</option>)}
+                                    
+                                </select>
+
+                                <label>Eintrittsdatum: </label>
+                                <input type="date" id="eintrittsdatum" name="sl-date"
+                                    defaultValue={this.defaultDateValue}
+                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                <br></br>
+                                
+
+                                <label>Existierende Lerngruppe Einträge dieser Person entfernen: </label>
+                                <select id='lerngruppeToBeDeleted' onChange= {this.handleChange}>
+                                    <option selected="true" value=''>-</option>
+
+                                    {this.state.lerngruppen.map((gruppe) => 
+                                    <option value={gruppe.lerngruppe_id}>{gruppe.bezeichnung 
+                                    + " Eintritt am: " + dateToDEFormat(new Date(gruppe.eintrittsdatum))}</option>)}
+                                    
+                                </select>
+                                <br></br>
+                        </div>
+
+
+
+                        {/* Bezugspersonen */}
                         <div className='edit-person-data-cont'>
                             <h4>Bezugspersonen</h4>
                                 <button 
@@ -594,6 +731,7 @@ export class EditPerson extends React.Component{
                         </div>
                     </div>
                     <div>
+                        {/* Haushalte */}
                         <div className='edit-person-data-cont'>
                             <h4>Haushalte</h4>
                                 <button 

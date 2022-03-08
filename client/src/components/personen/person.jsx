@@ -192,6 +192,8 @@ export class Person extends React.Component{
 
                             //haushalte
                             haushalte = {this.state.addresses}
+
+                            
                                     />
                     </div>
                 , document.getElementById('person-data'))):(
@@ -278,7 +280,7 @@ export class Person extends React.Component{
         if(this.state.clicked){
             this.customRender();
         }
-        //console.log(this.state.data.bezugspersonen)
+        console.log(this.state.data)
     }
     
     handleClick = async() => {
