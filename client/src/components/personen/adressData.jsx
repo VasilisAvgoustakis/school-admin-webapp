@@ -52,7 +52,7 @@ export function AddressData(props){
         <table>
             <thead>
                 <tr>
-                    <th colSpan="11">Wohnsituation</th>
+                    <th colSpan="11">Haushalte</th>
                 </tr>
             </thead>
             <tbody>

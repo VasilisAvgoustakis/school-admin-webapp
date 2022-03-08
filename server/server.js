@@ -399,7 +399,8 @@ WHERE
         staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache,
         zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag,
         betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien,
-        bezugspersonen, probableBezugspersonen, bezugsPersonToBeAdded, bezugsPersonToBeDeleted, beziehung_zu_person2, recht_gegenueber_person2
+        bezugspersonen, probableBezugspersonen, bezugsPersonToBeAdded, bezugsPersonToBeDeleted, beziehung_zu_person2, recht_gegenueber_person2,
+        haushalte, probableHaushalte, haushalteToBeAdded, haushaltToBeDeleted, meldeanschrift, datum_einzug
         ] = req.query.state
 
     // this variable will be true if the error case in one of the queries has already send headers
@@ -622,11 +623,54 @@ WHERE
 
     //removes selected person as Bezugsperson for this Pupil
     if(bezugsPersonToBeDeleted){
-      console.log("BZPADD: "+bezugsPersonToBeDeleted)
+      //console.log("BZPADD: "+bezugsPersonToBeDeleted)
       pool.query(
         `DELETE FROM bezugsperson_kind 
             WHERE person_id_1=${bezugsPersonToBeDeleted}
             AND person_id_2=${person_id}
+          ;`
+          ,(err,results) => {
+            if(err){ //Query Error (Rollback and release connection)
+              console.log(err)
+              freeOfErrors = false;
+              return res.send(err);
+            }else {
+              sumResults.push(results)
+            }
+          }
+      )
+    }
+
+
+    //adds selected Haushalt as address for this person
+    if(haushalteToBeAdded){
+      //console.log("BZPADD: "+haushalteToBeAdded)
+      pool.query(
+        `INSERT IGNORE INTO person_haushalt (haushalt_id, person_id, meldeanschrift, datum_einzug) 
+          VALUES(${haushalteToBeAdded}, 
+                  ${person_id}, 
+                  ${meldeanschrift}, 
+                  ${datum_einzug ? ("'"+datum_einzug.toString()+"'"):(null)})
+          ;`
+          ,(err,results) => {
+            if(err){ //Query Error (Rollback and release connection)
+              console.log(err)
+              freeOfErrors = false;
+              return res.send(err);
+            }else {
+              sumResults.push(results)
+            }
+          }
+      )
+    }
+
+    //removes selected Haushalt for this person
+    if(haushaltToBeDeleted){
+      console.log("BZPADD: "+haushaltToBeDeleted)
+      pool.query(
+        `DELETE FROM person_haushalt 
+            WHERE haushalt_id=${haushaltToBeDeleted}
+            AND person_id=${person_id}
           ;`
           ,(err,results) => {
             if(err){ //Query Error (Rollback and release connection)
@@ -660,28 +704,41 @@ WHERE
           return res.send("Results");
         }
       }})   
-
-
       }); 
+
+  // END of EDIT Query
     
+      //deletes all bezugspersonen for a given person
+    app.get('/deleteBezugspersonen', (req, res) => {
+      let person_id = req.query.person_id;
+      pool.query(`DELETE FROM bezugsperson_kind WHERE person_id_2= ${person_id};`,
+      (err, result)=>{
+        if(err){
+          console.log(err);
+          return res.send(err);
+        }else{
+          console.log(result)
+          return res.send("Results");
+        }
+      })
 
-      app.get('/deleteBezugspersonen', (req, res) => {
-        let table = req.query.table;
-        let person_id = req.query.person_id;
-        pool.query(`DELETE FROM bezugsperson_kind WHERE person_id_2= ${person_id};`,
-        (err, result)=>{
-          if(err){
-            console.log(err);
-            return res.send(err);
-          }else{
-            console.log(result)
-            return res.send("Results");
-          }
-        })
-  
-      });
+    });
 
+    //deletes all haushalte for a given person
+    app.get('/deleteHaushalte', (req, res) => {
+      let person_id = req.query.person_id;
+      pool.query(`DELETE FROM person_haushalt WHERE person_id= ${person_id};`,
+      (err, result)=>{
+        if(err){
+          console.log(err);
+          return res.send(err);
+        }else{
+          console.log(result)
+          return res.send("Results");
+        }
+      })
 
+    });
 
     app.get('/deletePersonData', (req, res) => {
       let table = req.query.table;
@@ -744,21 +801,9 @@ WHERE
         }
       })
       }
-      
-      
-      
-
     });
 
-
-
-
   //END OF POSTS
-
-
-
-
-
 //end of Personen queries
 
 

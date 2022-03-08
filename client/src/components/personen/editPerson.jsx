@@ -10,13 +10,19 @@ import { TouchableNativeFeedbackBase } from 'react-native';
 export class EditPerson extends React.Component{
     constructor(props){
         super(props);
+        this.today = new Date();
+        this.defaultDateValue = this.today.getFullYear()+'-'+(this.today.getMonth()+1)+'-'+ this.today.getDate();
         this.fetchProbableBezugspersonen = this.fetchProbableBezugspersonen.bind(this);
+        this.fetchProbableHaushalte = this.fetchProbableHaushalte.bind(this);
         this.updateQuery = this.updateQuery.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.editData = this.editData.bind(this);
+        this.deleteQueryBezugspersonen = this.deleteQueryBezugspersonen.bind(this);
+        this.deleteQueryHaushalte = this.deleteQueryHaushalte.bind(this);
         this.deleteQueryPerson = this.deleteQueryPerson.bind(this);
         this.deleteQueryKind = this.deleteQueryKind.bind(this);
         this.deleteBezugspersonen = this.deleteBezugspersonen.bind(this);
+        this.deleteHaushalte = this.deleteHaushalte.bind(this);
         this.deletePersonData = this.deletePersonData.bind(this);
         this.deleteKindData = this.deleteKindData.bind(this);
 
@@ -66,7 +72,15 @@ export class EditPerson extends React.Component{
             bezugsPersonToBeAdded: '',
             bezugsPersonToBeDeleted: '',
             beziehung_zu_person2: '',
-            recht_gegenueber_person2: ''
+            recht_gegenueber_person2: '',
+
+            //haushalte
+            haushalte: this.props.haushalte,
+            probableHaushalte: [],
+            haushalteToBeAdded: '',
+            haushaltToBeDeleted: '',
+            meldeanschrift:null,
+            datum_einzug:this.defaultDateValue
 
 
         }
@@ -91,11 +105,19 @@ export class EditPerson extends React.Component{
           }))
       }
 
+      async fetchProbableHaushalte(){
+        return (
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/hausList`, {
+            params: {
+                table: 'haushalte',
+              },
+          }))
+      }
+
     async updateQuery(){
         var stateObj = this.state;
         var dataArr = Object.values(stateObj);
 
-        
         return(
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/editPerson`, {
            params: {
@@ -109,6 +131,17 @@ export class EditPerson extends React.Component{
     async deleteQueryBezugspersonen(){
         return(
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteBezugspersonen`, {
+           params: {
+               person_id: this.state.person_id
+           } 
+      })
+       )
+    }
+
+    //deletes all Haushalte for this Person
+    async deleteQueryHaushalte(){
+        return(
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteHaushalte`, {
            params: {
                person_id: this.state.person_id
            } 
@@ -144,6 +177,24 @@ export class EditPerson extends React.Component{
             probableBezugspersonen: erwachsene
           })
         });
+
+        this.fetchProbableHaushalte().then(res => {
+          
+            let haushalte = [];
+            res.data.forEach(haus => {
+                //console.log(person.rufname)
+                haushalte.push(
+                    Object.create({haushalt_id:haus.haushalt_id, 
+                                strasse:haus.strasse,
+                                plz:haus.postleitzahl}))
+                
+            });
+            this.setState({
+              probableHaushalte: haushalte
+            })
+          });
+
+
       }
 
 
@@ -169,13 +220,13 @@ export class EditPerson extends React.Component{
         this.updateQuery().then(res =>{
             if(typeof(res.data) !== 'string'){
                 console.log("This is the Err: ")
-                console.log(res.data)
+                //console.log(res.data)
                 window.alert(res.data);
             }else{
                 console.log("confirm")
                 confirm = false;
                 if(!confirm)window.location.reload();
-                console.log(res);
+                //console.log(res);
             }
         }).catch(err =>{console.log(err)})
     }
@@ -229,6 +280,24 @@ export class EditPerson extends React.Component{
 
     }
 
+    deleteHaushalte(){
+        var confirm = window.confirm("ACHTUNG!!! Diese Aktion wird alle Haushalte dieser Person löschen!")
+        
+        if(confirm){
+
+            this.deleteQueryHaushalte()
+            
+            .then(result=>{
+                console.log("confirm")
+                confirm = false;
+                //last delete query refreshes the page
+                if(!confirm)window.location.reload()
+                console.log(result)
+            });
+        }
+
+    }
+
     deletePersonData(e){
         //console.log(e.target.id)
         let table = e.target.id;
@@ -259,274 +328,317 @@ export class EditPerson extends React.Component{
 
     render(){
         //console.log(this.state.bezugsPersonToBeAdded)
-        console.log(this.state.bezugsPersonToBeDeleted)
+        //console.log(this.state.bezugsPersonToBeDeleted)
         //console.log(dateToENFormat(new Date(this.state.geburtsdatum)))
         return(
-            
             <div>
-                
                 <button type='button' onClick={this.editData}>Speichern</button>
+                <div className='edit-person-cont'>
 
-                <div id='editInputs-left'>
-                    {/* Kerndaten */}
-                    <div className='edit-person-cont'>
-                        <h4>Edit Kerndaten</h4>
-                        <button 
-                            className='delete-buttons' 
-                            id='personen' type='button'
-                            onClick={this.deletePersonData}
-                        >Person löschen</button>
-                    
-                        <label >Person ID:</label>
-                        <input type='text' name='person_id' value={this.state.person_id}readOnly></input>
-                        <br></br>
+                    <div>
+                        {/* Kerndaten */}
+                        <div className='edit-person-data-cont'>
+                            <h4>Edit Kerndaten</h4>
+                            <button 
+                                className='delete-buttons' 
+                                id='personen' type='button'
+                                onClick={this.deletePersonData}
+                            >Person löschen</button>
+                        
+                            <label >Person ID:</label>
+                            <input type='text' name='person_id' value={this.state.person_id}readOnly></input>
+                            <br></br>
 
-                        <label >Rufname:</label>
-                        <input type='text' id='rufname' value={this.state.rufname} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
+                            <label >Rufname:</label>
+                            <input type='text' id='rufname' value={this.state.rufname} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
 
-                        <label >Amtlicher Vorname:</label>
-                        <input type='text' id='amtlicher_vorname' value={this.state.amtlicher_vorname} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
+                            <label >Amtlicher Vorname:</label>
+                            <input type='text' id='amtlicher_vorname' value={this.state.amtlicher_vorname} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
 
-                        <label >Nachname:</label>
-                        <input type='text' id='nachname' value={this.state.nachname} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
+                            <label >Nachname:</label>
+                            <input type='text' id='nachname' value={this.state.nachname} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
 
-                        <label >Geburtsdatum:</label>
-                        <input type='date' id='geburtsdatum' value={
-                            this.state.geburtsdatum ?
-                            (dateToENFormat(new Date(this.state.geburtsdatum))):('')} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
+                            <label >Geburtsdatum:</label>
+                            <input type='date' id='geburtsdatum' value={
+                                this.state.geburtsdatum ?
+                                (dateToENFormat(new Date(this.state.geburtsdatum))):('')} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
 
-                        <label >Einschulungsdatum:</label>
-                        <input type='date' id='einschulungsdatum' value={
-                            this.state.einschulungsdatum ? 
-                            (dateToENFormat(new Date(this.state.einschulungsdatum))):('')} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
+                            <label >Einschulungsdatum:</label>
+                            <input type='date' id='einschulungsdatum' value={
+                                this.state.einschulungsdatum ? 
+                                (dateToENFormat(new Date(this.state.einschulungsdatum))):('')} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
 
-                        <label >Nicht auf Listen:</label>
-                        <select id='nicht_auf_listen' value={this.state.nicht_auf_listen} 
-                        onChange= {this.handleChange} >
-                            <option value='0'>0</option>
-                            <option value='1'>1</option>
-                        </select>
-                        <br></br>
-                    </div>
+                            <label >Nicht auf Listen:</label>
+                            <select id='nicht_auf_listen' value={this.state.nicht_auf_listen} 
+                            onChange= {this.handleChange} >
+                                <option value='0'>0</option>
+                                <option value='1'>1</option>
+                            </select>
+                            <br></br>
+                        </div>
 
-                    {/* Contact Data */}
-                    <div className='edit-person-cont'>
-                        <h4>Kontaktdaten</h4>
-                        <button 
-                            className='delete-buttons' 
-                            id='kontakt_daten' type='button'
-                            onClick={this.deletePersonData}
-                        >Kontaktdaten löschen</button>
-
-                        <label>E-Mail 1: </label>
-                        <input type='email' id='email_1' value={this.state.email_1} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                        <label>E-Mail 2: </label>
-                        <input type='email' id='email_2' value={this.state.email_2} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                        <label>E-Mail FSX: </label>
-                        <input type='email' id='email_fsx' value={this.state.email_fsx} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                        <label>Mobil 1: </label>
-                        <input type='tel' id='mobil_telefon_1' value={this.state.mobil_telefon_1} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                        <label>Mobil 2: </label>
-                        <input type='tel' id='mobil_telefon_2' value={this.state.mobil_telefon_2} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                        <label>Mobil FSX: </label>
-                        <input type='tel' id='mobil_telefon_fsx' value={this.state.mobil_telefon_fsx} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                        <label>Tel 1: </label>
-                        <input type='tel' id='telefon_1' value={this.state.telefon_1} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                        <label>Tel 2: </label>
-                        <input type='tel' id='telefon_2' value={this.state.telefon_2} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                        <label>Tel FSX: </label>
-                        <input type='tel' id='telefon_fsx' value={this.state.telefon_fsx} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                    </div>
-                </div>
-                
-                <div id='editInputs-middle'>
-                    {/* Kind bezogene Daten */}
-                    <div className='edit-person-cont'>
-                        <h4>Kindsdaten</h4>
-                        <button className='delete-buttons' type='button' onClick={this.deleteKindData}>Kindbezogene Daten löschen</button>
-
-                        <label>Staatsangehörigkeit: </label>
-                        <input type='text' id='staatsangehoerigkeit' value={this.state.staatsangehoerigkeit} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                        <label>Geburtsort: </label>
-                        <input type='text' id='geburtsort' value={this.state.geburtsort} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                        <label>Geschlecht: </label>
-                        <select id='geschlecht' value={this.state.geschlecht} 
-                        onChange= {this.handleChange} >
-                            <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
-                            <option value='m'>m</option>
-                            <option value='f'>f</option>
-                            <option value='n'>n</option>
-                        </select>
-                        <br></br>
-
-                        <label>nicht deutsche Herkunftssprache: </label>
-                        <select id='nichtdeutsche_herkunftssprache' value={this.state.nichtdeutsche_herkunftssprache} 
-                        onChange= {this.handleChange} >
-                            <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
-                            <option value='0'>0</option>
-                            <option value='1'>1</option>
-                        </select>
-                        <br></br>
-
-                        <label >Zugang zu FSX:</label>
-                        <input type='date' id='zugangsdatum_zur_fsx' value={
-                            this.state.zugangsdatum_zur_fsx ? 
-                            (dateToENFormat(new Date(this.state.zugangsdatum_zur_fsx))):('')} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                        <label >Abgang vom FSX:</label>
-                        <input type='date' id='abgangsdatum_von_fsx' value={
-                            this.state.abgangsdatum_von_fsx ? 
-                            (dateToENFormat(new Date(this.state.abgangsdatum_von_fsx))):('')} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                        <label>Abgangsgrund: </label>
-                        <select id='abgangsgrund' value={this.state.abgangsgrund} 
-                        onChange= {this.handleChange} >
-                            <option selected="true" value=''>-</option> {/*default option when no data from database for selected person*/}
-                            <option value='Elternwunsch'>Elternwunsch</option>
-                            <option value='Wegzug'>Wegzug</option>
-                            <option value='Umzug'>Umzug</option>
-                            <option value='Uebergang Sekundarstufe'>Übergang Sekundarstufe</option>
-                            <option value='Sonstiges'>Sonstiges</option>
-                        </select>
-                        <br></br>
-
-                        <label >Mittag:</label>
-                        <select id='mittag' value={this.state.mittag} 
-                        onChange= {this.handleChange} >
-                            <option selected="true">-</option> {/*default option when no data from database for selected person*/}
-                            <option value='0'>0</option>
-                            <option value='1'>1</option>
-                        </select>
-                        <br></br>
-
-                        <label >Betreuung Beginn:</label>
-                        <input type='date' id='betreuung_beginn' value={
-                            this.state.betreuung_beginn ? 
-                            (dateToENFormat(new Date(this.state.betreuung_beginn))):('')} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                        <label >Betreuung Ende:</label>
-                        <input type='date' id='betreuung_ende' value={
-                            this.state.betreuung_ende ? 
-                            (dateToENFormat(new Date(this.state.betreuung_ende))):('')} 
-                        onChange= {this.handleChange} ></input>
-                        <br></br>
-
-                        <label >Betreuung Umfang:</label>
-                        <select id='betreuung_umfang' value={this.state.betreuung_umfang} 
-                        onChange= {this.handleChange} >
-                            <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
-                            <option value='16:00'>16:00</option>
-                            <option value='18:00'>18:00</option>
-                        </select>
-                        <br></br>
-
-                        <label >Betreuung Ferien:</label>
-                        <select id='betreuung_ferien' value={this.state.betreuung_ferien} 
-                        onChange= {this.handleChange} >
-                            <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
-                            <option value='0'>0</option>
-                            <option value='1'>1</option>
-                        </select>
-                        <br></br>
-
-
-                    </div>
-
-                    <div className='edit-person-cont'>
-                        <h4>Bezugspersonen</h4>
+                        {/* Contact Data */}
+                        <div className='edit-person-data-cont'>
+                            <h4>Kontaktdaten</h4>
                             <button 
                                 className='delete-buttons' 
                                 id='kontakt_daten' type='button'
-                                onClick={this.deleteBezugspersonen}
-                            >Alle Bezugspersonen löschen</button>
+                                onClick={this.deletePersonData}
+                            >Kontaktdaten löschen</button>
 
-                            <label>Neue Person für dieses Kind addieren: </label>
-                            <select id='bezugsPersonToBeAdded' onChange= {this.handleChange}>
-                                <option selected="true" value=''>-</option>
-
-                                {this.state.probableBezugspersonen.map((person) => 
-                                <option value={person.person_id}>{person.rufname + " " + person.nachname}</option>)}
-                                
-                            </select>
-                            <label>Beziehung zum Kind: </label>
-                            <select id='beziehung_zu_person2' onChange= {this.handleChange}>
-                                <option selected="true" value={null}>-</option>
-                                <option value='Elternteil'>Elternteil</option>
-                                <option value='Andere'>Andere</option>
-                            </select>
-
-                            <label>Recht gegenüber Kind: </label>
-                            <select id='recht_gegenueber_person2' onChange= {this.handleChange}>
-                                <option selected="true" value={null}>-</option>
-                                <option value='Sorgerecht'>Sorgerecht</option>
-                                <option value='Umgangsrecht/Abholen'>Umgangsrecht/Abholen</option>
-                                <option value='Keine'>Keine</option>
-                            </select>
+                            <label>E-Mail 1: </label>
+                            <input type='email' id='email_1' value={this.state.email_1} 
+                            onChange= {this.handleChange} ></input>
                             <br></br>
-                            
 
-                            <label>Existierende Bezugspersonen fürs Kind entfernen: </label>
-                            <select id='bezugsPersonToBeDeleted' onChange= {this.handleChange}>
-                                <option selected="true" value=''>-</option>
-
-                                {this.state.bezugspersonen.map((person) => 
-                                <option value={person.person_id}>{person.rufname + " " + person.nachname}</option>)}
-                                
-                            </select>
+                            <label>E-Mail 2: </label>
+                            <input type='email' id='email_2' value={this.state.email_2} 
+                            onChange= {this.handleChange} ></input>
                             <br></br>
+
+                            <label>E-Mail FSX: </label>
+                            <input type='email' id='email_fsx' value={this.state.email_fsx} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
+
+                            <label>Mobil 1: </label>
+                            <input type='tel' id='mobil_telefon_1' value={this.state.mobil_telefon_1} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
+
+                            <label>Mobil 2: </label>
+                            <input type='tel' id='mobil_telefon_2' value={this.state.mobil_telefon_2} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
+
+                            <label>Mobil FSX: </label>
+                            <input type='tel' id='mobil_telefon_fsx' value={this.state.mobil_telefon_fsx} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
+
+                            <label>Tel 1: </label>
+                            <input type='tel' id='telefon_1' value={this.state.telefon_1} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
+
+                            <label>Tel 2: </label>
+                            <input type='tel' id='telefon_2' value={this.state.telefon_2} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
+
+                            <label>Tel FSX: </label>
+                            <input type='tel' id='telefon_fsx' value={this.state.telefon_fsx} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
+
+                        </div>
                     </div>
-                </div>
+                    
+                    <div>
+                        {/* Kind bezogene Daten */}
+                        <div className='edit-person-data-cont'>
+                            <h4>Kindsdaten</h4>
+                            <button className='delete-buttons' type='button' onClick={this.deleteKindData}>Kindbezogene Daten löschen</button>
 
-                
+                            <label>Staatsangehörigkeit: </label>
+                            <input type='text' id='staatsangehoerigkeit' value={this.state.staatsangehoerigkeit} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
+
+                            <label>Geburtsort: </label>
+                            <input type='text' id='geburtsort' value={this.state.geburtsort} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
+
+                            <label>Geschlecht: </label>
+                            <select id='geschlecht' value={this.state.geschlecht} 
+                            onChange= {this.handleChange} >
+                                <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                <option value='m'>m</option>
+                                <option value='f'>f</option>
+                                <option value='n'>n</option>
+                            </select>
+                            <br></br>
+
+                            <label>nicht deutsche Herkunftssprache: </label>
+                            <select id='nichtdeutsche_herkunftssprache' value={this.state.nichtdeutsche_herkunftssprache} 
+                            onChange= {this.handleChange} >
+                                <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                <option value='0'>0</option>
+                                <option value='1'>1</option>
+                            </select>
+                            <br></br>
+
+                            <label >Zugang zu FSX:</label>
+                            <input type='date' id='zugangsdatum_zur_fsx' value={
+                                this.state.zugangsdatum_zur_fsx ? 
+                                (dateToENFormat(new Date(this.state.zugangsdatum_zur_fsx))):('')} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
+
+                            <label >Abgang vom FSX:</label>
+                            <input type='date' id='abgangsdatum_von_fsx' value={
+                                this.state.abgangsdatum_von_fsx ? 
+                                (dateToENFormat(new Date(this.state.abgangsdatum_von_fsx))):('')} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
+
+                            <label>Abgangsgrund: </label>
+                            <select id='abgangsgrund' value={this.state.abgangsgrund} 
+                            onChange= {this.handleChange} >
+                                <option selected="true" value=''>-</option> {/*default option when no data from database for selected person*/}
+                                <option value='Elternwunsch'>Elternwunsch</option>
+                                <option value='Wegzug'>Wegzug</option>
+                                <option value='Umzug'>Umzug</option>
+                                <option value='Uebergang Sekundarstufe'>Übergang Sekundarstufe</option>
+                                <option value='Sonstiges'>Sonstiges</option>
+                            </select>
+                            <br></br>
+
+                            <label >Mittag:</label>
+                            <select id='mittag' value={this.state.mittag} 
+                            onChange= {this.handleChange} >
+                                <option selected="true">-</option> {/*default option when no data from database for selected person*/}
+                                <option value='0'>0</option>
+                                <option value='1'>1</option>
+                            </select>
+                            <br></br>
+
+                            <label >Betreuung Beginn:</label>
+                            <input type='date' id='betreuung_beginn' value={
+                                this.state.betreuung_beginn ? 
+                                (dateToENFormat(new Date(this.state.betreuung_beginn))):('')} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
+
+                            <label >Betreuung Ende:</label>
+                            <input type='date' id='betreuung_ende' value={
+                                this.state.betreuung_ende ? 
+                                (dateToENFormat(new Date(this.state.betreuung_ende))):('')} 
+                            onChange= {this.handleChange} ></input>
+                            <br></br>
+
+                            <label >Betreuung Umfang:</label>
+                            <select id='betreuung_umfang' value={this.state.betreuung_umfang} 
+                            onChange= {this.handleChange} >
+                                <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                <option value='16:00'>16:00</option>
+                                <option value='18:00'>18:00</option>
+                            </select>
+                            <br></br>
+
+                            <label >Betreuung Ferien:</label>
+                            <select id='betreuung_ferien' value={this.state.betreuung_ferien} 
+                            onChange= {this.handleChange} >
+                                <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                <option value='0'>0</option>
+                                <option value='1'>1</option>
+                            </select>
+                            <br></br>
+
+
+                        </div>
+
+                        <div className='edit-person-data-cont'>
+                            <h4>Bezugspersonen</h4>
+                                <button 
+                                    className='delete-buttons' 
+                                    id='kontakt_daten' type='button'
+                                    onClick={this.deleteBezugspersonen}
+                                >Alle Bezugspersonen löschen</button>
+
+                                <label>Neue Person für dieses Kind addieren: </label>
+                                <select id='bezugsPersonToBeAdded' onChange= {this.handleChange}>
+                                    <option selected="true" value=''>-</option>
+
+                                    {this.state.probableBezugspersonen.map((person) => 
+                                    <option value={person.person_id}>{person.rufname + " " + person.nachname}</option>)}
+                                    
+                                </select>
+                                <label>Beziehung zum Kind: </label>
+                                <select id='beziehung_zu_person2' onChange= {this.handleChange}>
+                                    <option selected="true" value={null}>-</option>
+                                    <option value='Elternteil'>Elternteil</option>
+                                    <option value='Andere'>Andere</option>
+                                </select>
+
+                                <label>Recht gegenüber Kind: </label>
+                                <select id='recht_gegenueber_person2' onChange= {this.handleChange}>
+                                    <option selected="true" value={null}>-</option>
+                                    <option value='Sorgerecht'>Sorgerecht</option>
+                                    <option value='Umgangsrecht/Abholen'>Umgangsrecht/Abholen</option>
+                                    <option value='Keine'>Keine</option>
+                                </select>
+                                <br></br>
+                                
+
+                                <label>Existierende Bezugspersonen fürs Kind entfernen: </label>
+                                <select id='bezugsPersonToBeDeleted' onChange= {this.handleChange}>
+                                    <option selected="true" value=''>-</option>
+
+                                    {this.state.bezugspersonen.map((person) => 
+                                    <option value={person.person_id}>{person.rufname + " " + person.nachname}</option>)}
+                                    
+                                </select>
+                                <br></br>
+                        </div>
+                    </div>
+                    <div>
+                        <div className='edit-person-data-cont'>
+                            <h4>Haushalte</h4>
+                                <button 
+                                    className='delete-buttons' 
+                                    id='person_haushalt' type='button'
+                                    onClick={this.deleteHaushalte}
+                                >Alle Haushalte dieser Person löschen</button>
+
+                                <label>Neues Haushalt für diese Person hinzufügen: </label>
+                                <select id='haushalteToBeAdded' onChange= {this.handleChange}>
+                                    <option selected="true" value=''>-</option>
+
+                                    {this.state.probableHaushalte.map((haus) => 
+                                    <option value={haus.haushalt_id}>{haus.strasse +' ' + haus.plz}</option>)}
+                                    
+                                </select>
+                                <label>Meldeanschrift: </label>
+                                <select id='meldeanschrift' onChange= {this.handleChange}>
+                                    <option selected="true" value={null}>-</option>
+                                    <option value='0'>False</option>
+                                    <option value='1'>True</option>
+                                </select>
+
+                                <label>Einzugsdatum: </label>
+                                <input type="date" id="datum_einzug" name="sl-date"
+                                    defaultValue={this.defaultDateValue}
+                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                <br></br>
+                                
+
+                                <label>Existierende Haushalt dieser Person entfernen: </label>
+                                <select id='haushaltToBeDeleted' onChange= {this.handleChange}>
+                                    <option selected="true" value=''>-</option>
+
+                                    {this.state.haushalte.map((haus) => 
+                                    <option value={haus.haushalt_id}>{haus.strasse + " " + haus.postleitzahl}</option>)}
+                                    
+                                </select>
+                                <br></br>
+                        </div>
+                    </div>
+                    
+
+                    
+                </div>
             </div>
         )
     }

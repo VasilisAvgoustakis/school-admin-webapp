@@ -189,6 +189,9 @@ export class Person extends React.Component{
 
                             //bezugspersonen
                             bezugspersonen = {this.state.bezugspersonen}
+
+                            //haushalte
+                            haushalte = {this.state.addresses}
                                     />
                     </div>
                 , document.getElementById('person-data'))):(
@@ -253,7 +256,7 @@ export class Person extends React.Component{
                         
                         {(!this.state.core_data.einschulungsdatum 
                             || 
-                          this.state.data.abgangsdatum_von_fsx) ? 
+                          !this.state.data.zugangsdatum_zur_fsx) ? 
                             (<AGData
                                 ags={this.state.arbeitsgruppen} />)
                                 :

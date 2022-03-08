@@ -1,23 +1,13 @@
-#editInputs-left{
-    position: absolute;
-    left: 0%;
-    width:30%;  
-}
 
-
-#editInputs-middle{
-    position: absolute;
-    right:40%;
-    width:30%;  
-}
-
-#editInputs-right{
-    position: absolute;
-    right: 0%;
-    width:30%;  
-}
 
 .edit-person-cont{
+    display: flex;
+    flex-direction: row;
+    
+
+}
+
+.edit-person-data-cont{
     display: flex;
     flex-direction: column;
     border-radius: 10px;
@@ -28,4 +18,7 @@
     margin: 10px;
 
 }
+
+
+
 
