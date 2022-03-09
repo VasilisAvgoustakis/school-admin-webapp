@@ -16,17 +16,20 @@ export class EditPerson extends React.Component{
         this.fetchProbableHaushalte = this.fetchProbableHaushalte.bind(this);
         this.fetchPersonsLerngruppen = this.fetchPersonsLerngruppen.bind(this);
         this.fetchProbableLerngruppen = this.fetchProbableLerngruppen.bind(this);
+        this.fetchJahrgangswechselnWerte = this.fetchJahrgangswechselnWerte.bind(this);
         this.updateQuery = this.updateQuery.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.editData = this.editData.bind(this);
         this.deleteQueryBezugspersonen = this.deleteQueryBezugspersonen.bind(this);
         this.deleteQueryHaushalte = this.deleteQueryHaushalte.bind(this);
         this.deleteQueryLerngruppen = this.deleteQueryLerngruppen.bind(this);
+        this.deleteQueryJahrgangswechsel = this.deleteQueryJahrgangswechsel.bind(this);
         this.deleteQueryPerson = this.deleteQueryPerson.bind(this);
         this.deleteQueryKind = this.deleteQueryKind.bind(this);
         this.deleteBezugspersonen = this.deleteBezugspersonen.bind(this);
         this.deleteHaushalte = this.deleteHaushalte.bind(this);
         this.deleteLerngruppen = this.deleteLerngruppen.bind(this);
+        this.deleteJahrgangswechseln = this.deleteJahrgangswechseln.bind(this);
         this.deletePersonData = this.deletePersonData.bind(this);
         this.deleteKindData = this.deleteKindData.bind(this);
 
@@ -93,6 +96,14 @@ export class EditPerson extends React.Component{
             eintrittsdatum:this.defaultDateValue,
             lerngruppeToBeDeleted:'',
 
+            //jahrgangswechsel
+            jahrgangswechselRecords: [],
+            datum: this.defaultDateValue,
+            wert: '',
+            grund:'',
+            jahrgangToBeDeleted:'',
+
+
 
         }
     }
@@ -139,6 +150,15 @@ export class EditPerson extends React.Component{
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lerngruppenPerson`, {
             params: {
                 table: 'kind_lerngruppe',
+                person_id: this.state.person_id
+                },
+            }))
+    }
+
+    async fetchJahrgangswechselnWerte(){
+        return (
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/personsJahrgangswechseln`, {
+            params: {
                 person_id: this.state.person_id
                 },
             }))
@@ -193,6 +213,20 @@ export class EditPerson extends React.Component{
        )
     }
 
+    //deletes all Jahrgangswechseln Records for this Child
+    async deleteQueryJahrgangswechsel(){
+        return(
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteJahrgangswechsel`, {
+           params: {
+               person_id: this.state.person_id
+           } 
+      })
+       )
+    }
+
+
+
+
     //deletes all records from a table with the given id
     async deleteQueryPerson(table){
         console.log(table)
@@ -205,7 +239,6 @@ export class EditPerson extends React.Component{
       })
        )
     }
-
 
     componentDidMount() {
         this.fetchProbableBezugspersonen('personen').then(res => {
@@ -269,6 +302,24 @@ export class EditPerson extends React.Component{
             });
             this.setState({
                 lerngruppen: lerngruppen
+            })
+        });
+
+        this.fetchJahrgangswechselnWerte().then(res => {
+        
+            let jahrgangswechseln = [];
+            res.data.forEach(record => {
+                //console.log(gruppe.bezeichnung)
+                jahrgangswechseln.push(
+                    Object.create({ 
+                                datum: record.datum,
+                                wert:record.wert,
+                                grund: record.grund
+                                }))
+                
+            });
+            this.setState({
+                jahrgangswechselRecords: jahrgangswechseln
             })
         });
 
@@ -394,6 +445,24 @@ export class EditPerson extends React.Component{
 
     }
 
+    deleteJahrgangswechseln(){
+        var confirm = window.confirm("ACHTUNG!!! Diese Aktion wird alle Jahrgangswechsel Einträge dieses Kindes löschen!")
+        
+        if(confirm){
+
+            this.deleteQueryJahrgangswechsel()
+            
+            .then(result=>{
+                console.log("confirm")
+                confirm = false;
+                //last delete query refreshes the page
+                if(!confirm)window.location.reload()
+                console.log(result)
+            });
+        }
+
+    }
+
     deletePersonData(e){
         //console.log(e.target.id)
         let table = e.target.id;
@@ -421,17 +490,18 @@ export class EditPerson extends React.Component{
     }
    
 
-
     render(){
-        console.log(this.state.eintrittsdatum)
+        console.log(this.state.jahrgangToBeDeleted)
         //console.log(this.state.bezugsPersonToBeDeleted)
         //console.log(dateToENFormat(new Date(this.state.geburtsdatum)))
         return(
             <div>
                 <button type='button' onClick={this.editData}>Speichern</button>
                 <div className='edit-person-cont'>
-
-                    <div>
+                    {/* allgemeine Personrelevante Daten */}
+                    
+                    <div style={({backgroundColor: "cyan"})}>
+                        <h3>Personrelevanten Daten</h3>
                         {/* Kerndaten */}
                         <div className='edit-person-data-cont'>
                             <h4>Edit Kerndaten</h4>
@@ -538,9 +608,53 @@ export class EditPerson extends React.Component{
                             <br></br>
 
                         </div>
+
+                        {/* Haushalte */}
+                        <div className='edit-person-data-cont'>
+                            <h4>Haushalte</h4>
+                                <button 
+                                    className='delete-buttons' 
+                                    id='person_haushalt' type='button'
+                                    onClick={this.deleteHaushalte}
+                                >Alle Haushalte dieser Person löschen</button>
+
+                                <label>Neues Haushalt für diese Person hinzufügen: </label>
+                                <select id='haushalteToBeAdded' onChange= {this.handleChange}>
+                                    <option selected="true" value=''>-</option>
+
+                                    {this.state.probableHaushalte.map((haus) => 
+                                    <option value={haus.haushalt_id}>{haus.strasse +' ' + haus.plz}</option>)}
+                                    
+                                </select>
+                                <label>Meldeanschrift: </label>
+                                <select id='meldeanschrift' onChange= {this.handleChange}>
+                                    <option selected="true" value={null}>-</option>
+                                    <option value='0'>False</option>
+                                    <option value='1'>True</option>
+                                </select>
+
+                                <label>Einzugsdatum: </label>
+                                <input type="date" id="datum_einzug" name="sl-date"
+                                    defaultValue={this.defaultDateValue}
+                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                <br></br>
+                                
+
+                                <label>Existierende Haushalt dieser Person entfernen: </label>
+                                <select id='haushaltToBeDeleted' onChange= {this.handleChange}>
+                                    <option selected="true" value=''>-</option>
+
+                                    {this.state.haushalte.map((haus) => 
+                                    <option value={haus.haushalt_id}>{haus.strasse + " " + haus.postleitzahl}</option>)}
+                                    
+                                </select>
+                                <br></br>
+                        </div>
                     </div>
                     
-                    <div>
+                    {/* Kinderrelevante Daten */}
+                    <div style={({backgroundColor: "blue"})}>
+                        <h3>Kindrelevante Daten</h3>
                         {/* Kind bezogene Daten */}
                         <div className='edit-person-data-cont'>
                             <h4>Kindsdaten</h4>
@@ -683,8 +797,6 @@ export class EditPerson extends React.Component{
                                 <br></br>
                         </div>
 
-
-
                         {/* Bezugspersonen */}
                         <div className='edit-person-data-cont'>
                             <h4>Bezugspersonen</h4>
@@ -729,55 +841,68 @@ export class EditPerson extends React.Component{
                                 </select>
                                 <br></br>
                         </div>
-                    </div>
-                    <div>
-                        {/* Haushalte */}
+
+                        {/* Jahrgangswechsel */}
                         <div className='edit-person-data-cont'>
-                            <h4>Haushalte</h4>
+                            <h4>Jahrgangswechsel</h4>
                                 <button 
                                     className='delete-buttons' 
-                                    id='person_haushalt' type='button'
-                                    onClick={this.deleteHaushalte}
-                                >Alle Haushalte dieser Person löschen</button>
+                                    id='kind_lerngruppe' type='button'
+                                    onClick={this.deleteJahrgangswechseln}
+                                >Alle Jahrgangswechsel Einträge dieser Person löschen</button>
 
-                                <label>Neues Haushalt für diese Person hinzufügen: </label>
-                                <select id='haushalteToBeAdded' onChange= {this.handleChange}>
-                                    <option selected="true" value=''>-</option>
-
-                                    {this.state.probableHaushalte.map((haus) => 
-                                    <option value={haus.haushalt_id}>{haus.strasse +' ' + haus.plz}</option>)}
-                                    
-                                </select>
-                                <label>Meldeanschrift: </label>
-                                <select id='meldeanschrift' onChange= {this.handleChange}>
-                                    <option selected="true" value={null}>-</option>
-                                    <option value='0'>False</option>
-                                    <option value='1'>True</option>
-                                </select>
-
-                                <label>Einzugsdatum: </label>
-                                <input type="date" id="datum_einzug" name="sl-date"
+                                <label>Neuer Jahrgangswechsel Eintrag für diese Person hinzufügen: </label>
+                                <label>Datum: </label>
+                                <input type="date" id="datum" name="sl-date"
                                     defaultValue={this.defaultDateValue}
                                     min="2012-01-01" onChange={this.handleChange}></input>
                                 <br></br>
+
+                                <label >Wert:</label>
+                                <select id='wert'  
+                                onChange= {this.handleChange} >
+                                    <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                    <option value='-1'>-1</option>
+                                    <option value='1'>1</option>
+                                </select>
+                                <br></br>
+
+                                <label>Grund: </label>
+                                <select id='grund' 
+                                onChange= {this.handleChange} >
+                                    <option selected="true" value=''>-</option> {/*default option when no data from database for selected person*/}
+                                    <option value='Verkuerzung Schulanfangsphase (Klasse 1 und 2)'>Verkürzung Schulanfangsphase (Klasse 1 und 2)</option>
+                                    <option value='Verlaengerung Schulanfangsphase (Klasse 1 und2)'>Verlängerung Schulanfangsphase (Klasse 1 und2)</option>
+                                    <option value='Ueberspringen (Klasse 3 bis 6)'>Überspringen (Klasse 3 bis 6)</option>
+                                    <option value='Wiederholung (Klasse 3 bis 6)'>Wiederholung (Klasse 3 bis 6)</option>
+                                    <option value='Freiwillige Wiederholung (Klasse 3 bis 6)'>Freiwillige Wiederholung (Klasse 3 bis 6)</option>
+                                    <option value='Ruecktritt (Klasse 3 bis 6)'>'Rücktritt (Klasse 3 bis 6)</option>
+                                </select>
+                                <br></br>
                                 
 
-                                <label>Existierende Haushalt dieser Person entfernen: </label>
-                                <select id='haushaltToBeDeleted' onChange= {this.handleChange}>
-                                    <option selected="true" value=''>-</option>
+                                <label>Existierende Jahrgangswechsel Einträge dieser Person entfernen: </label>
+                                <select id='jahrgangToBeDeleted' onChange= {this.handleChange}>
+                                    <option selected="true" >-</option>
 
-                                    {this.state.haushalte.map((haus) => 
-                                    <option value={haus.haushalt_id}>{haus.strasse + " " + haus.postleitzahl}</option>)}
+                                    {this.state.jahrgangswechselRecords.map((record) => 
+                                    <option value={dateToENFormat(new Date(record.datum))}>{"Wert: "+record.wert + " Grund: " + record.grund 
+                                    + "  von: " + dateToDEFormat(new Date(record.datum))}</option>)}
                                     
                                 </select>
                                 <br></br>
                         </div>
                     </div>
-                    
 
+                    <div style={({backgroundColor: "purple"})}>
+                        <h3>Erwachsenenrelevante Daten</h3>
+                        
+                    </div>
                     
                 </div>
             </div>
         )
     }
 }
+
+

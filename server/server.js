@@ -417,6 +417,7 @@ WHERE
         bezugspersonen, probableBezugspersonen, bezugsPersonToBeAdded, bezugsPersonToBeDeleted, beziehung_zu_person2, recht_gegenueber_person2,
         haushalte, probableHaushalte, haushalteToBeAdded, haushaltToBeDeleted, meldeanschrift, datum_einzug,
         lerngruppen, probableLerngruppen, lerngruppeToBeAdded, eintrittsdatum, lerngruppeToBeDeleted,
+        jahrgangswechselRecords, datum, wert, grund, jahrgangToBeDeleted,
         ] = req.query.state
 
     // this variable will be true if the error case in one of the queries has already send headers
@@ -742,6 +743,56 @@ WHERE
       )
     }
 
+    //make array only with the relevant data of coming query
+    let jahrgangswechsel = [datum, wert, grund]
+    
+    // check that at least on of the values is relevant for saving (not null or '')
+    validCoreData = 0;
+    jahrgangswechsel.forEach(element=> {
+      if(element === '' || element === null || element === 'null'){
+        return;
+      }else{
+        validCoreData++;
+      }
+      })
+ 
+    if(validCoreData == 3){
+      pool.query(
+      `INSERT IGNORE INTO jahrgangswechsel(person_id, datum, wert, grund)
+        VALUES(${person_id}, ${datum ? ("'" + datum.toString() + "'"):(null)}, 
+              ${wert}, 
+              '${grund}');`
+
+        ,(err, results) =>{
+          if(err){
+            console.log("Sending err!!!!")
+            freeOfErrors = false;
+            return res.send(err);
+          }else {
+            sumResults.push(results)
+          }})
+    }
+
+    //removes selected Jahrgangswechsel Record for this Kid
+    if(jahrgangToBeDeleted){
+      console.log("BZPADD: "+jahrgangToBeDeleted)
+      pool.query(
+        `DELETE FROM jahrgangswechsel 
+            WHERE person_id=${person_id}
+            AND datum=${jahrgangToBeDeleted ? ("'" + jahrgangToBeDeleted.toString() + "'"):(null)}
+          ;`
+          ,(err,results) => {
+            if(err){
+              console.log(err)
+              freeOfErrors = false;
+              return res.send(err);
+            }else {
+              sumResults.push(results)
+            }
+          }
+      )
+    }
+
    
     
     
@@ -814,72 +865,112 @@ WHERE
 
   });
 
-    app.get('/deletePersonData', (req, res) => {
-      let table = req.query.table;
-      let person_id = req.query.person_id;
-      pool.query(`DELETE FROM ${table} WHERE person_id= ${person_id};`,
-      (err, result)=>{
-        if(err){
-          console.log(err);
-          return res.send(err);
-        }else{
-          console.log(result)
-          return res.send("Results");
-        }
-      })
-
-    });
-
-    app.get('/deleteKindData', (req, res) => {
-      let table = req.query.table;
-      let id = req.query.id;
-      let columnNames = req.query.columnNames;
-      let numIdColumns = id.length;
-
-      //console.log(table, id, numIdColumns, columnNames)
-      
-      if(numIdColumns === 2){
-        pool.query(`DELETE FROM ${table} 
-                      WHERE 
-                        person_id = ${id[0]}
-                        AND
-                        ${columnNames[0]} = '${id[1].toString()}'
-                        ;`,
-      (err, result)=>{
-        if(err){
-          console.log(err);
-          return res.send(err);
-        }else{
-          console.log(result)
-          return res.send(result);
-        }
-      })
+  //deletes all Jahrgangswechsel Records for a given Child
+  app.get('/deleteJahrgangswechsel', (req, res) => {
+    let person_id = req.query.person_id;
+    pool.query(`DELETE FROM jahrgangswechsel WHERE person_id= ${person_id};`,
+    (err, result)=>{
+      if(err){
+        console.log(err);
+        return res.send(err);
+      }else{
+        console.log(result)
+        return res.send("Results");
       }
+    })
 
-      if(numIdColumns === 3){
-        pool.query(`DELETE FROM ${table} 
-                      WHERE 
-                        person_id = ${id[0]}
-                        AND
-                        ${columnNames[0]} = '${id[1].toString()}'
-                        AND
-                        ${columnNames[1]} = '${id[2].toString()}'
-                        ;`,
-      (err, result)=>{
-        if(err){
-          console.log(err);
-          return res.send(err);
-        }else{
-          console.log(result)
-          return res.send(result);
-        }
-      })
+  });
+
+
+  app.get('/deletePersonData', (req, res) => {
+    let table = req.query.table;
+    let person_id = req.query.person_id;
+    pool.query(`DELETE FROM ${table} WHERE person_id= ${person_id};`,
+    (err, result)=>{
+      if(err){
+        console.log(err);
+        return res.send(err);
+      }else{
+        console.log(result)
+        return res.send("Results");
       }
-    });
+    })
+
+  });
+
+  app.get('/deleteKindData', (req, res) => {
+    let table = req.query.table;
+    let id = req.query.id;
+    let columnNames = req.query.columnNames;
+    let numIdColumns = id.length;
+
+    //console.log(table, id, numIdColumns, columnNames)
+    
+    if(numIdColumns === 2){
+      pool.query(`DELETE FROM ${table} 
+                    WHERE 
+                      person_id = ${id[0]}
+                      AND
+                      ${columnNames[0]} = '${id[1].toString()}'
+                      ;`,
+    (err, result)=>{
+      if(err){
+        console.log(err);
+        return res.send(err);
+      }else{
+        console.log(result)
+        return res.send(result);
+      }
+    })
+    }
+
+    if(numIdColumns === 3){
+      pool.query(`DELETE FROM ${table} 
+                    WHERE 
+                      person_id = ${id[0]}
+                      AND
+                      ${columnNames[0]} = '${id[1].toString()}'
+                      AND
+                      ${columnNames[1]} = '${id[2].toString()}'
+                      ;`,
+    (err, result)=>{
+      if(err){
+        console.log(err);
+        return res.send(err);
+      }else{
+        console.log(result)
+        return res.send(result);
+      }
+    })
+    }
+  });
 
   //END OF POSTS
 //end of Personen queries
 
+
+//jahrgangswecheln records
+app.get('/personsJahrgangswechseln', (req, res) => {
+  const { person_id } = req.query;
+  
+  pool.query(
+  `SELECT
+      *
+  FROM
+      jahrgangswechsel
+  WHERE person_id = ${person_id}
+  ORDER BY 
+      datum DESC
+  ;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      //console.log(results)
+      return res.send(results);
+    }
+  });
+});
 
 //haushalte
 app.get('/hausList', (req, res) => {
