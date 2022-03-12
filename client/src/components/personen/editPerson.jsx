@@ -12,9 +12,9 @@ export class EditPerson extends React.Component{
         super(props);
         this.today = new Date();
         this.defaultDateValue = this.today.getFullYear()+'-'+(this.today.getMonth()+1)+'-'+ this.today.getDate();
-        this.fetchProbableBezugspersonen = this.fetchProbableBezugspersonen.bind(this);
-        this.fetchProbableHaushalte = this.fetchProbableHaushalte.bind(this);
-        this.fetchProbableLerngruppen = this.fetchProbableLerngruppen.bind(this);
+        this.fetchProbableBezugspersonen = this.fetchProbable.bind(this);
+        this.fetchProbableHaushalte = this.fetchProbable.bind(this);
+        this.fetchProbableLerngruppen = this.fetchProbable.bind(this);
         this.fetchPersonsRecords = this.fetchPersonsRecords.bind(this);
         this.updateQuery = this.updateQuery.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -99,7 +99,18 @@ export class EditPerson extends React.Component{
             but_ende: this.defaultDateValue,
             berlinpass_but: '',
             butToBeDeleted: '',
-            butRecords: []
+            butRecords: [],
+
+            //AGs
+            ags: [],
+            probableAgs: [],
+            agToBeAdded: '',
+            koordination_der_ag: '',
+            datum_mitgliedschaftsbeginn: this.defaultDateValue,
+            datum_mitgliedschaftsende: '',
+            agToBeDeleted: '',
+
+
         }
     }
 
@@ -112,39 +123,22 @@ export class EditPerson extends React.Component{
         console.log(e.target.id + ":" + e.target.value)
     }
 
-    async fetchProbableBezugspersonen(table){
-        return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/personsList`, {
-            params: {
-              table: table,
-            },
-          }))
-      }
 
-    async fetchProbableHaushalte(){
+    async fetchProbable(queryName){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/hausList`, {
-            params: {
-                table: 'haushalte',
-                },
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/${queryName}`, {
+            
             }))
     }
 
-    async fetchProbableLerngruppen(){
+    async fetchPersonsDataMultitable(table1, table2, sortByColumn){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lerngruppenList`, {
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/dataMultitablePerson`, {
             params: {
-                table: 'lerngruppen',
-                },
-            }))
-    }
-
-    async fetchPersonsLerngruppen(){
-        return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lerngruppenPerson`, {
-            params: {
-                table: 'kind_lerngruppe',
-                person_id: this.state.person_id
+                table1: table1,
+                table2: table2,
+                person_id: this.state.person_id,
+                sortByColumn: sortByColumn
                 },
             }))
     }
@@ -206,7 +200,7 @@ export class EditPerson extends React.Component{
 
     // populates optios for selects when component mounts
     componentDidMount() {
-        this.fetchProbableBezugspersonen('personen').then(res => {
+        this.fetchProbable('personsList').then(res => {
           
           let erwachsene = [];
           res.data.forEach(person => {
@@ -220,7 +214,7 @@ export class EditPerson extends React.Component{
           })
         });
 
-        this.fetchProbableHaushalte().then(res => {
+        this.fetchProbable('hausList').then(res => {
           
             let haushalte = [];
             res.data.forEach(haus => {
@@ -236,7 +230,7 @@ export class EditPerson extends React.Component{
             })
           });
 
-        this.fetchProbableLerngruppen().then(res => {
+        this.fetchProbable('lerngruppenList').then(res => {
           
             let lerngruppen = [];
             res.data.forEach(gruppe => {
@@ -252,7 +246,24 @@ export class EditPerson extends React.Component{
             })
           });
 
-        this.fetchPersonsLerngruppen().then(res => {
+        this.fetchProbable('agList').then(res => {
+        
+        let arbeitsgruppen = [];
+        res.data.forEach(gruppe => {
+            //console.log(gruppe.bezeichnung)
+            arbeitsgruppen.push(
+                Object.create({arbeitsgruppe_id:gruppe.arbeitsgruppe_id, 
+                            bezeichnung:gruppe.bezeichnung,
+                            }))
+            
+        });
+        this.setState({
+            probableAgs: arbeitsgruppen
+        })
+        //console.log(this.state.ags)
+        });
+
+        this.fetchPersonsDataMultitable("kind_lerngruppe", "lerngruppen", "eintrittsdatum").then(res => {
         
             let lerngruppen = [];
             res.data.forEach(gruppe => {
@@ -302,6 +313,8 @@ export class EditPerson extends React.Component{
                 butRecords: but
             })
         });
+
+        
 
 
       }
@@ -831,6 +844,59 @@ export class EditPerson extends React.Component{
 
                     <div style={({backgroundColor: "purple"})}>
                         <h3>Erwachsenenrelevante Daten</h3>
+
+                        {/* Arbeitsgruppen */}
+                        <div className='edit-person-data-cont'>
+                            <h4>Arbeitsgruppen</h4>
+                                <button 
+                                    className='delete-buttons' 
+                                    id='person_arbeitsgruppe' type='button'
+                                    onClick={this.deletePersonData}
+                                    
+                                >Alle Arbeitsgruppen Einträge dieser Person löschen</button>
+
+                                <label>Neuer Arbeitsgruppe hinzufügen: </label>
+                                <select id='agToBeAdded' onChange= {this.handleChange}>
+                                    <option selected="true" value=''>-</option>
+
+                                    {this.state.probableAgs.map((ag) => 
+                                    <option value={ag.arbeitsgruppe_id}>{ag.bezeichnung}</option>)}
+                                    
+                                </select>
+
+                                <label >Koordination:</label>
+                                <select id='koordination_der_ag'  
+                                onChange= {this.handleChange} >
+                                    <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                    <option value='0'>0</option>
+                                    <option value='1'>1</option>
+                                </select>
+                                <br></br>
+
+                                <label>Mitgliedschaftsbeginn: </label>
+                                <input type="date" id="datum_mitgliedschaftsbeginn" name="sl-date"
+                                    defaultValue={this.defaultDateValue}
+                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                <br></br>
+
+                                <label>Mitgliedschaftsende: </label>
+                                <input type="date" id="datum_mitgliedschaftsende" name="sl-date"
+                                    defaultValue={this.defaultDateValue}
+                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                <br></br>
+                                
+
+                                <label>Existierende AG Mitgliedschaften dieser Person entfernen: </label>
+                                <select id='agToBeDeleted' onChange= {this.handleChange}>
+                                    <option selected="true" value=''>-</option>
+
+                                    {this.state.ags.map((ag) => 
+                                    <option value={ag.arbeitsgruppe_id}>{ag.bezeichnung 
+                                    + " Eintritt am: " + dateToDEFormat(new Date(ag.datum_mitgliedschaftsbeginn))}</option>)}
+                                    
+                                </select>
+                                <br></br>
+                        </div>
                         
                     </div>
                     

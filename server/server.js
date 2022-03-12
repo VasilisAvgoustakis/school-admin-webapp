@@ -197,7 +197,7 @@ app.post('/logout', (req, res)=>{
   //GETS
 app.get('/personsList', (req, res) => {
   const { table } = req.query;
-  pool.query(`SELECT * FROM ${table} ORDER BY rufname, nachname`, (err, results) => {
+  pool.query(`SELECT * FROM personen ORDER BY rufname, nachname`, (err, results) => {
     if (err) {
       return res.send(err);
     } else {
@@ -418,7 +418,9 @@ WHERE
         haushalte, probableHaushalte, haushalteToBeAdded, haushaltToBeDeleted, meldeanschrift, datum_einzug,
         lerngruppen, probableLerngruppen, lerngruppeToBeAdded, eintrittsdatum, lerngruppeToBeDeleted,
         jahrgangswechselRecords, datum, wert, grund, jahrgangToBeDeleted,
-        but_beginn, but_ende, berlinpass_but, butToBeDeleted, butRecords
+        but_beginn, but_ende, berlinpass_but, butToBeDeleted, butRecords,
+        ags, probableAgs, agToBeAdded, koordination_der_ag, datum_mitgliedschaftsbeginn, datum_mitgliedschaftsende, agToBeDeleted,
+
         ] = req.query.state
 
     // this variable will be true if the error case in one of the queries has already send headers
@@ -850,6 +852,41 @@ WHERE
   }
 
 
+  //make array only with the relevant data of coming query
+  let agData = [agToBeAdded, koordination_der_ag, datum_mitgliedschaftsbeginn, datum_mitgliedschaftsende]
+  
+  // check that at least on of the values is relevant for saving (not null or '')
+  validCoreData = 0;
+  agData.forEach(element=> {
+    if(element === '' || element === null || element === 'null'){
+      return;
+    }else{
+      validCoreData++;
+    }
+    })
+
+  // adds AG record
+  if(validCoreData > 0){
+    
+    pool.query(
+    `INSERT IGNORE INTO person_arbeitsgruppe(person_id, arbeitsgruppe_id, koordination_der_ag, datum_mitgliedschaftsbeginn, datum_mitgliedschaftsende)
+      VALUES(${person_id}, ${agToBeAdded},
+            ${koordination_der_ag ? (koordination_der_ag):(null)},
+            ${datum_mitgliedschaftsbeginn ? ("'" + datum_mitgliedschaftsbeginn.toString() + "'"):(null)},
+            ${datum_mitgliedschaftsende ? ("'" + datum_mitgliedschaftsende.toString() + "'"):(null)}
+            );`
+
+      ,(err, results) =>{
+        if(err){
+          console.log(err)
+          freeOfErrors = false;
+          return res.send(err);
+        }else {
+          sumResults.push(results)
+        }})
+  }
+
+
     // this query's role is just as workaround soolution to send a valid response 
     //that makes client refresh the page
     pool.query("SELECT * from personen;",(err, results) =>{
@@ -967,12 +1004,12 @@ app.get('/personsRecords', (req, res) => {
 //haushalte
 app.get('/hausList', (req, res) => {
   // const { person_id } = req.query;
-  const { table } = req.query;
+  //const { table } = req.query;
   pool.query(
   `SELECT
       *
   FROM
-      ${table}
+      haushalte
   ORDER BY 
       strasse ASC,
       postleitzahl ASC,
@@ -1022,12 +1059,12 @@ app.get('/anwohner', (req, res) => {
 //Arbeitsgruppen
 app.get('/agList', (req, res) => {
   // const { person_id } = req.query;
-  const { table } = req.query;
+  //const { table } = req.query;
   pool.query(
   `SELECT
       *
   FROM
-      ${table}
+      arbeitsgruppen
   ORDER BY 
       bezeichnung ASC,
       email ASC
@@ -1077,12 +1114,12 @@ app.get('/ag_mitglieder', (req, res) => {
 //Lerngruppen
 app.get('/lerngruppenList', (req, res) => {
   // const { person_id } = req.query;
-  const { table } = req.query;
+  // const { table } = req.query;
   pool.query(
   `SELECT
       *
   FROM
-      ${table}
+      lerngruppen
   ORDER BY 
       lerngruppe_id ASC
   ;`, (err, results) => {
@@ -1097,22 +1134,20 @@ app.get('/lerngruppenList', (req, res) => {
 });
 
 
-app.get('/lerngruppenPerson', (req, res) => {
-  const { person_id } = req.query;
-  const { table } = req.query;
+app.get('/dataMultitablePerson', (req, res) => {
+  const { table1, table2, person_id, sortByColumn } = req.query;
+  
   pool.query(
   `SELECT
-      lerngruppen.lerngruppe_id,
-      lerngruppen.bezeichnung,
-      kind_lerngruppe.eintrittsdatum
+      *
   FROM
-      ${table}
+      ${table1}
       INNER JOIN
-      lerngruppen ON lerngruppen.lerngruppe_id = kind_lerngruppe.lerngruppe_id
+      ${table2} ON ${table2}.${table2.substring(0, table2.length-1)}_id = ${table1}.${table2.substring(0, table2.length-1)}_id
   WHERE
-    kind_lerngruppe.person_id = ${person_id}
+    ${table1}.person_id = ${person_id}
   ORDER BY 
-      eintrittsdatum ASC
+      ${sortByColumn} ASC
   ;`, (err, results) => {
     if (err) {
       console.log(err)
