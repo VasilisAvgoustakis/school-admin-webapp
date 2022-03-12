@@ -202,6 +202,7 @@ CREATE TABLE `kind_but` (
   `but_beginn` date DEFAULT NULL,
   `but_ende` date DEFAULT NULL,
   `berlinpass_but` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY(`person_id`, `but_beginn`),
   KEY `fk_Kind_BuT_idx` (`person_id`),
   CONSTRAINT `fk_Kind_BuT` FOREIGN KEY (`person_id`) REFERENCES `personen` (`person_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

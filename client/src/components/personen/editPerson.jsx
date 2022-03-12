@@ -14,22 +14,13 @@ export class EditPerson extends React.Component{
         this.defaultDateValue = this.today.getFullYear()+'-'+(this.today.getMonth()+1)+'-'+ this.today.getDate();
         this.fetchProbableBezugspersonen = this.fetchProbableBezugspersonen.bind(this);
         this.fetchProbableHaushalte = this.fetchProbableHaushalte.bind(this);
-        this.fetchPersonsLerngruppen = this.fetchPersonsLerngruppen.bind(this);
         this.fetchProbableLerngruppen = this.fetchProbableLerngruppen.bind(this);
-        this.fetchJahrgangswechselnWerte = this.fetchJahrgangswechselnWerte.bind(this);
+        this.fetchPersonsRecords = this.fetchPersonsRecords.bind(this);
         this.updateQuery = this.updateQuery.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.editData = this.editData.bind(this);
-        this.deleteQueryBezugspersonen = this.deleteQueryBezugspersonen.bind(this);
-        this.deleteQueryHaushalte = this.deleteQueryHaushalte.bind(this);
-        this.deleteQueryLerngruppen = this.deleteQueryLerngruppen.bind(this);
-        this.deleteQueryJahrgangswechsel = this.deleteQueryJahrgangswechsel.bind(this);
         this.deleteQueryPerson = this.deleteQueryPerson.bind(this);
         this.deleteQueryKind = this.deleteQueryKind.bind(this);
-        this.deleteBezugspersonen = this.deleteBezugspersonen.bind(this);
-        this.deleteHaushalte = this.deleteHaushalte.bind(this);
-        this.deleteLerngruppen = this.deleteLerngruppen.bind(this);
-        this.deleteJahrgangswechseln = this.deleteJahrgangswechseln.bind(this);
         this.deletePersonData = this.deletePersonData.bind(this);
         this.deleteKindData = this.deleteKindData.bind(this);
 
@@ -103,8 +94,12 @@ export class EditPerson extends React.Component{
             grund:'',
             jahrgangToBeDeleted:'',
 
-
-
+            //BuT
+            but_beginn: this.defaultDateValue,
+            but_ende: this.defaultDateValue,
+            berlinpass_but: '',
+            butToBeDeleted: '',
+            butRecords: []
         }
     }
 
@@ -116,7 +111,6 @@ export class EditPerson extends React.Component{
         }
         console.log(e.target.id + ":" + e.target.value)
     }
-
 
     async fetchProbableBezugspersonen(table){
         return (
@@ -155,15 +149,17 @@ export class EditPerson extends React.Component{
             }))
     }
 
-    async fetchJahrgangswechselnWerte(){
+    //general query to fetch records of given table to populate options in selects
+    async fetchPersonsRecords(table, sortByColumn){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/personsJahrgangswechseln`, {
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/personsRecords`, {
             params: {
-                person_id: this.state.person_id
+                table: table,
+                person_id: this.state.person_id,
+                sortByColumn: sortByColumn
                 },
             }))
     }
-
 
 
     async updateQuery(){
@@ -179,54 +175,6 @@ export class EditPerson extends React.Component{
        )
     }
 
-    //deletes all Bezugspersonen for this kid
-    async deleteQueryBezugspersonen(){
-        return(
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteBezugspersonen`, {
-           params: {
-               person_id: this.state.person_id
-           } 
-      })
-       )
-    }
-
-    //deletes all Haushalte for this Person
-    async deleteQueryHaushalte(){
-        return(
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteHaushalte`, {
-           params: {
-               person_id: this.state.person_id
-           } 
-      })
-       )
-    }
-
-
-    //deletes all Lerngruppen for this Child
-    async deleteQueryLerngruppen(){
-        return(
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteLerngruppen`, {
-           params: {
-               person_id: this.state.person_id
-           } 
-      })
-       )
-    }
-
-    //deletes all Jahrgangswechseln Records for this Child
-    async deleteQueryJahrgangswechsel(){
-        return(
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteJahrgangswechsel`, {
-           params: {
-               person_id: this.state.person_id
-           } 
-      })
-       )
-    }
-
-
-
-
     //deletes all records from a table with the given id
     async deleteQueryPerson(table){
         console.log(table)
@@ -240,6 +188,23 @@ export class EditPerson extends React.Component{
        )
     }
 
+    //the 2nd parameter is an array containing all values which are part of the primary key
+    //of the given table in the 1st parameter
+    //the 3rd parameter contains an array with names of the columns part of the PM except that of perso_id
+    // which always the same for each table
+    async deleteQueryKind(table, id, columnNames){
+        return(
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteKindData`, {
+           params: {
+               table: table,
+               id: id,
+               columnNames: columnNames 
+           } 
+      })
+       )
+    }
+
+    // populates optios for selects when component mounts
     componentDidMount() {
         this.fetchProbableBezugspersonen('personen').then(res => {
           
@@ -291,7 +256,6 @@ export class EditPerson extends React.Component{
         
             let lerngruppen = [];
             res.data.forEach(gruppe => {
-                //console.log(gruppe.bezeichnung)
                 lerngruppen.push(
                     Object.create({ 
                                 lerngruppe_id: gruppe.lerngruppe_id,
@@ -305,11 +269,10 @@ export class EditPerson extends React.Component{
             })
         });
 
-        this.fetchJahrgangswechselnWerte().then(res => {
+        this.fetchPersonsRecords('jahrgangswechsel', 'datum').then(res => {
         
             let jahrgangswechseln = [];
             res.data.forEach(record => {
-                //console.log(gruppe.bezeichnung)
                 jahrgangswechseln.push(
                     Object.create({ 
                                 datum: record.datum,
@@ -323,33 +286,35 @@ export class EditPerson extends React.Component{
             })
         });
 
+        this.fetchPersonsRecords('kind_but', 'but_ende').then(res => {
+        
+            let but = [];
+            res.data.forEach(record => {
+                but.push(
+                    Object.create({ 
+                                but_beginn: record.but_beginn,
+                                but_ende:record.but_ende,
+                                berlinpass_but: record.berlinpass_but
+                                }))
+                
+            });
+            this.setState({
+                butRecords: but
+            })
+        });
+
 
       }
 
-
-    //the 2nd parameter is an array containing all values which are part of the primary key
-    //of the given table in the 1st parameter
-    //the 3rd parameter contains an array with names of the columns part of the PM except that of perso_id
-    // which always the same for each table
-    async deleteQueryKind(table, id, columnNames){
-        return(
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteKindData`, {
-           params: {
-               table: table,
-               id: id,
-               columnNames: columnNames 
-           } 
-      })
-       )
-    }
-
+    
+    // edits DB for changed data in the form
     editData(){
         var confirm = window.confirm('Diese Aktion wird die Daten direkt in der Datenbank bearbeiten!!! Bist du sicher dass diese Korrekt sind?')
         if(confirm){
         this.updateQuery().then(res =>{
             if(typeof(res.data) !== 'string'){
                 console.log("This is the Err: ")
-                //console.log(res.data)
+                console.log(res.data)
                 window.alert(res.data);
             }else{
                 console.log("confirm")
@@ -363,7 +328,7 @@ export class EditPerson extends React.Component{
 
     //delete Kindbezogenen Daten
     deleteKindData(){
-        var confirm = window.confirm("ACHTUNG!!! Diese Aktion wird alle Kind bezogene Daten fpr diese Person löschen!")
+        var confirm = window.confirm("ACHTUNG!!! Diese Aktion wird alle Kind bezogene Daten für dieses Kind löschen!")
         
         if(confirm){
 
@@ -391,94 +356,20 @@ export class EditPerson extends React.Component{
         }
     }
 
-    deleteBezugspersonen(){
-        var confirm = window.confirm("ACHTUNG!!! Diese Aktion wird alle Bezugspersonen für dieses Kind löschen!")
-        
-        if(confirm){
-
-            this.deleteQueryBezugspersonen()
-            
-            .then(result=>{
-                console.log("confirm")
-                confirm = false;
-                //last delete query refreshes the page
-                if(!confirm)window.location.reload()
-                console.log(result)
-            });
-        }
-
-    }
-
-    deleteHaushalte(){
-        var confirm = window.confirm("ACHTUNG!!! Diese Aktion wird alle Haushalte dieser Person löschen!")
-        
-        if(confirm){
-
-            this.deleteQueryHaushalte()
-            
-            .then(result=>{
-                console.log("confirm")
-                confirm = false;
-                //last delete query refreshes the page
-                if(!confirm)window.location.reload()
-                console.log(result)
-            });
-        }
-
-    }
-
-    deleteLerngruppen(){
-        var confirm = window.confirm("ACHTUNG!!! Diese Aktion wird alle Lerngruppen Einträge dieses Kindes löschen!")
-        
-        if(confirm){
-
-            this.deleteQueryLerngruppen()
-            
-            .then(result=>{
-                console.log("confirm")
-                confirm = false;
-                //last delete query refreshes the page
-                if(!confirm)window.location.reload()
-                console.log(result)
-            });
-        }
-
-    }
-
-    deleteJahrgangswechseln(){
-        var confirm = window.confirm("ACHTUNG!!! Diese Aktion wird alle Jahrgangswechsel Einträge dieses Kindes löschen!")
-        
-        if(confirm){
-
-            this.deleteQueryJahrgangswechsel()
-            
-            .then(result=>{
-                console.log("confirm")
-                confirm = false;
-                //last delete query refreshes the page
-                if(!confirm)window.location.reload()
-                console.log(result)
-            });
-        }
-
-    }
-
+    // delete general Person Data by given table
     deletePersonData(e){
         //console.log(e.target.id)
         let table = e.target.id;
         console.log(table);
 
         var confirm = window.confirm(
-            `ACHTUNG!!! Diese Aktion wird ${table === 'personen' ? 
-            ('dieser Person und alle seine Daten von allen Tabellen komplett vom DB')
-            :("die " + table + " dieser Person")} löschen!`)
+                    `ACHTUNG!!! Diese Aktion wird ${table === 'personen' ? 
+                    ('dieser Person und alle seine Daten von allen Tabellen komplett vom DB')
+                    :("alle " + table + " Einträge dieser Person")} löschen!`
+            )
         
         if(confirm){
-            
-            
-
             this.deleteQueryPerson(table)
-
             .then(result=>{
                 console.log("confirm")
                 confirm = false;
@@ -491,15 +382,12 @@ export class EditPerson extends React.Component{
    
 
     render(){
-        console.log(this.state.jahrgangToBeDeleted)
-        //console.log(this.state.bezugsPersonToBeDeleted)
-        //console.log(dateToENFormat(new Date(this.state.geburtsdatum)))
+        
         return(
             <div>
                 <button type='button' onClick={this.editData}>Speichern</button>
                 <div className='edit-person-cont'>
-                    {/* allgemeine Personrelevante Daten */}
-                    
+                    {/* allgemeine Personrelevante Daten */}  
                     <div style={({backgroundColor: "cyan"})}>
                         <h3>Personrelevanten Daten</h3>
                         {/* Kerndaten */}
@@ -615,7 +503,7 @@ export class EditPerson extends React.Component{
                                 <button 
                                     className='delete-buttons' 
                                     id='person_haushalt' type='button'
-                                    onClick={this.deleteHaushalte}
+                                    onClick={this.deletePersonData}
                                 >Alle Haushalte dieser Person löschen</button>
 
                                 <label>Neues Haushalt für diese Person hinzufügen: </label>
@@ -765,7 +653,7 @@ export class EditPerson extends React.Component{
                                 <button 
                                     className='delete-buttons' 
                                     id='kind_lerngruppe' type='button'
-                                    onClick={this.deleteLerngruppen}
+                                    onClick={this.deletePersonData}
                                     
                                 >Alle Lerngruppe Einträge dieser Person löschen</button>
 
@@ -802,8 +690,8 @@ export class EditPerson extends React.Component{
                             <h4>Bezugspersonen</h4>
                                 <button 
                                     className='delete-buttons' 
-                                    id='kontakt_daten' type='button'
-                                    onClick={this.deleteBezugspersonen}
+                                    id='bezugsperson_kind' type='button'
+                                    onClick={this.deletePersonData}
                                 >Alle Bezugspersonen löschen</button>
 
                                 <label>Neue Person für dieses Kind addieren: </label>
@@ -847,8 +735,8 @@ export class EditPerson extends React.Component{
                             <h4>Jahrgangswechsel</h4>
                                 <button 
                                     className='delete-buttons' 
-                                    id='kind_lerngruppe' type='button'
-                                    onClick={this.deleteJahrgangswechseln}
+                                    id='jahrgangswechsel' type='button'
+                                    onClick={this.deletePersonData}
                                 >Alle Jahrgangswechsel Einträge dieser Person löschen</button>
 
                                 <label>Neuer Jahrgangswechsel Eintrag für diese Person hinzufügen: </label>
@@ -888,6 +776,53 @@ export class EditPerson extends React.Component{
                                     {this.state.jahrgangswechselRecords.map((record) => 
                                     <option value={dateToENFormat(new Date(record.datum))}>{"Wert: "+record.wert + " Grund: " + record.grund 
                                     + "  von: " + dateToDEFormat(new Date(record.datum))}</option>)}
+                                    
+                                </select>
+                                <br></br>
+                        </div>
+
+                        {/* BuT */}
+                        <div className='edit-person-data-cont'>
+                            <h4>BuT</h4>
+                                <button 
+                                    className='delete-buttons' 
+                                    id='kind_but' type='button'
+                                    onClick={this.deletePersonData}
+                                >Alle BuT Einträge dieser Person löschen</button>
+
+                                <label>Neuer BuT Eintrag für diese Person hinzufügen: </label>
+                                <label>BuT Beginn: </label>
+                                <input type="date" id="but_beginn" name="sl-date"
+                                    defaultValue={this.defaultDateValue}
+                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                <br></br>
+
+                                <label>BuT Ende: </label>
+                                <input type="date" id="but_ende" name="sl-date"
+                                    defaultValue={this.defaultDateValue}
+                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                <br></br>
+
+                                <label >Berlinpass BuT:</label>
+                                <select id='berlinpass_but'  
+                                onChange= {this.handleChange} >
+                                    <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                    <option value='0'>0</option>
+                                    <option value='1'>1</option>
+                                </select>
+                                <br></br>
+
+
+                                <label>Existierende BuT Einträge dieser Person entfernen: </label>
+                                <select id='butToBeDeleted' onChange= {this.handleChange}>
+                                    <option selected="true" >-</option>
+
+                                    {this.state.butRecords.map((record) => 
+                                    <option value={dateToENFormat(new Date(record.but_beginn))}>{"Beginn: "+ dateToDEFormat(new Date(record.but_beginn)) 
+                                                                                                + " Ende: " + dateToDEFormat(new Date(record.but_ende))
+                                                                                                + " Ber.Pass: " + (record.berlinpass_but ? ("True"):("False"))
+                                                                                                }
+                                                                                                </option>)}
                                     
                                 </select>
                                 <br></br>
