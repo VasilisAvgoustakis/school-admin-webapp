@@ -866,7 +866,7 @@ WHERE
     })
 
   // adds AG record
-  if(validCoreData > 0){
+  if(validCoreData > 0 && agToBeAdded){
     
     pool.query(
     `INSERT IGNORE INTO person_arbeitsgruppe(person_id, arbeitsgruppe_id, koordination_der_ag, datum_mitgliedschaftsbeginn, datum_mitgliedschaftsende)
@@ -885,6 +885,27 @@ WHERE
           sumResults.push(results)
         }})
   }
+
+  // deletes AG record
+  if(agToBeDeleted){
+    
+  pool.query(
+  `DELETE FROM person_arbeitsgruppe
+    WHERE 
+    person_id = ${person_id}
+    AND
+    arbeitsgruppe_id = ${agToBeDeleted} 
+  ;`
+
+    ,(err, results) =>{
+      if(err){
+        console.log(err)
+        freeOfErrors = false;
+        return res.send(err);
+      }else {
+        sumResults.push(results)
+      }})
+}
 
 
     // this query's role is just as workaround soolution to send a valid response 

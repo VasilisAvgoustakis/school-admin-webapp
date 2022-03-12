@@ -110,6 +110,14 @@ export class EditPerson extends React.Component{
             datum_mitgliedschaftsende: '',
             agToBeDeleted: '',
 
+            //tätigkeit
+            taetigkeit_beginn: this.defaultDateValue,
+            taetigkeit_ende:'',
+            typ:'',
+            taetigkeit:'',
+            taetigkeitToBeDeleted: '',
+
+
 
         }
     }
@@ -130,7 +138,7 @@ export class EditPerson extends React.Component{
             
             }))
     }
-
+    //general query to fetch records of given table to populate options in selects
     async fetchPersonsDataMultitable(table1, table2, sortByColumn){
         return (
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/dataMultitablePerson`, {
@@ -280,6 +288,23 @@ export class EditPerson extends React.Component{
             })
         });
 
+        this.fetchPersonsDataMultitable("person_arbeitsgruppe", "arbeitsgruppen", "bezeichnung").then(res => {
+        
+            let arbeitsgruppen = [];
+            res.data.forEach(gruppe => {
+                arbeitsgruppen.push(
+                    Object.create({ 
+                                arbeitsgruppe_id: gruppe.arbeitsgruppe_id,
+                                bezeichnung:gruppe.bezeichnung,
+                                datum_mitgliedschaftsbeginn: gruppe.datum_mitgliedschaftsbeginn
+                                }))
+                
+            });
+            this.setState({
+                ags: arbeitsgruppen
+            })
+        });
+
         this.fetchPersonsRecords('jahrgangswechsel', 'datum').then(res => {
         
             let jahrgangswechseln = [];
@@ -395,7 +420,7 @@ export class EditPerson extends React.Component{
    
 
     render(){
-        
+        console.log(this.state.ags)
         return(
             <div>
                 <button type='button' onClick={this.editData}>Speichern</button>
@@ -897,7 +922,75 @@ export class EditPerson extends React.Component{
                                 </select>
                                 <br></br>
                         </div>
-                        
+
+                        {/* Tätigkeit */}
+                        <div className='edit-person-data-cont'>
+                            <h4>Tätigkeit</h4>
+                                <button 
+                                    className='delete-buttons' 
+                                    id='taetigkeit' type='button'
+                                    onClick={this.deletePersonData}
+                                >Alle Tätigkeiten dieser Person löschen</button>
+
+                                <label>Neuer Tätigkeit für diese Person hinzufügen: </label>
+                                <label>Tätigkeitsbeginn: </label>
+                                <input type="date" id="taetigkeit_beginn" name="sl-date"
+                                    defaultValue={this.defaultDateValue}
+                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                <br></br>
+
+                                <label>Tätigkeitsende: </label>
+                                <input type="date" id="taetigkeit_ende" name="sl-date"
+                                    defaultValue={this.defaultDateValue}
+                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                <br></br>
+
+                                <label>Typ: </label>
+                                <select id='typ' 
+                                onChange= {this.handleChange} >
+                                    <option selected="true" value=''>-</option> {/*default option when no data from database for selected person*/}
+                                    <option value='Freiwilligendienst'>Freiwilligendienst</option>
+                                    <option value='Ehrenamt'>Ehrenamt</option>
+                                    <option value='Praktikum'>Praktikum</option>
+                                    <option value='Honorartaetigkeit'>Honorartaetigkeit</option>
+                                    <option value='extern'>extern</option>
+                                    <option value='Kollektiv'>Kollektiv</option>
+                                    <option value='Arbeitsverhaeltniss'>Arbeitsverhaeltniss</option>
+                                </select>
+                                <br></br>
+
+                                <label>Tätigkeit: </label>
+                                <select id='taetigkeit' 
+                                onChange= {this.handleChange} >
+                                    <option selected="true" value=''>-</option> {/*default option when no data from database for selected person*/}
+                                    <option value='Lehrkraefte mit Unterrichtsbefaehigung'>Lehrkräfte mit Unterrichtsbefähigung</option>
+                                    <option value='Lehrkraefte ohne Unterrichtsbefaehigung'>Lehrkräfte ohne Unterrichtsbefähigung</option>
+                                    <option value='Sonstige Lehrkraft'>Sonstige Lehrkraft</option>
+                                    <option value='Paedagogische Fachkraefte eFoeB'>Pädagogische Fachkräfte eFoeB</option>
+                                    <option value='Sonstige paedagogische Kraft Ganztag'>Sonstige pädagogische Kraft Ganztag</option>
+                                    <option value='Verwaltungskraft'>Verwaltungskraft</option>
+                                    <option value='Kuechenkraft'>Küchenkraft</option>
+                                    <option value='Kuechenhilfe'>Küchenhilfe</option>
+                                    <option value='Reinigungskraft'>Reinigungskraft</option>
+                                    <option value='Hausmeister*in'>Hausmeister*in</option>
+                                    <option value='Schulhilfe'>Schulhilfe</option>
+                                </select>
+                                <br></br>
+
+                                
+
+                                <label>Existierende Tätigkeit dieser Person entfernen: </label>
+                                <select id='taetigkeitToBeDeleted' onChange= {this.handleChange}>
+                                    <option selected="true" >-</option>
+
+                                    {this.state.jahrgangswechselRecords.map((record) => 
+                                    <option value={dateToENFormat(new Date(record.datum))}>{"Wert: "+record.wert + " Grund: " + record.grund 
+                                    + "  von: " + dateToDEFormat(new Date(record.datum))}</option>)}
+                                    
+                                </select>
+                                <br></br>
+                        </div>
+                       
                     </div>
                     
                 </div>
