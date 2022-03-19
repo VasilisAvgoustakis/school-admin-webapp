@@ -193,7 +193,12 @@ export class Person extends React.Component{
                             //haushalte
                             haushalte = {this.state.addresses}
 
-                            
+                            //verinsmitgliedschaft
+                            mitgliedschaftsbeginn = {this.state.data.mitgliedschaftsbeginn}
+                            typ = {this.state.data.typ}
+                            mitgliedschaftsende = {this.state.data.mitgliedschaftsende}
+                            grund_fuer_mitgliedschaftsende = {this.state.data.grund_fuer_mitgliedschaftsende}
+
                                     />
                     </div>
                 , document.getElementById('person-data'))):(

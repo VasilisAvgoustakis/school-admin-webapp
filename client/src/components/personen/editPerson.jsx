@@ -116,6 +116,17 @@ export class EditPerson extends React.Component{
             typ:'',
             taetigkeit:'',
             taetigkeitToBeDeleted: '',
+            taetigkeitRecords: [],
+
+            //Vereinsmitgliedschaft
+            mitgliedschaftsbeginn: this.props.typ === "aktiv" ? (dateToENFormat(new Date(this.props.mitgliedschaftsbeginn))):(''),
+            typ_m: this.props.typ === "aktiv" ? (this.props.typ):(''),
+            mitgliedschaftsende: (this.props.typ === "aktiv" && this.props.mitgliedschaftsende !== null) ? 
+                (dateToENFormat(new Date(this.props.mitgliedschaftsende))):(''),
+            grund_fuer_mitgliedschaftsende: this.props.typ === "aktiv" ? (this.props.grund_fuer_mitgliedschaftsende):(''),
+            mitgliedschaftToBeDeleted: '',
+            mitgliedschaftsRecords: [],
+
 
 
 
@@ -167,7 +178,7 @@ export class EditPerson extends React.Component{
     async updateQuery(){
         var stateObj = this.state;
         var dataArr = Object.values(stateObj);
-
+        console.log(dataArr)
         return(
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/editPerson`, {
            params: {
@@ -339,6 +350,42 @@ export class EditPerson extends React.Component{
             })
         });
 
+        this.fetchPersonsRecords('taetigkeit', 'taetigkeit_beginn').then(res => {
+        
+            let taetigkeiten = [];
+            res.data.forEach(record => {
+                taetigkeiten.push(
+                    Object.create({ 
+                                taetigkeit_beginn: record.taetigkeit_beginn,
+                                taetigkeit_ende:record.taetigkeit_ende,
+                                typ: record.typ,
+                                taetigkeit: record.taetigkeit
+                                }))
+                
+            });
+            this.setState({
+                taetigkeitRecords: taetigkeiten
+            })
+        });
+
+        this.fetchPersonsRecords('vereinsmitgliedschaft', 'mitgliedschaftsbeginn').then(res => {
+        
+            let mitgliedschaften = [];
+            res.data.forEach(record => {
+                mitgliedschaften.push(
+                    Object.create({ 
+                                mitgliedschaftsbeginn: record.mitgliedschaftsbeginn,
+                                typ: record.typ,
+                                mitgliedschaftsende: record.mitgliedschaftsende,
+                                grund_fuer_mitgliedschaftsende: record.grund_fuer_mitgliedschaftsende
+                                }))
+                
+            });
+            this.setState({
+                mitgliedschaftsRecords: mitgliedschaften
+            })
+        });
+
         
 
 
@@ -420,7 +467,7 @@ export class EditPerson extends React.Component{
    
 
     render(){
-        console.log(this.state.ags)
+        console.log(this.state.mitgliedschaftsbeginn)
         return(
             <div>
                 <button type='button' onClick={this.editData}>Speichern</button>
@@ -941,7 +988,7 @@ export class EditPerson extends React.Component{
 
                                 <label>Tätigkeitsende: </label>
                                 <input type="date" id="taetigkeit_ende" name="sl-date"
-                                    defaultValue={this.defaultDateValue}
+                                    defaultValue={null}
                                     min="2012-01-01" onChange={this.handleChange}></input>
                                 <br></br>
 
@@ -983,9 +1030,72 @@ export class EditPerson extends React.Component{
                                 <select id='taetigkeitToBeDeleted' onChange= {this.handleChange}>
                                     <option selected="true" >-</option>
 
-                                    {this.state.jahrgangswechselRecords.map((record) => 
-                                    <option value={dateToENFormat(new Date(record.datum))}>{"Wert: "+record.wert + " Grund: " + record.grund 
-                                    + "  von: " + dateToDEFormat(new Date(record.datum))}</option>)}
+                                    {this.state.taetigkeitRecords.map((record) => 
+                                    <option value={dateToENFormat(new Date(record.taetigkeit_beginn)) + "_" + record.taetigkeit}>
+                                        {"Beginn: "+dateToDEFormat(new Date(record.taetigkeit_beginn)) + " Ende: " + (record.taetigkeit_ende ? (dateToDEFormat(new Date(record.taetigkeit_ende))):("null"))
+                                        + " Typ: " + record.typ + " Tätigkeit: " + record.taetigkeit}</option>)}
+                                    
+                                </select>
+                                <br></br>
+                        </div>
+
+                        {/* Vereinsmitgliedschaft */}
+                        <div className='edit-person-data-cont'>
+                            <h4>Vereinsmitgliedschaft</h4>
+                                <button 
+                                    className='delete-buttons' 
+                                    id='vereinsmitgliedschaft' type='button'
+                                    onClick={this.deletePersonData}
+                                >Alle Vereinmitgliedschaft Einträge dieser Person löschen</button>
+
+                                <label>Neuer Vereinsmitgliedschaft für diese Person hinzufügen: </label>
+                                <label>Mitgliedschaftsbeginn: </label>
+                                <input type="date" id="mitgliedschaftsbeginn" name="sl-date"
+                                    defaultValue={this.state.mitgliedschaftsbeginn ? (this.state.mitgliedschaftsbeginn):(this.state.defaultDateValue)}
+                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                <br></br>
+
+                                <label>Mitgliedschaftsende: </label>
+                                <input type="date" id="mitgliedschaftsende" name="sl-date"
+                                    defaultValue={this.state.mitgliedschaftsende ? (this.state.mitgliedschaftsende):(null)}
+                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                <br></br>
+
+                                <label>Typ: </label>
+                                <select id='typ_m' 
+                                defaultValue={this.state.typ_m ? (this.state.typ_m):(null)}
+                                onChange= {this.handleChange} >
+                                    <option selected="true" value=''>-</option> {/*default option when no data from database for selected person*/}
+                                    <option value='aktiv'>Aktiv</option>
+                                    <option value='foerdernd'>Fördernd</option>
+                                </select>
+                                <br></br>
+
+
+                                <label>Grund für Mitgliedschaftsende: </label>
+                                <select id='grund_fuer_mitgliedschaftsende' 
+                                defaultValue={this.state.grund_fuer_mitgliedschaftsende ? (this.state.grund_fuer_mitgliedschaftsende):(null)}
+                                onChange= {this.handleChange} >
+                                    <option selected="true" value=''>-</option> {/*default option when no data from database for selected person*/}
+                                    <option value='Austritt'>Austritt</option>
+                                    <option value='Ausschluss'>Ausschluss</option>
+                                    <option value='Tod'>Tod</option>
+                                    <option value='Streichung'>Streichung</option>
+                                    <option value='Ende des Schulbesuchs'>Ende des Schulbesuchs</option>
+                                    <option value='Ende des Arbeitsverhaeltnisses'>Ende des Arbeitsverhältnisses</option>
+                                    <option value='Sonstiges'>Sonstiges</option>
+                                </select>
+                                <br></br>
+
+
+                                <label>Existierende Vereinsmitgliedschaft dieser Person entfernen: </label>
+                                <select id='mitgliedschaftToBeDeleted' onChange= {this.handleChange}>
+                                    <option selected="true" >-</option>
+
+                                    {this.state.mitgliedschaftsRecords.map((record) => 
+                                    <option value={this.state.person_id + "_" + dateToENFormat(new Date(record.mitgliedschaftsbeginn))}>
+                                        {"Beginn: "+dateToDEFormat(new Date(record.mitgliedschaftsbeginn)) + " Ende: " + (record.mitgliedschaftsende ? (dateToDEFormat(new Date(record.mitgliedschaftsende))):("null"))
+                                        + " Typ: " + record.typ + " Grund für Ende: " + record.grund_fuer_mitgliedschaftsende}</option>)}
                                     
                                 </select>
                                 <br></br>

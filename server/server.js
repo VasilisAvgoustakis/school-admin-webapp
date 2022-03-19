@@ -259,7 +259,8 @@ WHERE
   kind_daten.*,
   kind_schule.*,
   kind_betreuung.*,
-  taetigkeit
+  taetigkeit.*,
+  vereinsmitgliedschaft.*
 FROM
   personen
       LEFT OUTER JOIN
@@ -281,7 +282,14 @@ FROM
       WHERE
           personen.person_id = kind_betreuung.person_id)
       LEFT OUTER JOIN
-  vereinsmitgliedschaft ON personen.person_id = vereinsmitgliedschaft.person_id
+        vereinsmitgliedschaft  ON personen.person_id = vereinsmitgliedschaft.person_id
+        AND mitgliedschaftsbeginn = (SELECT
+                MAX(mitgliedschaftsbeginn)
+            FROM 
+              vereinsmitgliedschaft 
+            WHERE
+                personen.person_id = vereinsmitgliedschaft.person_id
+                            )
     LEFT OUTER JOIN
   taetigkeit ON personen.person_id = taetigkeit.person_id
   
@@ -420,8 +428,9 @@ WHERE
         jahrgangswechselRecords, datum, wert, grund, jahrgangToBeDeleted,
         but_beginn, but_ende, berlinpass_but, butToBeDeleted, butRecords,
         ags, probableAgs, agToBeAdded, koordination_der_ag, datum_mitgliedschaftsbeginn, datum_mitgliedschaftsende, agToBeDeleted,
-
-        ] = req.query.state
+        taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit, taetigkeitToBeDeleted, taetigkeitRecords,
+        mitgliedschaftsbeginn, typ_m, mitgliedschaftsende, grund_fuer_mitgliedschaftsende, mitgliedschaftToBeDeleted, mitgliedschaftsRecords,
+      ] = req.query.state
 
     // this variable will be true if the error case in one of the queries has already send headers
     let freeOfErrors = true;
@@ -906,6 +915,136 @@ WHERE
         sumResults.push(results)
       }})
 }
+
+
+  //make array only with the relevant data of coming query
+  let taetigkeitData = [taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit]
+  
+  // check that at least one of the values is relevant for saving (not null or '')
+  validCoreData = 0;
+  taetigkeitData.forEach(element=> {
+    if(element === '' || element === null || element === 'null'){
+      return;
+    }else{
+      validCoreData++;
+    }
+    })
+
+  // adds Tätigkeit record
+  if(validCoreData > 1 && (!einschulungsdatum || abgangsdatum_von_fsx)){
+    
+    pool.query(
+    `INSERT IGNORE INTO taetigkeit(person_id, taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit)
+      VALUES(${person_id},
+            ${taetigkeit_beginn ? ("'" + taetigkeit_beginn.toString() + "'"):(null)},
+            ${taetigkeit_ende ? ("'" + taetigkeit_ende.toString() + "'"):(null)},
+            ${typ ? ("'"+typ+"'"):(null)},
+            ${taetigkeit ? ("'"+taetigkeit+"'"):(null)})
+            ;`
+
+      ,(err, results) =>{
+        if(err){
+          console.log(err)
+          freeOfErrors = false;
+          return res.send(err);
+        }else {
+          sumResults.push(results)
+        }})
+  }
+
+  // deletes Taetigkeit record
+  if(taetigkeitToBeDeleted){
+  let splitValues = taetigkeitToBeDeleted.split("_");
+  let beginn = splitValues[0];
+  let taetigkeit = splitValues[1];
+  console.log(taetigkeit)
+  
+  pool.query(
+  `DELETE FROM taetigkeit
+    WHERE 
+    person_id = ${person_id}
+    AND
+    taetigkeit_beginn = ${"'"+beginn.toString()+"'"}
+    
+  ;`
+
+    ,(err, results) =>{
+      if(err){
+        console.log(err)
+        freeOfErrors = false;
+        return res.send(err);
+      }else {
+        console.log(results)
+        sumResults.push(results)
+      }})
+  }
+
+
+  //make array only with the relevant data of coming query
+  let mitgliedschaftsData = [mitgliedschaftsbeginn, typ_m, mitgliedschaftsende, grund_fuer_mitgliedschaftsende]
+  
+  // check that at least one of the values is relevant for saving (not null or '')
+  validCoreData = 0;
+  mitgliedschaftsData.forEach(element=> {
+    if(element === '' || element === null || element === 'null'){
+      return;
+    }else{
+      validCoreData++;
+    }
+    })
+
+  // adds Vereinmitgliedschaft record
+  if(validCoreData > 1 && (!einschulungsdatum || abgangsdatum_von_fsx)){
+    console.log(mitgliedschaftsData)
+    pool.query(
+    `INSERT INTO vereinsmitgliedschaft(person_id, mitgliedschaftsbeginn, typ, mitgliedschaftsende, grund_fuer_mitgliedschaftsende)
+      VALUES(${person_id},
+            ${mitgliedschaftsbeginn ? ("'" + mitgliedschaftsbeginn.toString() + "'"):(null)},
+            ${typ_m ? ("'"+typ_m+"'"):(null)},
+            ${mitgliedschaftsende ? ("'" + mitgliedschaftsende.toString() + "'"):(null)},
+            ${grund_fuer_mitgliedschaftsende ? ("'"+grund_fuer_mitgliedschaftsende+"'"):(null)})
+            ON DUPLICATE KEY UPDATE
+              typ = ${typ_m ? ("'"+typ_m+"'"):(null)},
+              mitgliedschaftsende = ${mitgliedschaftsende ? ("'" + mitgliedschaftsende.toString() + "'"):(null)},
+              grund_fuer_mitgliedschaftsende = ${grund_fuer_mitgliedschaftsende ? ("'"+grund_fuer_mitgliedschaftsende+"'"):(null)}
+            ;`
+
+      ,(err, results) =>{
+        if(err){
+          console.log(err)
+          freeOfErrors = false;
+          return res.send(err);
+        }else {
+          sumResults.push(results)
+        }})
+  }
+
+  // deletes vereinmitgliedschaft record
+  if(mitgliedschaftToBeDeleted){
+    let splitValues = mitgliedschaftToBeDeleted.split("_");
+    let person_id = splitValues[0];
+    let beginn = splitValues[1];
+    console.log(taetigkeit)
+    
+    pool.query(
+    `DELETE FROM vereinsmitgliedschaft
+      WHERE 
+      person_id = ${person_id}
+      AND
+      mitgliedschaftsbeginn = ${"'"+beginn.toString()+"'"}
+    ;`
+  
+      ,(err, results) =>{
+        if(err){
+          console.log(err)
+          freeOfErrors = false;
+          return res.send(err);
+        }else {
+          console.log(results)
+          sumResults.push(results)
+        }})
+    }
+
 
 
     // this query's role is just as workaround soolution to send a valid response 
