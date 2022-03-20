@@ -7,17 +7,58 @@
 
 }
 
+
+.bg-cont{
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    padding: auto;
+    margin: 3px;
+    width: 100%;
+
+    
+}
+
+.delete-section{
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(236, 195, 195);
+    border-top: 3px solid #3d3d3d;
+    border-radius: 5px;
+    padding: 5px;
+    margin-top: 20px;
+}
+
+.delete-buttons{
+    background-color: rgb(247, 108, 108);  
+    border-radius: 6px;
+    align-self: center;
+    width: 50%;
+  }
+
 .edit-person-data-cont{
     display: flex;
     flex-direction: column;
     border-radius: 10px;
-    background: rgb(151, 151, 233); 
-
+    background: rgb(203, 203, 224); 
+    
     padding: 10px; 
-    border: 2px solid #000000; 
+    border: 1px solid #3d3d3d; 
     margin: 10px;
 
 }
+
+input:invalid {
+    border-radius: 3px;
+    border: 2px solid red;
+  }
+  
+input:valid {
+    border-radius: 3px;
+    border: 1px solid black;
+}
+
+
 
 
 

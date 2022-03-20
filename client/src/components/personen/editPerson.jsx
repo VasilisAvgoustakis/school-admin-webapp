@@ -394,21 +394,38 @@ export class EditPerson extends React.Component{
     
     // edits DB for changed data in the form
     editData(){
-        var confirm = window.confirm('Diese Aktion wird die Daten direkt in der Datenbank bearbeiten!!! Bist du sicher dass diese Korrekt sind?')
-        if(confirm){
-        this.updateQuery().then(res =>{
-            if(typeof(res.data) !== 'string'){
-                console.log("This is the Err: ")
-                console.log(res.data)
-                window.alert(res.data);
-            }else{
-                console.log("confirm")
-                confirm = false;
-                if(!confirm)window.location.reload();
-                //console.log(res);
+        //input validation
+        let validationSuccess = false;
+        //get all invalid inputs
+        let invalidInputFields = document.querySelectorAll(':invalid');
+        //console.log(invalidInputFields)
+
+        if(invalidInputFields.length > 0){
+            window.alert('Bitte kontrollieren Sie alle rot gekennzeichnete Input Felder und versuchen Sie es erneut!')
+        }else if(invalidInputFields.length === 0) validationSuccess = true;
+
+
+
+
+
+
+        if(validationSuccess){
+            var confirm = window.confirm('Diese Aktion wird die Daten direkt in der Datenbank bearbeiten!!! Bist du sicher dass diese Korrekt sind?')
+            if(confirm){
+            this.updateQuery().then(res =>{
+                if(typeof(res.data) !== 'string'){
+                    console.log("This is the Err: ")
+                    console.log(res.data)
+                    window.alert(res.data);
+                }else{
+                    console.log("confirm")
+                    confirm = false;
+                    if(!confirm)window.location.reload();
+                    //console.log(res);
+                }
+            }).catch(err =>{console.log(err)})
             }
-        }).catch(err =>{console.log(err)})
-    }
+        }
     }
 
     //delete Kindbezogenen Daten
@@ -473,34 +490,30 @@ export class EditPerson extends React.Component{
                 <button type='button' onClick={this.editData}>Speichern</button>
                 <div className='edit-person-cont'>
                     {/* allgemeine Personrelevante Daten */}  
-                    <div style={({backgroundColor: "cyan"})}>
-                        <h3>Personrelevanten Daten</h3>
+                    <div className='bg-cont' style={({backgroundColor: "#74a3ed"})}>
+                        <h3 style={({textAlign: "center"})}>Personrelevanten Daten</h3>
                         {/* Kerndaten */}
                         <div className='edit-person-data-cont'>
                             <h4>Edit Kerndaten</h4>
-                            <button 
-                                className='delete-buttons' 
-                                id='personen' type='button'
-                                onClick={this.deletePersonData}
-                            >Person löschen</button>
+                            
                         
                             <label >Person ID:</label>
-                            <input type='text' name='person_id' value={this.state.person_id}readOnly></input>
+                            <input type='text' className='text-input' name='person_id' value={this.state.person_id}readOnly></input>
                             <br></br>
 
                             <label >Rufname:</label>
-                            <input type='text' id='rufname' value={this.state.rufname} 
-                            onChange= {this.handleChange} ></input>
+                            <input type='text' className='text-input' id='rufname' value={this.state.rufname} 
+                            onChange= {this.handleChange} pattern='[a-zA-ZäöüÄÖÜ\s]*$' ></input>
                             <br></br>
 
                             <label >Amtlicher Vorname:</label>
-                            <input type='text' id='amtlicher_vorname' value={this.state.amtlicher_vorname} 
-                            onChange= {this.handleChange} ></input>
+                            <input type='text' className='text-input' id='amtlicher_vorname' value={this.state.amtlicher_vorname} 
+                            onChange= {this.handleChange} pattern='[a-zA-ZäöüÄÖÜ\s]*$' ></input>
                             <br></br>
 
                             <label >Nachname:</label>
-                            <input type='text' id='nachname' value={this.state.nachname} 
-                            onChange= {this.handleChange} ></input>
+                            <input type='text' className='text-input' id='nachname' value={this.state.nachname} 
+                            onChange= {this.handleChange} pattern='[a-zA-ZäöüÄÖÜ\s]*$' ></input>
                             <br></br>
 
                             <label >Geburtsdatum:</label>
@@ -511,9 +524,15 @@ export class EditPerson extends React.Component{
                             <br></br>
 
                             <label >Einschulungsdatum:</label>
-                            <input type='date' id='einschulungsdatum' value={
+                            <input type='date' id='einschulungsdatum' 
+                            value={
                                 this.state.einschulungsdatum ? 
-                                (dateToENFormat(new Date(this.state.einschulungsdatum))):('')} 
+                                (dateToENFormat(new Date(this.state.einschulungsdatum))):('')
+                            }
+                            min={
+                                this.state.geburtsdatum ?
+                                (dateToENFormat(new Date(this.state.geburtsdatum))):('')
+                            } 
                             onChange= {this.handleChange} ></input>
                             <br></br>
 
@@ -524,20 +543,23 @@ export class EditPerson extends React.Component{
                                 <option value='1'>1</option>
                             </select>
                             <br></br>
+
+                            <div className='delete-section'>
+                            <button 
+                                className='delete-buttons' 
+                                id='personen' type='button'
+                                onClick={this.deletePersonData}
+                            >Person löschen</button>
+                            </div>
                         </div>
 
                         {/* Contact Data */}
                         <div className='edit-person-data-cont'>
                             <h4>Kontaktdaten</h4>
-                            <button 
-                                className='delete-buttons' 
-                                id='kontakt_daten' type='button'
-                                onClick={this.deletePersonData}
-                            >Kontaktdaten löschen</button>
 
                             <label>E-Mail 1: </label>
                             <input type='email' id='email_1' value={this.state.email_1} 
-                            onChange= {this.handleChange} ></input>
+                            onChange= {this.handleChange}  ></input>
                             <br></br>
 
                             <label>E-Mail 2: </label>
@@ -551,45 +573,55 @@ export class EditPerson extends React.Component{
                             <br></br>
 
                             <label>Mobil 1: </label>
-                            <input type='tel' id='mobil_telefon_1' value={this.state.mobil_telefon_1} 
+                            <input type='tel' id='mobil_telefon_1' value={this.state.mobil_telefon_1}
+                            pattern='^[0-9+][0-9-()]*$' 
                             onChange= {this.handleChange} ></input>
                             <br></br>
 
                             <label>Mobil 2: </label>
                             <input type='tel' id='mobil_telefon_2' value={this.state.mobil_telefon_2} 
+                            pattern='^[0-9+][0-9-()]*$'
                             onChange= {this.handleChange} ></input>
                             <br></br>
 
                             <label>Mobil FSX: </label>
                             <input type='tel' id='mobil_telefon_fsx' value={this.state.mobil_telefon_fsx} 
+                            pattern='^[0-9+][0-9-()]*$'
                             onChange= {this.handleChange} ></input>
                             <br></br>
 
                             <label>Tel 1: </label>
                             <input type='tel' id='telefon_1' value={this.state.telefon_1} 
+                            pattern='^[0-9+][0-9-()]*$'
                             onChange= {this.handleChange} ></input>
                             <br></br>
 
                             <label>Tel 2: </label>
                             <input type='tel' id='telefon_2' value={this.state.telefon_2} 
+                            pattern='^[0-9+][0-9-()]*$'
                             onChange= {this.handleChange} ></input>
                             <br></br>
 
                             <label>Tel FSX: </label>
                             <input type='tel' id='telefon_fsx' value={this.state.telefon_fsx} 
+                            pattern='^[0-9+][0-9-()]*$'
                             onChange= {this.handleChange} ></input>
                             <br></br>
+
+                            <div className='delete-section'>
+                            <button 
+                                className='delete-buttons' 
+                                id='kontakt_daten' type='button'
+                                onClick={this.deletePersonData}
+                            >Kontaktdaten löschen</button>
+                            </div>
 
                         </div>
 
                         {/* Haushalte */}
                         <div className='edit-person-data-cont'>
                             <h4>Haushalte</h4>
-                                <button 
-                                    className='delete-buttons' 
-                                    id='person_haushalt' type='button'
-                                    onClick={this.deletePersonData}
-                                >Alle Haushalte dieser Person löschen</button>
+                                
 
                                 <label>Neues Haushalt für diese Person hinzufügen: </label>
                                 <select id='haushalteToBeAdded' onChange= {this.handleChange}>
@@ -609,38 +641,49 @@ export class EditPerson extends React.Component{
                                 <label>Einzugsdatum: </label>
                                 <input type="date" id="datum_einzug" name="sl-date"
                                     defaultValue={this.defaultDateValue}
-                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                    min={
+                                        this.state.geburtsdatum ?
+                                        (dateToENFormat(new Date(this.state.geburtsdatum))):('')    
+                                    } 
+                                    onChange={this.handleChange}></input>
                                 <br></br>
                                 
+                                <div className='delete-section'>
+                                    <label>Existierende Haushalt dieser Person entfernen: </label>
+                                    <select id='haushaltToBeDeleted' onChange= {this.handleChange}>
+                                        <option selected="true" value=''>-</option>
 
-                                <label>Existierende Haushalt dieser Person entfernen: </label>
-                                <select id='haushaltToBeDeleted' onChange= {this.handleChange}>
-                                    <option selected="true" value=''>-</option>
+                                        {this.state.haushalte.map((haus) => 
+                                        <option value={haus.haushalt_id}>{haus.strasse + " " + haus.postleitzahl}</option>)}
+                                        
+                                    </select>
+                                    <br></br>
 
-                                    {this.state.haushalte.map((haus) => 
-                                    <option value={haus.haushalt_id}>{haus.strasse + " " + haus.postleitzahl}</option>)}
-                                    
-                                </select>
-                                <br></br>
+                                    <label>Oder: </label>
+                                    <button 
+                                        className='delete-buttons' 
+                                        id='person_haushalt' type='button'
+                                        onClick={this.deletePersonData}
+                                    >Haushalte löschen</button>
+                                </div>
                         </div>
                     </div>
                     
                     {/* Kinderrelevante Daten */}
-                    <div style={({backgroundColor: "blue"})}>
-                        <h3>Kindrelevante Daten</h3>
+                    <div className='bg-cont' style={({backgroundColor: "#96ebdd"})}>
+                        <h3 style={({textAlign: "center"})}>Kindrelevante Daten</h3>
                         {/* Kind bezogene Daten */}
                         <div className='edit-person-data-cont'>
                             <h4>Kindsdaten</h4>
-                            <button className='delete-buttons' type='button' onClick={this.deleteKindData}>Kindbezogene Daten löschen</button>
 
                             <label>Staatsangehörigkeit: </label>
                             <input type='text' id='staatsangehoerigkeit' value={this.state.staatsangehoerigkeit} 
-                            onChange= {this.handleChange} ></input>
+                            onChange= {this.handleChange} pattern='[A-Z]{0,3}'></input>
                             <br></br>
 
                             <label>Geburtsort: </label>
                             <input type='text' id='geburtsort' value={this.state.geburtsort} 
-                            onChange= {this.handleChange} ></input>
+                            onChange= {this.handleChange} pattern='[a-zA-ZäöüÄÖÜ\s]*$' ></input>
                             <br></br>
 
                             <label>Geschlecht: </label>
@@ -663,17 +706,32 @@ export class EditPerson extends React.Component{
                             <br></br>
 
                             <label >Zugang zu FSX:</label>
-                            <input type='date' id='zugangsdatum_zur_fsx' value={
+                            <input type='date' id='zugangsdatum_zur_fsx' 
+                            value={
                                 this.state.zugangsdatum_zur_fsx ? 
-                                (dateToENFormat(new Date(this.state.zugangsdatum_zur_fsx))):('')} 
-                            onChange= {this.handleChange} ></input>
+                                (dateToENFormat(new Date(this.state.zugangsdatum_zur_fsx))):('')
+                            } 
+                            min={
+                                this.state.einschulungsdatum ?
+                                (dateToENFormat(new Date(this.state.einschulungsdatum))):('')
+                            }
+                            onChange= {this.handleChange} >
+                                
+                            </input>
                             <br></br>
 
                             <label >Abgang vom FSX:</label>
-                            <input type='date' id='abgangsdatum_von_fsx' value={
+                            <input type='date' id='abgangsdatum_von_fsx' 
+                            value={
                                 this.state.abgangsdatum_von_fsx ? 
-                                (dateToENFormat(new Date(this.state.abgangsdatum_von_fsx))):('')} 
-                            onChange= {this.handleChange} ></input>
+                                (dateToENFormat(new Date(this.state.abgangsdatum_von_fsx))):('')
+                            } 
+                            onChange= {this.handleChange} 
+                                min= {
+                                this.state.zugangsdatum_zur_fsx ? 
+                                (dateToENFormat(new Date(this.state.zugangsdatum_zur_fsx))):('')
+                                } >
+                                </input>
                             <br></br>
 
                             <label>Abgangsgrund: </label>
@@ -698,17 +756,31 @@ export class EditPerson extends React.Component{
                             <br></br>
 
                             <label >Betreuung Beginn:</label>
-                            <input type='date' id='betreuung_beginn' value={
+                            <input type='date' id='betreuung_beginn' 
+                            value={
                                 this.state.betreuung_beginn ? 
-                                (dateToENFormat(new Date(this.state.betreuung_beginn))):('')} 
+                                (dateToENFormat(new Date(this.state.betreuung_beginn))):('')
+                            }
+                            min={
+                                this.state.zugangsdatum_zur_fsx ?
+                                (dateToENFormat(new Date(this.state.zugangsdatum_zur_fsx))):('')
+                            } 
                             onChange= {this.handleChange} ></input>
                             <br></br>
 
                             <label >Betreuung Ende:</label>
-                            <input type='date' id='betreuung_ende' value={
+                            <input type='date' id='betreuung_ende' 
+                            value={
                                 this.state.betreuung_ende ? 
-                                (dateToENFormat(new Date(this.state.betreuung_ende))):('')} 
-                            onChange= {this.handleChange} ></input>
+                                (dateToENFormat(new Date(this.state.betreuung_ende))):('')
+                            } 
+                            onChange= {this.handleChange} 
+                            min={
+                                this.state.betreuung_beginn ? 
+                                (dateToENFormat(new Date(this.state.betreuung_beginn))):('')
+                            }>
+
+                            </input>
                             <br></br>
 
                             <label >Betreuung Umfang:</label>
@@ -728,6 +800,11 @@ export class EditPerson extends React.Component{
                                 <option value='1'>1</option>
                             </select>
                             <br></br>
+                            
+                            <div className='delete-section'>
+                                <button className='delete-buttons' type='button' onClick={this.deleteKindData}>
+                                    Kindsdaten löschen</button>
+                            </div>
 
 
                         </div>
@@ -735,12 +812,7 @@ export class EditPerson extends React.Component{
                         {/* Lerngruppen */}
                         <div className='edit-person-data-cont'>
                             <h4>Lerngruppen</h4>
-                                <button 
-                                    className='delete-buttons' 
-                                    id='kind_lerngruppe' type='button'
-                                    onClick={this.deletePersonData}
-                                    
-                                >Alle Lerngruppe Einträge dieser Person löschen</button>
+                                
 
                                 <label>Neuer Lerngruppe Eintrag für diese Person hinzufügen: </label>
                                 <select id='lerngruppeToBeAdded' onChange= {this.handleChange}>
@@ -754,30 +826,39 @@ export class EditPerson extends React.Component{
                                 <label>Eintrittsdatum: </label>
                                 <input type="date" id="eintrittsdatum" name="sl-date"
                                     defaultValue={this.defaultDateValue}
-                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                    min={
+                                        this.state.zugangsdatum_zur_fsx ? 
+                                        (dateToENFormat(new Date(this.state.zugangsdatum_zur_fsx))):('')
+                                    } 
+                                    onChange={this.handleChange}></input>
                                 <br></br>
                                 
+                                <div className='delete-section'>
+                                    <label>Existierende Lerngruppe Einträge dieser Person entfernen: </label>
+                                    <select id='lerngruppeToBeDeleted' onChange= {this.handleChange}>
+                                        <option selected="true" value=''>-</option>
 
-                                <label>Existierende Lerngruppe Einträge dieser Person entfernen: </label>
-                                <select id='lerngruppeToBeDeleted' onChange= {this.handleChange}>
-                                    <option selected="true" value=''>-</option>
+                                        {this.state.lerngruppen.map((gruppe) => 
+                                        <option value={gruppe.lerngruppe_id}>{gruppe.bezeichnung 
+                                        + " Eintritt am: " + dateToDEFormat(new Date(gruppe.eintrittsdatum))}</option>)}
+                                        
+                                    </select>
+                                    <br></br>
 
-                                    {this.state.lerngruppen.map((gruppe) => 
-                                    <option value={gruppe.lerngruppe_id}>{gruppe.bezeichnung 
-                                    + " Eintritt am: " + dateToDEFormat(new Date(gruppe.eintrittsdatum))}</option>)}
-                                    
-                                </select>
-                                <br></br>
+                                    <label>Oder: </label>
+                                    <button 
+                                        className='delete-buttons' 
+                                        id='kind_lerngruppe' type='button'
+                                        onClick={this.deletePersonData}
+                                        
+                                    >Alle Lerngruppen löschen</button>
+                                </div>
                         </div>
 
                         {/* Bezugspersonen */}
                         <div className='edit-person-data-cont'>
                             <h4>Bezugspersonen</h4>
-                                <button 
-                                    className='delete-buttons' 
-                                    id='bezugsperson_kind' type='button'
-                                    onClick={this.deletePersonData}
-                                >Alle Bezugspersonen löschen</button>
+                                
 
                                 <label>Neue Person für dieses Kind addieren: </label>
                                 <select id='bezugsPersonToBeAdded' onChange= {this.handleChange}>
@@ -803,32 +884,41 @@ export class EditPerson extends React.Component{
                                 </select>
                                 <br></br>
                                 
+                                <div className='delete-section'>
+                                    <label>Existierende Bezugspersonen fürs Kind entfernen: </label>
+                                    <select id='bezugsPersonToBeDeleted' onChange= {this.handleChange}>
+                                        <option selected="true" value=''>-</option>
 
-                                <label>Existierende Bezugspersonen fürs Kind entfernen: </label>
-                                <select id='bezugsPersonToBeDeleted' onChange= {this.handleChange}>
-                                    <option selected="true" value=''>-</option>
+                                        {this.state.bezugspersonen.map((person) => 
+                                        <option value={person.person_id}>{person.rufname + " " + person.nachname}</option>)}
+                                        
+                                    </select>
+                                    <br></br>
 
-                                    {this.state.bezugspersonen.map((person) => 
-                                    <option value={person.person_id}>{person.rufname + " " + person.nachname}</option>)}
-                                    
-                                </select>
-                                <br></br>
+
+                                    <label>Oder: </label>
+                                    <button 
+                                        className='delete-buttons' 
+                                        id='bezugsperson_kind' type='button'
+                                        onClick={this.deletePersonData}
+                                    >Alle Bezugspersonen löschen</button>
+                                </div>
                         </div>
 
                         {/* Jahrgangswechsel */}
                         <div className='edit-person-data-cont'>
                             <h4>Jahrgangswechsel</h4>
-                                <button 
-                                    className='delete-buttons' 
-                                    id='jahrgangswechsel' type='button'
-                                    onClick={this.deletePersonData}
-                                >Alle Jahrgangswechsel Einträge dieser Person löschen</button>
+                                
 
                                 <label>Neuer Jahrgangswechsel Eintrag für diese Person hinzufügen: </label>
                                 <label>Datum: </label>
                                 <input type="date" id="datum" name="sl-date"
                                     defaultValue={this.defaultDateValue}
-                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                    min={
+                                        this.state.einschulungsdatum ? 
+                                        (dateToENFormat(new Date(this.state.einschulungsdatum))):('')
+                                    } 
+                                    onChange={this.handleChange}></input>
                                 <br></br>
 
                                 <label >Wert:</label>
@@ -853,39 +943,51 @@ export class EditPerson extends React.Component{
                                 </select>
                                 <br></br>
                                 
+                                <div className='delete-section'>
+                                    <label>Existierende Jahrgangswechsel Einträge dieser Person entfernen: </label>
+                                    <select id='jahrgangToBeDeleted' onChange= {this.handleChange}>
+                                        <option selected="true" >-</option>
 
-                                <label>Existierende Jahrgangswechsel Einträge dieser Person entfernen: </label>
-                                <select id='jahrgangToBeDeleted' onChange= {this.handleChange}>
-                                    <option selected="true" >-</option>
+                                        {this.state.jahrgangswechselRecords.map((record) => 
+                                        <option value={dateToENFormat(new Date(record.datum))}>{"Wert: "+record.wert + " Grund: " + record.grund 
+                                        + "  von: " + dateToDEFormat(new Date(record.datum))}</option>)}
+                                        
+                                    </select>
+                                    <br></br>
 
-                                    {this.state.jahrgangswechselRecords.map((record) => 
-                                    <option value={dateToENFormat(new Date(record.datum))}>{"Wert: "+record.wert + " Grund: " + record.grund 
-                                    + "  von: " + dateToDEFormat(new Date(record.datum))}</option>)}
-                                    
-                                </select>
-                                <br></br>
+                                    <label>Oder: </label>
+                                    <button 
+                                        className='delete-buttons' 
+                                        id='jahrgangswechsel' type='button'
+                                        onClick={this.deletePersonData}
+                                    >Alle Jahrgangswechsel löschen</button>
+                                </div>
                         </div>
 
                         {/* BuT */}
                         <div className='edit-person-data-cont'>
                             <h4>BuT</h4>
-                                <button 
-                                    className='delete-buttons' 
-                                    id='kind_but' type='button'
-                                    onClick={this.deletePersonData}
-                                >Alle BuT Einträge dieser Person löschen</button>
+                                
 
                                 <label>Neuer BuT Eintrag für diese Person hinzufügen: </label>
                                 <label>BuT Beginn: </label>
                                 <input type="date" id="but_beginn" name="sl-date"
                                     defaultValue={this.defaultDateValue}
-                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                    min={
+                                        this.state.einschulungsdatum ? 
+                                        (dateToENFormat(new Date(this.state.einschulungsdatum))):('')    
+                                    } 
+                                    onChange={this.handleChange}></input>
                                 <br></br>
 
                                 <label>BuT Ende: </label>
                                 <input type="date" id="but_ende" name="sl-date"
                                     defaultValue={this.defaultDateValue}
-                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                    min={
+                                        this.state.but_beginn ? 
+                                        (dateToENFormat(new Date(this.state.but_beginn))):('')    
+                                    } 
+                                    onChange={this.handleChange}></input>
                                 <br></br>
 
                                 <label >Berlinpass BuT:</label>
@@ -897,35 +999,38 @@ export class EditPerson extends React.Component{
                                 </select>
                                 <br></br>
 
+                                <div className='delete-section'>      
+                                    <label>Existierende BuT Einträge dieser Person entfernen: </label>
+                                    <select id='butToBeDeleted' onChange= {this.handleChange}>
+                                        <option selected="true" >-</option>
 
-                                <label>Existierende BuT Einträge dieser Person entfernen: </label>
-                                <select id='butToBeDeleted' onChange= {this.handleChange}>
-                                    <option selected="true" >-</option>
+                                        {this.state.butRecords.map((record) => 
+                                        <option value={dateToENFormat(new Date(record.but_beginn))}>{"Beginn: "+ dateToDEFormat(new Date(record.but_beginn)) 
+                                                                                                    + " Ende: " + dateToDEFormat(new Date(record.but_ende))
+                                                                                                    + " Ber.Pass: " + (record.berlinpass_but ? ("True"):("False"))
+                                                                                                    }
+                                                                                                    </option>)}
+                                        
+                                    </select>
+                                    <br></br>
 
-                                    {this.state.butRecords.map((record) => 
-                                    <option value={dateToENFormat(new Date(record.but_beginn))}>{"Beginn: "+ dateToDEFormat(new Date(record.but_beginn)) 
-                                                                                                + " Ende: " + dateToDEFormat(new Date(record.but_ende))
-                                                                                                + " Ber.Pass: " + (record.berlinpass_but ? ("True"):("False"))
-                                                                                                }
-                                                                                                </option>)}
-                                    
-                                </select>
-                                <br></br>
+                                    <label>Oder: </label>                                                   
+                                    <button 
+                                        className='delete-buttons' 
+                                        id='kind_but' type='button'
+                                        onClick={this.deletePersonData}
+                                    >Alle BuT löschen</button>
+                                </div>  
                         </div>
                     </div>
 
-                    <div style={({backgroundColor: "purple"})}>
-                        <h3>Erwachsenenrelevante Daten</h3>
+                    <div className='bg-cont' style={({backgroundColor: "#e6ebae"})}>
+                        <h3 style={({textAlign: "center"})}>Erwachsenenrelevante Daten</h3>
 
                         {/* Arbeitsgruppen */}
                         <div className='edit-person-data-cont'>
                             <h4>Arbeitsgruppen</h4>
-                                <button 
-                                    className='delete-buttons' 
-                                    id='person_arbeitsgruppe' type='button'
-                                    onClick={this.deletePersonData}
-                                    
-                                >Alle Arbeitsgruppen Einträge dieser Person löschen</button>
+                                
 
                                 <label>Neuer Arbeitsgruppe hinzufügen: </label>
                                 <select id='agToBeAdded' onChange= {this.handleChange}>
@@ -948,48 +1053,69 @@ export class EditPerson extends React.Component{
                                 <label>Mitgliedschaftsbeginn: </label>
                                 <input type="date" id="datum_mitgliedschaftsbeginn" name="sl-date"
                                     defaultValue={this.defaultDateValue}
-                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                    min={
+                                        this.state.geburtsdatum ? 
+                                        (dateToENFormat(new Date(this.state.geburtsdatum))):('')
+                                    } 
+                                    onChange={this.handleChange}></input>
                                 <br></br>
 
                                 <label>Mitgliedschaftsende: </label>
                                 <input type="date" id="datum_mitgliedschaftsende" name="sl-date"
                                     defaultValue={this.defaultDateValue}
-                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                    min={
+                                        this.state.mitgliedschaftsbeginn ?
+                                        (dateToENFormat(new Date(this.state.mitgliedschaftsbeginn))):('')
+                                    } 
+                                    onChange={this.handleChange}></input>
                                 <br></br>
                                 
+                                <div className='delete-section'>
+                                    <label>Existierende AG Mitgliedschaften dieser Person entfernen: </label>
+                                    <select id='agToBeDeleted' onChange= {this.handleChange}>
+                                        <option selected="true" value=''>-</option>
 
-                                <label>Existierende AG Mitgliedschaften dieser Person entfernen: </label>
-                                <select id='agToBeDeleted' onChange= {this.handleChange}>
-                                    <option selected="true" value=''>-</option>
+                                        {this.state.ags.map((ag) => 
+                                        <option value={ag.arbeitsgruppe_id}>{ag.bezeichnung 
+                                        + " Eintritt am: " + dateToDEFormat(new Date(ag.datum_mitgliedschaftsbeginn))}</option>)}
+                                        
+                                    </select>
+                                    <br></br>
 
-                                    {this.state.ags.map((ag) => 
-                                    <option value={ag.arbeitsgruppe_id}>{ag.bezeichnung 
-                                    + " Eintritt am: " + dateToDEFormat(new Date(ag.datum_mitgliedschaftsbeginn))}</option>)}
-                                    
-                                </select>
-                                <br></br>
+                                    <label>Oder: </label>
+                                    <button 
+                                        className='delete-buttons' 
+                                        id='person_arbeitsgruppe' type='button'
+                                        onClick={this.deletePersonData}
+                                        
+                                    >Alle Arbeitsgruppen löschen</button>
+                                </div>
                         </div>
 
                         {/* Tätigkeit */}
                         <div className='edit-person-data-cont'>
                             <h4>Tätigkeit</h4>
-                                <button 
-                                    className='delete-buttons' 
-                                    id='taetigkeit' type='button'
-                                    onClick={this.deletePersonData}
-                                >Alle Tätigkeiten dieser Person löschen</button>
+                                
 
                                 <label>Neuer Tätigkeit für diese Person hinzufügen: </label>
                                 <label>Tätigkeitsbeginn: </label>
                                 <input type="date" id="taetigkeit_beginn" name="sl-date"
                                     defaultValue={this.defaultDateValue}
-                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                    min={
+                                        this.state.geburtsdatum ?
+                                        (dateToENFormat(new Date(this.state.geburtsdatum))):('')    
+                                    } 
+                                    onChange={this.handleChange}></input>
                                 <br></br>
 
                                 <label>Tätigkeitsende: </label>
                                 <input type="date" id="taetigkeit_ende" name="sl-date"
                                     defaultValue={null}
-                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                    min={
+                                        this.state.taetigkeit_beginn ?
+                                        (dateToENFormat(new Date(this.state.taetigkeit_beginn))):('')    
+                                    } 
+                                    onChange={this.handleChange}></input>
                                 <br></br>
 
                                 <label>Typ: </label>
@@ -1025,40 +1151,52 @@ export class EditPerson extends React.Component{
                                 <br></br>
 
                                 
+                                <div className='delete-section'>      
+                                    <label>Existierende Tätigkeit dieser Person entfernen: </label>
+                                    <select id='taetigkeitToBeDeleted' onChange= {this.handleChange}>
+                                        <option selected="true" >-</option>
 
-                                <label>Existierende Tätigkeit dieser Person entfernen: </label>
-                                <select id='taetigkeitToBeDeleted' onChange= {this.handleChange}>
-                                    <option selected="true" >-</option>
+                                        {this.state.taetigkeitRecords.map((record) => 
+                                        <option value={dateToENFormat(new Date(record.taetigkeit_beginn)) + "_" + record.taetigkeit}>
+                                            {"Beginn: "+dateToDEFormat(new Date(record.taetigkeit_beginn)) + " Ende: " + (record.taetigkeit_ende ? (dateToDEFormat(new Date(record.taetigkeit_ende))):("null"))
+                                            + " Tätigkeit: " + record.taetigkeit}</option>)}
+                                        
+                                    </select>
+                                    <br></br>
 
-                                    {this.state.taetigkeitRecords.map((record) => 
-                                    <option value={dateToENFormat(new Date(record.taetigkeit_beginn)) + "_" + record.taetigkeit}>
-                                        {"Beginn: "+dateToDEFormat(new Date(record.taetigkeit_beginn)) + " Ende: " + (record.taetigkeit_ende ? (dateToDEFormat(new Date(record.taetigkeit_ende))):("null"))
-                                        + " Typ: " + record.typ + " Tätigkeit: " + record.taetigkeit}</option>)}
-                                    
-                                </select>
-                                <br></br>
+                                    <label>Oder: </label>
+                                    <button 
+                                        className='delete-buttons' 
+                                        id='taetigkeit' type='button'
+                                        onClick={this.deletePersonData}
+                                    >Alle Tätigkeiten löschen</button>
+                                </div>  
                         </div>
 
                         {/* Vereinsmitgliedschaft */}
                         <div className='edit-person-data-cont'>
                             <h4>Vereinsmitgliedschaft</h4>
-                                <button 
-                                    className='delete-buttons' 
-                                    id='vereinsmitgliedschaft' type='button'
-                                    onClick={this.deletePersonData}
-                                >Alle Vereinmitgliedschaft Einträge dieser Person löschen</button>
+                                
 
                                 <label>Neuer Vereinsmitgliedschaft für diese Person hinzufügen: </label>
                                 <label>Mitgliedschaftsbeginn: </label>
                                 <input type="date" id="mitgliedschaftsbeginn" name="sl-date"
                                     defaultValue={this.state.mitgliedschaftsbeginn ? (this.state.mitgliedschaftsbeginn):(this.state.defaultDateValue)}
-                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                    min={
+                                        this.state.geburtsdatum ?
+                                        (dateToENFormat(new Date(this.state.geburtsdatum))):('')    
+                                    } 
+                                    onChange={this.handleChange}></input>
                                 <br></br>
 
                                 <label>Mitgliedschaftsende: </label>
                                 <input type="date" id="mitgliedschaftsende" name="sl-date"
                                     defaultValue={this.state.mitgliedschaftsende ? (this.state.mitgliedschaftsende):(null)}
-                                    min="2012-01-01" onChange={this.handleChange}></input>
+                                    min={
+                                        this.state.taetigkeit_beginn ?
+                                        (dateToENFormat(new Date(this.state.taetigkeit_beginn))):('')    
+                                    } 
+                                    onChange={this.handleChange}></input>
                                 <br></br>
 
                                 <label>Typ: </label>
@@ -1087,18 +1225,26 @@ export class EditPerson extends React.Component{
                                 </select>
                                 <br></br>
 
+                                <div className='delete-section'>
+                                    <label>Existierende Vereinsmitgliedschaft dieser Person entfernen: </label>
+                                    <select id='mitgliedschaftToBeDeleted' onChange= {this.handleChange}>
+                                        <option selected="true" >-</option>
 
-                                <label>Existierende Vereinsmitgliedschaft dieser Person entfernen: </label>
-                                <select id='mitgliedschaftToBeDeleted' onChange= {this.handleChange}>
-                                    <option selected="true" >-</option>
-
-                                    {this.state.mitgliedschaftsRecords.map((record) => 
-                                    <option value={this.state.person_id + "_" + dateToENFormat(new Date(record.mitgliedschaftsbeginn))}>
-                                        {"Beginn: "+dateToDEFormat(new Date(record.mitgliedschaftsbeginn)) + " Ende: " + (record.mitgliedschaftsende ? (dateToDEFormat(new Date(record.mitgliedschaftsende))):("null"))
-                                        + " Typ: " + record.typ + " Grund für Ende: " + record.grund_fuer_mitgliedschaftsende}</option>)}
+                                        {this.state.mitgliedschaftsRecords.map((record) => 
+                                        <option value={this.state.person_id + "_" + dateToENFormat(new Date(record.mitgliedschaftsbeginn))}>
+                                            {"Beginn: "+dateToDEFormat(new Date(record.mitgliedschaftsbeginn)) + " Ende: " + (record.mitgliedschaftsende ? (dateToDEFormat(new Date(record.mitgliedschaftsende))):("null"))
+                                            + " Typ: " + record.typ}</option>)}
+                                        
+                                    </select>
+                                    <br></br>
                                     
-                                </select>
-                                <br></br>
+                                    <label>Oder: </label>
+                                    <button 
+                                    className='delete-buttons' 
+                                    id='vereinsmitgliedschaft' type='button'
+                                    onClick={this.deletePersonData}
+                                >Alle Vereinmitgliedschaften löschen</button>
+                                </div>
                         </div>
                        
                     </div>
