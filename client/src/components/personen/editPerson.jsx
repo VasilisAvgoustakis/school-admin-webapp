@@ -404,11 +404,6 @@ export class EditPerson extends React.Component{
             window.alert('Bitte kontrollieren Sie alle rot gekennzeichnete Input Felder und versuchen Sie es erneut!')
         }else if(invalidInputFields.length === 0) validationSuccess = true;
 
-
-
-
-
-
         if(validationSuccess){
             var confirm = window.confirm('Diese Aktion wird die Daten direkt in der Datenbank bearbeiten!!! Bist du sicher dass diese Korrekt sind?')
             if(confirm){

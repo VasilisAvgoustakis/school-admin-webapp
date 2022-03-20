@@ -60,6 +60,10 @@ function dateToENFormat(date){
     return shortDate.toString()
 }
 
-export {dateToDEFormat, dateToENFormat};
+function Sleep(milliseconds) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+   }
+
+export {dateToDEFormat, dateToENFormat, Sleep};
 
 //console.log(dateToDEFormat(sampleDate))

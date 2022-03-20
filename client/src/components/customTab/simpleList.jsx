@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Anwesenheitsliste } from './anwesenheitsPdf';
+import {CSVLink, CSVDownload} from "react-csv";
 import '../stylesheets/globalstyles.css';
-import dateToDEFormat from '../../globalFunctions'
+import {dateToDEFormat, Sleep} from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
 import { useWindowDimensions } from 'react-native';
 import { jsPDF } from "jspdf";
@@ -14,6 +15,8 @@ import 'jspdf-autotable';
 // on the selected date, the form only works for dates in 2022 since no other records exist in the kind_lerngruppe table
 // inside the current db
 export class SimpleList extends React.Component{
+    csvLink = React.createRef()
+
     constructor(props){
         super(props);
         this.today = new Date();
@@ -23,13 +26,17 @@ export class SimpleList extends React.Component{
         this.fetchData = this.fetchData.bind(this);
         this.showData = this.showData.bind(this);
         this.generatePDF = this.generatePDF.bind(this);
+        this.generateCSV = this.generateCSV.bind(this);
+        
         
         this.state = {
             showData: false,
             group:'alle',
             selectedDate: this.defaultDateValue,
             data:[],
-            statistik:[]
+            statistik:[],
+            csvFilename: '',
+            csvData: []
         }
 
     }
@@ -45,7 +52,6 @@ export class SimpleList extends React.Component{
       }
 
     updateGroup(e){
-        //console.log(e.target.value)
         this.setState({group: e.target.value})
         
     }
@@ -71,32 +77,11 @@ export class SimpleList extends React.Component{
                 id= {'anwesenheitsTable'} 
                 selectedDate= {this.state.selectedDate} 
                 data= {this.state.data} />, document.getElementById('hiddenTable')
-            ));
+            ))
 
           
     }
 
-//     calculateStatistik() {
-//         return new Promise(resolve => {
-//             setTimeout(() => {
-//                 //reset statistik in state
-//                 this.setState({statistik: []})
-//                 // create variables for Klassenstatistik
-//                 let sumMale = 0, sumFemale = 0, sumNoDeLangMale = 0, sumNoDeLangFemale = 0;
-//                 //iterate through the data for each student
-//                 this.state.data.forEach(student => {
-//                 //console.log(student)
-//                 if(student.geschlecht == 'm') sumMale += 1;
-//                 else if (student.geschlecht == 'f') sumFemale +=1;
-//                 if (student.geschlecht == 'm' && student.nichtdeutsche_herkunftssprache == '1') sumNoDeLangMale +=1;
-//                 else if (student.geschlecht == 'f' && student.nichtdeutsche_herkunftssprache == '1') sumNoDeLangFemale +=1;
-
-//             })
-//             this.state.statistik.push(sumMale, sumFemale, sumNoDeLangMale, sumNoDeLangFemale)
-//             resolve('resolved')
-//             }, 500)
-//     })
-// }
        
     resolveAfter2Seconds() {
         return new Promise(resolve => {
@@ -112,10 +97,28 @@ export class SimpleList extends React.Component{
             );
     }
 
+    async generateCSV() {
+        
+        let data =[["Rufname", "Jahrgangsstufe", "Lerngruppe"],]
+
+         this.state.data.forEach(line =>{
+            let lineArray = []
+            lineArray.push(line.Rufname);
+            lineArray.push(line.Jahrgangsstufe);
+            lineArray.push(line.Lerngruppe);
+            data.push(lineArray)
+                       
+        })
+        
+        this.setState({csvData: data, csvFilename: `anwesenheitsliste_${this.state.group}_${dateToDEFormat(new Date(this.defaultDateValue))}` + ".csv"})
+        await Sleep(1000);
+        this.csvLink.current.link.click()   
+    }
+
     generatePDF() {
         
         const doc = new jsPDF('l', 'mm', [297, 210], false);
-        //doc.text("Hello world!", 10, 10);
+    
        
         doc.autoTable(
             {html: '#anwesenheitsPDF' ,
@@ -170,9 +173,7 @@ export class SimpleList extends React.Component{
 
 
     render(){
-        // console.log(this.state.group)
-        // console.log(this.state.selectedDate)
-        //console.log(this.state.data)
+        console.log(this.csvFilename)
         return(
             <div className='simple-list-cont'>
                 <div>
@@ -205,6 +206,15 @@ export class SimpleList extends React.Component{
                     {this.state.showData ? (
                     <div>
                     <button onClick={this.generatePDF}>Anwesenheitsliste Generieren</button>
+                    <button onClick={this.generateCSV}>Generierte Liste als CSV exportieren</button>
+                    <CSVLink 
+                        data={this.state.csvData} 
+                        filename= {this.state.csvFilename}
+                        className="hidden"
+                        ref={this.csvLink}
+                        target="_blank"
+                        hidden
+                        >Download me</CSVLink>
                     <table >
                         <thead>
                             <tr>
@@ -214,7 +224,7 @@ export class SimpleList extends React.Component{
                         <tbody>
                             {this.state.data.map((student, index) => {
                                 const { Rufname, Jahrgangsstufe, Lerngruppe} = student
-                                console.log(student)
+                                //console.log(student)
                                 return (
                                     <tr key={uuidv4+Rufname}>
                                         <td style={{width:'10%'}}>{Rufname}</td>
