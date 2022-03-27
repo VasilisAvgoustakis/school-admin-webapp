@@ -13,6 +13,11 @@ const db = require('./db');
 const PORT = process.env.REACT_APP_SERVER_PORT
 
 
+function Sleep(milliseconds) {
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+ }
+
+
 
 //connection pool to db
 const pool = mysql.createPool({
@@ -198,6 +203,18 @@ app.post('/logout', (req, res)=>{
 app.get('/personsList', (req, res) => {
   const { table } = req.query;
   pool.query(`SELECT * FROM personen ORDER BY rufname, nachname`, (err, results) => {
+    if (err) {
+      return res.send(err);
+    } else {
+      //console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+app.get('/lastPersonsId', (req, res) => {
+  const { table } = req.query;
+  pool.query(`SELECT MAX(person_id) AS id FROM personen;`, (err, results) => {
     if (err) {
       return res.send(err);
     } else {
@@ -457,26 +474,31 @@ WHERE
       })
 
     //execute query    
-    if(validCoreData > 0){    
+    if(validCoreData > 1){    
       pool.query(`INSERT INTO personen(person_id, rufname, amtlicher_vorname, nachname, 
         geburtsdatum, einschulungsdatum, nicht_auf_listen) 
-        VALUES (${person_id}, '${rufname}', '${amtlicher_vorname}', '${nachname}', 
-        ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
-        ${einschulungsdatum ? ("'" + einschulungsdatum.toString() + "'"):(null)},
-        ${nicht_auf_listen}) 
+        VALUES (${person_id}, 
+          ${rufname ? ("'"+rufname+"'"):(null)}, 
+          ${amtlicher_vorname ? ("'"+amtlicher_vorname+"'"):(null)}, 
+          ${nachname ? ("'"+nachname+"'"):(null)}, 
+                ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
+                ${einschulungsdatum ? ("'" + einschulungsdatum.toString() + "'"):(null)},
+                ${nicht_auf_listen ? ("'"+nicht_auf_listen+"'"):(null)}) 
         ON DUPLICATE KEY UPDATE 
-        rufname='${rufname}',
-        amtlicher_vorname = '${amtlicher_vorname}',
-        nachname = '${nachname}',
+        rufname=${rufname ? ("'"+rufname+"'"):(null)},
+        amtlicher_vorname = ${amtlicher_vorname ? ("'"+amtlicher_vorname+"'"):(null)},
+        nachname = ${nachname ? ("'"+nachname+"'"):(null)},
         geburtsdatum = ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
         einschulungsdatum = ${einschulungsdatum ? ("'" + einschulungsdatum.toString() + "'"):(null)},
-        nicht_auf_listen = '${nicht_auf_listen}';`
+        nicht_auf_listen = ${nicht_auf_listen ? ("'"+nicht_auf_listen+"'"):(null)};`
         ,(err, results) =>{
 
           if(err){ //Query Error 
             freeOfErrors = false;
-            return res.send(err);
+            console.log(err)
+            //return res.send(err);
           }else {
+            //console.log(results)
             sumResults.push(results);
           }})
       }
@@ -496,32 +518,45 @@ WHERE
       }
       })
     
-    //execute query 
+    //execute query
     if(validCoreData > 0){
+      // I dont understand why but if I remove this empty console.log statement the query below fails because of 
+      // the missing foreign key, meaning that probably the insert a new person query above is not yet complete when this query below begins
+      console.log("")
       pool.query(
       `INSERT INTO kontakt_daten(person_id, email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2,
                         mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx)
-        VALUES(${person_id}, '${email_1}', '${email_2}', '${email_fsx}', '${mobil_telefon_1}', 
-        '${mobil_telefon_2}', '${mobil_telefon_fsx}', '${telefon_1}', '${telefon_2}', '${telefon_fsx}')
+        VALUES(${person_id}, 
+          ${email_1 ? ("'"+email_1+"'"):(null)}, 
+          ${email_2 ? ("'"+email_2+"'"):(null)}, 
+          ${email_fsx ? ("'"+email_fsx+"'"):(null)}, 
+          ${mobil_telefon_1 ? ("'"+mobil_telefon_1+"'"):(null)}, 
+          ${mobil_telefon_2 ? ("'"+mobil_telefon_2+"'"):(null)}, 
+          ${mobil_telefon_fsx ? ("'"+mobil_telefon_fsx+"'"):(null)}, 
+          ${telefon_1 ? ("'"+telefon_1+"'"):(null)}, 
+          ${telefon_2 ? ("'"+telefon_2+"'"):(null)}, 
+          ${telefon_fsx ?("'"+telefon_fsx+"'"):(null)})
         ON DUPLICATE KEY UPDATE
-        email_1 = '${email_1}',
-        email_2 = '${email_2}',
-        email_fsx = '${email_fsx}',
-        mobil_telefon_1 = '${mobil_telefon_1}',
-        mobil_telefon_2 = '${mobil_telefon_2}',
-        mobil_telefon_fsx = '${mobil_telefon_fsx}',
-        telefon_1 = '${telefon_1}',
-        telefon_2 = '${telefon_2}',
-        telefon_fsx = '${telefon_fsx}';`
+        email_1 = ${email_1 ? ("'"+email_1+"'"):(null)},
+        email_2 = ${email_2 ? ("'"+email_2+"'"):(null)},
+        email_fsx = ${email_fsx ? ("'"+email_fsx+"'"):(null)},
+        mobil_telefon_1 = ${mobil_telefon_1 ? ("'"+mobil_telefon_1+"'"):(null)},
+        mobil_telefon_2 = ${mobil_telefon_2 ? ("'"+mobil_telefon_2+"'"):(null)},
+        mobil_telefon_fsx = ${mobil_telefon_fsx ? ("'"+mobil_telefon_fsx+"'"):(null)},
+        telefon_1 = ${telefon_1 ? ("'"+telefon_1+"'"):(null)},
+        telefon_2 = ${telefon_2 ? ("'"+telefon_2+"'"):(null)},
+        telefon_fsx = ${telefon_fsx ?("'"+telefon_fsx+"'"):(null)};`
 
         ,(err, results) =>{
           if(err){ //Query Error (Rollback and release connection)
             freeOfErrors = false;
-            return res.send(err);
+            console.log(err)
+            //return res.send(err);
           }else{
             sumResults.push(results);
           }})
       }
+    
     //make array only with the relevant data of coming query
     let kind_schule_data = [zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag]
     
@@ -540,21 +575,25 @@ WHERE
     
     //console.log(kind_schule_data, 'validCoreData after iteration: '+ validCoreData)
     
-    if(validCoreData > 0){
+    if(validCoreData > 1){
       pool.query(
         `INSERT INTO kind_schule(person_id, zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag)
-          VALUES(${person_id}, ${zugangsdatum_zur_fsx ? ("'" + zugangsdatum_zur_fsx.toString() + "'"):(null)}, ${abgangsdatum_von_fsx ? ("'" + abgangsdatum_von_fsx.toString() + "'"):(null)},
-                  ${abgangsgrund !== '' ? ("'"+abgangsgrund+"'"):(null)}, ${mittag !== '' ? ("'"+mittag+"'"):(null)})
+          VALUES(${person_id},
+             ${zugangsdatum_zur_fsx ? ("'" + zugangsdatum_zur_fsx.toString() + "'"):(null)}, 
+             ${abgangsdatum_von_fsx ? ("'" + abgangsdatum_von_fsx.toString() + "'"):(null)},
+             ${abgangsgrund !== '' ? ("'"+abgangsgrund+"'"):(null)}, 
+             ${mittag !== '' ? ("'"+mittag+"'"):(null)})
           ON DUPLICATE KEY UPDATE
           zugangsdatum_zur_fsx = ${zugangsdatum_zur_fsx ? ("'" + zugangsdatum_zur_fsx.toString() + "'"):(null)},
           abgangsdatum_von_fsx = ${abgangsdatum_von_fsx ? ("'" + abgangsdatum_von_fsx.toString() + "'"):(null)},
           abgangsgrund = ${abgangsgrund !== '' ? ("'"+abgangsgrund+"'"):(null)},
-          mittag = ${mittag !== '' ? ("'"+mittag+"'"):(null)};`
+          mittag = ${mittag ? ("'"+mittag+"'"):(null)};`
 
           ,(err, results) =>{
             if(err){ //Query Error (Rollback and release connection)
               freeOfErrors = false;
-              return res.send(err);
+              console.log(err)
+              //return res.send(err);
             }else{
               sumResults.push(results);
             }})
@@ -562,7 +601,7 @@ WHERE
 
      //make array only with the relevant data of coming query
      let kind_data = [staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache]
-    
+      console.log(kind_data)
      // check that at least on of the values is relevant for saving (not null or '')
      validCoreData = 0;
      kind_data.forEach(element=> {
@@ -577,17 +616,22 @@ WHERE
     if(validCoreData > 0){
       pool.query(
         `INSERT INTO kind_daten(person_id, staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache)
-          VALUES(${person_id}, '${staatsangehoerigkeit}', '${geburtsort}', '${geschlecht}', '${nichtdeutsche_herkunftssprache}')
+          VALUES(${person_id}, 
+            ${staatsangehoerigkeit ? ("'"+staatsangehoerigkeit+"'"):(null)}, 
+            ${geburtsort ? ("'"+geburtsort+"'"):(null)}, 
+            ${geschlecht ? ("'"+geschlecht+"'"):(null)}, 
+            ${nichtdeutsche_herkunftssprache ? ("'"+nichtdeutsche_herkunftssprache+"'"):(null)})
           ON DUPLICATE KEY UPDATE
-          staatsangehoerigkeit = '${staatsangehoerigkeit}',
-          geburtsort = '${geburtsort}',
-          geschlecht = '${geschlecht}',
-          nichtdeutsche_herkunftssprache = '${nichtdeutsche_herkunftssprache}';`
+          staatsangehoerigkeit = ${staatsangehoerigkeit ? ("'"+staatsangehoerigkeit+"'"):(null)},
+          geburtsort = ${geburtsort ? ("'"+geburtsort+"'"):(null)},
+          geschlecht = ${geschlecht ? ("'"+geschlecht+"'"):(null)},
+          nichtdeutsche_herkunftssprache = ${nichtdeutsche_herkunftssprache ? ("'"+nichtdeutsche_herkunftssprache+"'"):(null)};`
 
           ,(err, results) =>{
             if(err){ //Query Error (Rollback and release connection)
               freeOfErrors = false;
-              return res.send(err);
+              console.log(err)
+              //return res.send(err);
             }else{
               sumResults.push(results);
             }})
@@ -606,23 +650,26 @@ WHERE
       }
       })
  
-    if(validCoreData > 0){
+    if(validCoreData > 1 && betreuung_beginn && betreuung_ende){
       pool.query(
       `INSERT INTO kind_betreuung(person_id, betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien)
-        VALUES(${person_id}, ${betreuung_beginn ? ("'" + betreuung_beginn.toString() + "'"):(null)}, 
+        VALUES(${person_id}, 
+          ${betreuung_beginn ? ("'" + betreuung_beginn.toString() + "'"):(null)}, 
               ${betreuung_ende ? ("'" + betreuung_ende.toString() + "'"):(null)}, 
-              '${betreuung_umfang}', '${betreuung_ferien}')
+              ${betreuung_umfang ?("'"+betreuung_umfang+"'"):(null)}, 
+              ${betreuung_ferien ? ("'"+betreuung_ferien+"'"):('0')})
         ON DUPLICATE KEY UPDATE
         betreuung_beginn = ${betreuung_beginn ? ("'" + betreuung_beginn.toString() + "'"):(null)},
         betreuung_ende = ${betreuung_ende ? ("'" + betreuung_ende.toString() + "'"):(null)},
-        betreuung_umfang = '${betreuung_umfang}',
-        betreuung_ferien = '${betreuung_ferien}';`
+        betreuung_umfang = ${betreuung_umfang ?("'"+betreuung_umfang+"'"):(null)},
+        betreuung_ferien = ${betreuung_ferien ? ("'"+betreuung_ferien+"'"):('0')};`
 
         ,(err, results) =>{
           if(err){ //Query Error (Rollback and release connection)
             console.log("Sending err!!!!")
             freeOfErrors = false;
-            return res.send(err);
+            console.log(err)
+            //return res.send(err);
           }else {
             sumResults.push(results)
           }})
@@ -662,7 +709,8 @@ WHERE
             if(err){ //Query Error (Rollback and release connection)
               console.log(err)
               freeOfErrors = false;
-              return res.send(err);
+              console.log(err)
+              //return res.send(err);
             }else {
               sumResults.push(results)
             }
@@ -685,7 +733,8 @@ WHERE
             if(err){ //Query Error (Rollback and release connection)
               console.log(err)
               freeOfErrors = false;
-              return res.send(err);
+              console.log(err)
+              //return res.send(err);
             }else {
               sumResults.push(results)
             }
@@ -705,7 +754,7 @@ WHERE
             if(err){ //Query Error (Rollback and release connection)
               console.log(err)
               freeOfErrors = false;
-              return res.send(err);
+              //return res.send(err);
             }else {
               sumResults.push(results)
             }
@@ -726,7 +775,8 @@ WHERE
             if(err){
               console.log(err)
               freeOfErrors = false;
-              return res.send(err);
+              console.log(err)
+              //return res.send(err);
             }else {
               sumResults.push(results)
             }
@@ -747,7 +797,8 @@ WHERE
             if(err){
               console.log(err)
               freeOfErrors = false;
-              return res.send(err);
+              console.log(err)
+              //return res.send(err);
             }else {
               sumResults.push(results)
             }
@@ -773,14 +824,15 @@ WHERE
       pool.query(
       `INSERT IGNORE INTO jahrgangswechsel(person_id, datum, wert, grund)
         VALUES(${person_id}, ${datum ? ("'" + datum.toString() + "'"):(null)}, 
-              ${wert}, 
+              ${wert ? (wert):(0)}, 
               '${grund}');`
 
         ,(err, results) =>{
           if(err){
             console.log("Sending err!!!!")
             freeOfErrors = false;
-            return res.send(err);
+            console.log(err)
+            //return res.send(err);
           }else {
             sumResults.push(results)
           }})
@@ -788,7 +840,7 @@ WHERE
 
     //removes selected Jahrgangswechsel Record for this Kid
     if(jahrgangToBeDeleted){
-      console.log("BZPADD: "+jahrgangToBeDeleted)
+      //console.log("BZPADD: "+jahrgangToBeDeleted)
       pool.query(
         `DELETE FROM jahrgangswechsel 
             WHERE person_id=${person_id}
@@ -798,7 +850,7 @@ WHERE
             if(err){
               console.log(err)
               freeOfErrors = false;
-              return res.send(err);
+              //return res.send(err);
             }else {
               sumResults.push(results)
             }
@@ -826,14 +878,14 @@ WHERE
       `INSERT IGNORE INTO kind_but(person_id, but_beginn, but_ende, berlinpass_but)
         VALUES(${person_id}, ${but_beginn ? ("'" + but_beginn.toString() + "'"):(null)},
               ${but_ende ? ("'" + but_ende.toString() + "'"):(null)},
-              ${berlinpass_but}
+              ${berlinpass_but ? (berlinpass_but):(null)}
               );`
 
         ,(err, results) =>{
           if(err){
             console.log(err)
             freeOfErrors = false;
-            return res.send(err);
+            //return res.send(err);
           }else {
             sumResults.push(results)
           }})
@@ -854,7 +906,7 @@ WHERE
         if(err){
           console.log(err)
           freeOfErrors = false;
-          return res.send(err);
+          //return res.send(err);
         }else {
           sumResults.push(results)
         }})
@@ -889,7 +941,7 @@ WHERE
         if(err){
           console.log(err)
           freeOfErrors = false;
-          return res.send(err);
+          //return res.send(err);
         }else {
           sumResults.push(results)
         }})
@@ -910,7 +962,7 @@ WHERE
       if(err){
         console.log(err)
         freeOfErrors = false;
-        return res.send(err);
+        //return res.send(err);
       }else {
         sumResults.push(results)
       }})
@@ -946,7 +998,7 @@ WHERE
         if(err){
           console.log(err)
           freeOfErrors = false;
-          return res.send(err);
+          //return res.send(err);
         }else {
           sumResults.push(results)
         }})
@@ -972,7 +1024,7 @@ WHERE
       if(err){
         console.log(err)
         freeOfErrors = false;
-        return res.send(err);
+        //return res.send(err);
       }else {
         console.log(results)
         sumResults.push(results)
@@ -995,7 +1047,7 @@ WHERE
 
   // adds Vereinmitgliedschaft record
   if(validCoreData > 1 && (!einschulungsdatum || abgangsdatum_von_fsx)){
-    console.log(mitgliedschaftsData)
+    //console.log(mitgliedschaftsData)
     pool.query(
     `INSERT INTO vereinsmitgliedschaft(person_id, mitgliedschaftsbeginn, typ, mitgliedschaftsende, grund_fuer_mitgliedschaftsende)
       VALUES(${person_id},
@@ -1013,7 +1065,7 @@ WHERE
         if(err){
           console.log(err)
           freeOfErrors = false;
-          return res.send(err);
+          //return res.send(err);
         }else {
           sumResults.push(results)
         }})
@@ -1038,7 +1090,7 @@ WHERE
         if(err){
           console.log(err)
           freeOfErrors = false;
-          return res.send(err);
+          //return res.send(err);
         }else {
           console.log(results)
           sumResults.push(results)

@@ -28,44 +28,44 @@ export class EditPerson extends React.Component{
         this.state = {
             //Kerndaten
             person_id: this.props.person_id,
-            rufname: this.props.rufname,
-            amtlicher_vorname: this.props.amtlicher_vorname,
-            nachname: this.props.nachname,
-            geburtsdatum: this.props.geburtsdatum,
-            einschulungsdatum: this.props.einschulungsdatum,
-            nicht_auf_listen: this.props.nicht_auf_listen,
+            rufname: this.props.rufname ? (this.props.rufname):(''),
+            amtlicher_vorname: this.props.amtlicher_vorname ? (this.props.amtlicher_vorname):(''),
+            nachname: this.props.nachname ? (this.props.nachname):(''),
+            geburtsdatum: this.props.geburtsdatum ? (this.props.geburtsdatum):(''),
+            einschulungsdatum: this.props.einschulungsdatum ?(this.props.einschulungsdatum):(''),
+            nicht_auf_listen: this.props.nicht_auf_listen ? (this.props.nicht_auf_listen):(''),
 
             //Kontaktdata
-            email_1: this.props.email_1,
-            email_2: this.props.email_2,
-            email_fsx: this.props.email_fsx,
-            mobil_telefon_1: this.props.mobil_telefon_1,
-            mobil_telefon_2: this.props.mobil_telefon_2,
-            mobil_telefon_fsx: this.props.mobil_telefon_fsx,
-            telefon_1: this.props.telefon_1,
-            telefon_2: this.props.telefon_2,
-            telefon_fsx: this.props.telefon_fsx,
+            email_1: this.props.email_1 ? (this.props.email_1):(''),
+            email_2: this.props.email_2 ? (this.props.email_2):(''),
+            email_fsx: this.props.email_fsx ? (this.props.email_fsx):(''),
+            mobil_telefon_1: this.props.mobil_telefon_1 ? (this.props.mobil_telefon_1):(''),
+            mobil_telefon_2: this.props.mobil_telefon_2 ? (this.props.mobil_telefon_2):(''),
+            mobil_telefon_fsx: this.props.mobil_telefon_fsx ? (this.props.mobil_telefon_fsx):(''),
+            telefon_1: this.props.telefon_1 ? (this.props.telefon_1):(''),
+            telefon_2: this.props.telefon_2 ? (this.props.telefon_2):(''),
+            telefon_fsx: this.props.telefon_fsx ? (this.props.telefon_fsx):(''),
 
             //kind_daten
-            staatsangehoerigkeit: this.props.staatsangehoerigkeit,
-            geburtsort: this.props.geburtsort,
-            geschlecht: this.props.geschlecht,
-            nichtdeutsche_herkunftssprache: this.props.nichtdeutsche_herkunftssprache,
+            staatsangehoerigkeit: this.props.staatsangehoerigkeit ? (this.props.staatsangehoerigkeit):(''),
+            geburtsort: this.props.geburtsort ? (this.props.geburtsort):(''),
+            geschlecht: this.props.geschlecht ? (this.props.geschlecht):(''),
+            nichtdeutsche_herkunftssprache: this.props.nichtdeutsche_herkunftssprache ? (this.props.nichtdeutsche_herkunftssprache):(''),
 
             //kind_schule
-            zugangsdatum_zur_fsx: this.props.zugangsdatum_zur_fsx,
-            abgangsdatum_von_fsx: this.props.abgangsdatum_von_fsx,
-            abgangsgrund:this.props.abgangsgrund,
-            mittag: this.props.mittag,
+            zugangsdatum_zur_fsx: this.props.zugangsdatum_zur_fsx ? (this.props.zugangsdatum_zur_fsx ):(''),
+            abgangsdatum_von_fsx: this.props.abgangsdatum_von_fsx ? (this.props.abgangsdatum_von_fsx):(''),
+            abgangsgrund:this.props.abgangsgrund ? (this.props.abgangsgrund):(''),
+            mittag: this.props.mittag ? (this.props.mittag):(''),
 
             //kind_betreuung
-            betreuung_beginn:this.props.betreuung_beginn,
-            betreuung_ende:this.props.betreuung_ende,
-            betreuung_umfang:this.props.betreuung_umfang,
-            betreuung_ferien:this.props.betreuung_ferien,
+            betreuung_beginn:this.props.betreuung_beginn ? (this.props.betreuung_beginn):(''),
+            betreuung_ende:this.props.betreuung_ende ? (this.props.betreuung_ende):(''),
+            betreuung_umfang:this.props.betreuung_umfang ? (this.props.betreuung_umfang):(''),
+            betreuung_ferien:this.props.betreuung_ferien ? (this.props.betreuung_ferien):(''),
 
             //bezugsperson_kind
-            bezugspersonen:this.props.bezugspersonen,
+            bezugspersonen:(this.props.bezugspersonen ? (this.props.bezugspersonen):([])),
             probableBezugspersonen: [],
             bezugsPersonToBeAdded: '',
             bezugsPersonToBeDeleted: '',
@@ -73,7 +73,7 @@ export class EditPerson extends React.Component{
             recht_gegenueber_person2: '',
 
             //haushalte
-            haushalte: this.props.haushalte,
+            haushalte: (this.props.haushalte ? (this.props.haushalte):([])),
             probableHaushalte: [],
             haushalteToBeAdded: '',
             haushaltToBeDeleted: '',
@@ -413,7 +413,7 @@ export class EditPerson extends React.Component{
                     console.log(res.data)
                     window.alert(res.data);
                 }else{
-                    console.log("confirm")
+                    //console.log("confirm")
                     confirm = false;
                     if(!confirm)window.location.reload();
                     //console.log(res);
@@ -479,7 +479,7 @@ export class EditPerson extends React.Component{
    
 
     render(){
-        console.log(this.state.mitgliedschaftsbeginn)
+        
         return(
             <div>
                 <button type='button' onClick={this.editData}>Speichern</button>
@@ -684,7 +684,7 @@ export class EditPerson extends React.Component{
                             <label>Geschlecht: </label>
                             <select id='geschlecht' value={this.state.geschlecht} 
                             onChange= {this.handleChange} >
-                                <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                <option value='' selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                                 <option value='m'>m</option>
                                 <option value='f'>f</option>
                                 <option value='n'>n</option>
@@ -694,7 +694,7 @@ export class EditPerson extends React.Component{
                             <label>nicht deutsche Herkunftssprache: </label>
                             <select id='nichtdeutsche_herkunftssprache' value={this.state.nichtdeutsche_herkunftssprache} 
                             onChange= {this.handleChange} >
-                                <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                <option value='' selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                                 <option value='0'>0</option>
                                 <option value='1'>1</option>
                             </select>
@@ -744,7 +744,7 @@ export class EditPerson extends React.Component{
                             <label >Mittag:</label>
                             <select id='mittag' value={this.state.mittag} 
                             onChange= {this.handleChange} >
-                                <option selected="true">-</option> {/*default option when no data from database for selected person*/}
+                                <option value='' selected="true">-</option> {/*default option when no data from database for selected person*/}
                                 <option value='0'>0</option>
                                 <option value='1'>1</option>
                             </select>
@@ -790,7 +790,7 @@ export class EditPerson extends React.Component{
                             <label >Betreuung Ferien:</label>
                             <select id='betreuung_ferien' value={this.state.betreuung_ferien} 
                             onChange= {this.handleChange} >
-                                <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                <option value='' selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                                 <option value='0'>0</option>
                                 <option value='1'>1</option>
                             </select>

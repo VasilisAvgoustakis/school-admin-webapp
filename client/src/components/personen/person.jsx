@@ -285,7 +285,7 @@ export class Person extends React.Component{
         if(this.state.clicked){
             this.customRender();
         }
-        console.log(this.state.data)
+        //console.log(this.state.data)
     }
     
     handleClick = async() => {

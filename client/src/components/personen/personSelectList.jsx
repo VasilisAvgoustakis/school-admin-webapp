@@ -1,9 +1,12 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import ReactDOM from 'react-dom'
 import {Person} from './person';
+import { Sleep } from '../../globalFunctions';
 import '../stylesheets/personen.css';
 import '../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
+import { EditPerson } from './editPerson';
 
 
 export class PersonSelectList extends Component{
@@ -11,12 +14,15 @@ export class PersonSelectList extends Component{
   constructor(props) {
     super(props);
     this.fetchData = this.fetchData.bind(this);
+    this.getLastPersonsId = this.getLastPersonsId.bind(this);
     this.search = this.search.bind(this);
     this.updateStateAfterEdit = this.updateStateAfterEdit.bind(this);
+    this.addPerson = this.addPerson.bind(this);
     this.state = {
       forceRemount:'',
       persons: [],
-      searchedPersons: []
+      searchedPersons: [],
+      nextPerson_Id:''
     };
   }
 
@@ -29,7 +35,21 @@ export class PersonSelectList extends Component{
         },
       }))
   }
-  
+
+  getLastPersonsId(){
+    return (
+    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lastPersonsId`, {
+      })).then(res=>{
+        this.setState({nextPerson_Id: res.data[0].id + 1})
+        console.log(this.state.nextPerson_Id)
+      })
+  }
+
+  addPerson(){
+    ReactDOM.render(<EditPerson 
+                        person_id={this.state.nextPerson_Id}
+                         />, document.getElementById('person-data'))
+  }
 
   search(name){
     this.setState.searchedPersons = [];
@@ -57,8 +77,9 @@ export class PersonSelectList extends Component{
       this.setState({
         persons: res.data
       })
+
       this.setState.searchedPersons = [];
-    });
+    }).then(this.getLastPersonsId())
   }
 
   updateStateAfterEdit(){
@@ -92,6 +113,9 @@ export class PersonSelectList extends Component{
                   this.search(e.target.value);
                 }}
             />
+
+          <button className='add-button' onClick={this.addPerson}>+</button>
+
           <div className='entity-list-scroller'>
               <ul id='person-list'  >
               {personsToRender.map(person => (
