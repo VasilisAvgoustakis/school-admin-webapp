@@ -408,8 +408,8 @@ export class EditPerson extends React.Component{
             var confirm = window.confirm('Diese Aktion wird die Daten direkt in der Datenbank bearbeiten!!! Bist du sicher dass diese Korrekt sind?')
             if(confirm){
             this.updateQuery().then(res =>{
-                if(typeof(res.data) !== 'string'){
-                    console.log("This is the Err: ")
+                if(typeof(res.data) == 'string'){
+                    //console.log("This is the Err: ")
                     console.log(res.data)
                     window.alert(res.data);
                 }else{

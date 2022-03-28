@@ -1,22 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-//const basicAuth = require('express-basic-auth');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
-
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const mysqlStore = require('express-mysql-session')(session);
-//dbobject from db.js containg all queries to db
+
+//db object from db.js containg all queries to db
 const db = require('./db');
 const PORT = process.env.REACT_APP_SERVER_PORT
-
-
-function Sleep(milliseconds) {
-  return new Promise(resolve => setTimeout(resolve, milliseconds));
- }
-
 
 
 //connection pool to db
@@ -26,6 +19,8 @@ const pool = mysql.createPool({
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
 });
+
+
 // create sessioStore middleware  allows
 // work with SQL relational tables and schema-less JSON collections.
 const sessionStore = new mysqlStore({
@@ -36,10 +31,9 @@ const sessionStore = new mysqlStore({
   host: process.env.MYSQL_HOST_IP,
   port: 3307,
   createDatabaseTable: false
-},
-pool)
+},pool)
 
-
+//express app object
 const app = express();
 
 app.use(function(req, res, next) {
@@ -50,7 +44,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-//app.use(express.json());
+
 app.use(cors({
   origin: ["http://localhost:3000"],
   methods: ["GET", "POST"],
@@ -59,11 +53,9 @@ app.use(cors({
 );
 
 
-
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
 app.use(session({
   name: "test session",
   resave: false,
@@ -82,8 +74,9 @@ app.use(session({
 
 
 
-//Authentication
-
+/**
+ * Authentication
+ */
 
 //register
 app.post('/register', (req, res)=> {
@@ -150,12 +143,11 @@ app.get("/login", (req, res) => {
   console.log(req.session.cookie)
 });
 
-
 app.post("/login", (req, res) => {
-  //console.log(req.session.id)
+
   const username = req.body.username;
   const password = req.body.password;
-  //console.log(req.session.id)
+
   pool.query(
     "SELECT * FROM users WHERE username = ?;",
     [username], 
@@ -170,8 +162,6 @@ app.post("/login", (req, res) => {
                   console.log(req.session.id)
                   console.log(req.session);
                   res.send(req.session.id);
-          
-                    
                 } else{
                     res.send({message: "Wrong username/ password comination!"}); 
                 }
@@ -190,16 +180,16 @@ app.post('/logout', (req, res)=>{
       }
       sessionStore.close()
       res.clearCookie("test session")
-      res.send({message: "Loged out succesfully!"})
-      
+      res.send({message: "Loged out succesfully!"}) 
   })
-
 })
-//End of Authentication
 
+/**
+ * End of Authentication
+*/
 
-//Personen
-  //GETS
+//Person relevant Queries
+
 app.get('/personsList', (req, res) => {
   const { table } = req.query;
   pool.query(`SELECT * FROM personen ORDER BY rufname, nachname`, (err, results) => {
@@ -427,763 +417,783 @@ WHERE
     }
   });
 });
-  //END OF GETS
 
- 
+//single most important for adding or editing an existing person
+app.get('/editPerson', async (req, res) => {
+  //array containg all variables passed in with the request
+  let [person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum, nicht_auf_listen,
+      email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2, mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx,
+      staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache,
+      zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag,
+      betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien,
+      bezugspersonen, probableBezugspersonen, bezugsPersonToBeAdded, bezugsPersonToBeDeleted, beziehung_zu_person2, recht_gegenueber_person2,
+      haushalte, probableHaushalte, haushalteToBeAdded, haushaltToBeDeleted, meldeanschrift, datum_einzug,
+      lerngruppen, probableLerngruppen, lerngruppeToBeAdded, eintrittsdatum, lerngruppeToBeDeleted,
+      jahrgangswechselRecords, datum, wert, grund, jahrgangToBeDeleted,
+      but_beginn, but_ende, berlinpass_but, butToBeDeleted, butRecords,
+      ags, probableAgs, agToBeAdded, koordination_der_ag, datum_mitgliedschaftsbeginn, datum_mitgliedschaftsende, agToBeDeleted,
+      taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit, taetigkeitToBeDeleted, taetigkeitRecords,
+      mitgliedschaftsbeginn, typ_m, mitgliedschaftsende, grund_fuer_mitgliedschaftsende, mitgliedschaftToBeDeleted, mitgliedschaftsRecords,
+    ] = req.query.state
 
-
-  app.get('/editPerson', async (req, res) => {
-    //array containg all variables passed in with the request
-    let [person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum, nicht_auf_listen,
-        email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2, mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx,
-        staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache,
-        zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag,
-        betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien,
-        bezugspersonen, probableBezugspersonen, bezugsPersonToBeAdded, bezugsPersonToBeDeleted, beziehung_zu_person2, recht_gegenueber_person2,
-        haushalte, probableHaushalte, haushalteToBeAdded, haushaltToBeDeleted, meldeanschrift, datum_einzug,
-        lerngruppen, probableLerngruppen, lerngruppeToBeAdded, eintrittsdatum, lerngruppeToBeDeleted,
-        jahrgangswechselRecords, datum, wert, grund, jahrgangToBeDeleted,
-        but_beginn, but_ende, berlinpass_but, butToBeDeleted, butRecords,
-        ags, probableAgs, agToBeAdded, koordination_der_ag, datum_mitgliedschaftsbeginn, datum_mitgliedschaftsende, agToBeDeleted,
-        taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit, taetigkeitToBeDeleted, taetigkeitRecords,
-        mitgliedschaftsbeginn, typ_m, mitgliedschaftsende, grund_fuer_mitgliedschaftsende, mitgliedschaftToBeDeleted, mitgliedschaftsRecords,
-      ] = req.query.state
-
-    // this variable will be true if the error case in one of the queries has already send headers
-    let freeOfErrors = true;
-   
-    //array to put all results and return them at the end of the querry
-    let sumResults = [];
-    
-    // see that no empty '' values are send in with the data, instead values that should remain empty or null are handled by the query 
-    // here in the server and their value is turned into null
-    //console.log(req.query.state)
-    //make array only with the relevant data of coming query
-    let coreData = [person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum];
-    //console.log(coreData)
-
-    // check that at least on of the values is relevant for saving (not null or '')
-    let validCoreData = 0;
-    coreData.forEach(element=> {
-      if(element === '' || element === null || element === 'null'){
-        return;
-        
-      }else{
-        validCoreData++;
-      }
-      })
-
-    //execute query    
-    if(validCoreData > 1){    
-      pool.query(`INSERT INTO personen(person_id, rufname, amtlicher_vorname, nachname, 
-        geburtsdatum, einschulungsdatum, nicht_auf_listen) 
-        VALUES (${person_id}, 
-          ${rufname ? ("'"+rufname+"'"):(null)}, 
-          ${amtlicher_vorname ? ("'"+amtlicher_vorname+"'"):(null)}, 
-          ${nachname ? ("'"+nachname+"'"):(null)}, 
-                ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
-                ${einschulungsdatum ? ("'" + einschulungsdatum.toString() + "'"):(null)},
-                ${nicht_auf_listen ? ("'"+nicht_auf_listen+"'"):(null)}) 
-        ON DUPLICATE KEY UPDATE 
-        rufname=${rufname ? ("'"+rufname+"'"):(null)},
-        amtlicher_vorname = ${amtlicher_vorname ? ("'"+amtlicher_vorname+"'"):(null)},
-        nachname = ${nachname ? ("'"+nachname+"'"):(null)},
-        geburtsdatum = ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
-        einschulungsdatum = ${einschulungsdatum ? ("'" + einschulungsdatum.toString() + "'"):(null)},
-        nicht_auf_listen = ${nicht_auf_listen ? ("'"+nicht_auf_listen+"'"):(null)};`
-        ,(err, results) =>{
-
-          if(err){ //Query Error 
-            freeOfErrors = false;
-            console.log(err)
-            //return res.send(err);
-          }else {
-            //console.log(results)
-            sumResults.push(results);
-          }})
-      }
-    
-    //make array only with the relevant data of coming query
-    let contactData = [email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2, mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx];
-    //console.log(contactData)
-
-    // check that at least on of the values is relevant for saving (not null or '')
-    validCoreData = 0;
-    contactData.forEach(element=> {
-      if(element === '' || element === null || element === 'null'){
-        return;
-         
-      }else{
-        validCoreData++;
-      }
-      })
-    
-    //execute query
-    if(validCoreData > 0){
-      // I dont understand why but if I remove this empty console.log statement the query below fails because of 
-      // the missing foreign key, meaning that probably the insert a new person query above is not yet complete when this query below begins
-      console.log("")
-      pool.query(
-      `INSERT INTO kontakt_daten(person_id, email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2,
-                        mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx)
-        VALUES(${person_id}, 
-          ${email_1 ? ("'"+email_1+"'"):(null)}, 
-          ${email_2 ? ("'"+email_2+"'"):(null)}, 
-          ${email_fsx ? ("'"+email_fsx+"'"):(null)}, 
-          ${mobil_telefon_1 ? ("'"+mobil_telefon_1+"'"):(null)}, 
-          ${mobil_telefon_2 ? ("'"+mobil_telefon_2+"'"):(null)}, 
-          ${mobil_telefon_fsx ? ("'"+mobil_telefon_fsx+"'"):(null)}, 
-          ${telefon_1 ? ("'"+telefon_1+"'"):(null)}, 
-          ${telefon_2 ? ("'"+telefon_2+"'"):(null)}, 
-          ${telefon_fsx ?("'"+telefon_fsx+"'"):(null)})
-        ON DUPLICATE KEY UPDATE
-        email_1 = ${email_1 ? ("'"+email_1+"'"):(null)},
-        email_2 = ${email_2 ? ("'"+email_2+"'"):(null)},
-        email_fsx = ${email_fsx ? ("'"+email_fsx+"'"):(null)},
-        mobil_telefon_1 = ${mobil_telefon_1 ? ("'"+mobil_telefon_1+"'"):(null)},
-        mobil_telefon_2 = ${mobil_telefon_2 ? ("'"+mobil_telefon_2+"'"):(null)},
-        mobil_telefon_fsx = ${mobil_telefon_fsx ? ("'"+mobil_telefon_fsx+"'"):(null)},
-        telefon_1 = ${telefon_1 ? ("'"+telefon_1+"'"):(null)},
-        telefon_2 = ${telefon_2 ? ("'"+telefon_2+"'"):(null)},
-        telefon_fsx = ${telefon_fsx ?("'"+telefon_fsx+"'"):(null)};`
-
-        ,(err, results) =>{
-          if(err){ //Query Error (Rollback and release connection)
-            freeOfErrors = false;
-            console.log(err)
-            //return res.send(err);
-          }else{
-            sumResults.push(results);
-          }})
-      }
-    
-    //make array only with the relevant data of coming query
-    let kind_schule_data = [zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag]
-    
-    // check that at least on of the values is relevant for saving (not null or '')
-    validCoreData = 0;
-    //console.log('validCoreData before iteration: '+ validCoreData);
-    kind_schule_data.forEach(element=> {
-      if(element === '' || element === null || element === 'null'){
-        return;
-      }else{
-        validCoreData++; 
-        //console.log(validCoreData);
-      }
-    })
-    
-    
-    //console.log(kind_schule_data, 'validCoreData after iteration: '+ validCoreData)
-    
-    if(validCoreData > 1){
-      pool.query(
-        `INSERT INTO kind_schule(person_id, zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag)
-          VALUES(${person_id},
-             ${zugangsdatum_zur_fsx ? ("'" + zugangsdatum_zur_fsx.toString() + "'"):(null)}, 
-             ${abgangsdatum_von_fsx ? ("'" + abgangsdatum_von_fsx.toString() + "'"):(null)},
-             ${abgangsgrund !== '' ? ("'"+abgangsgrund+"'"):(null)}, 
-             ${mittag !== '' ? ("'"+mittag+"'"):(null)})
-          ON DUPLICATE KEY UPDATE
-          zugangsdatum_zur_fsx = ${zugangsdatum_zur_fsx ? ("'" + zugangsdatum_zur_fsx.toString() + "'"):(null)},
-          abgangsdatum_von_fsx = ${abgangsdatum_von_fsx ? ("'" + abgangsdatum_von_fsx.toString() + "'"):(null)},
-          abgangsgrund = ${abgangsgrund !== '' ? ("'"+abgangsgrund+"'"):(null)},
-          mittag = ${mittag ? ("'"+mittag+"'"):(null)};`
-
-          ,(err, results) =>{
-            if(err){ //Query Error (Rollback and release connection)
-              freeOfErrors = false;
-              console.log(err)
-              //return res.send(err);
-            }else{
-              sumResults.push(results);
-            }})
-    }
-
-     //make array only with the relevant data of coming query
-     let kind_data = [staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache]
-      console.log(kind_data)
-     // check that at least on of the values is relevant for saving (not null or '')
-     validCoreData = 0;
-     kind_data.forEach(element=> {
-       if(element === '' || element === null || element === 'null'){
-          return;
-      }else{
-        validCoreData++;
-      }
-      });
+  // this variable will be true if the error case in one of the queries has already send headers
+  let freeOfErrors = true;
   
-
-    if(validCoreData > 0){
-      pool.query(
-        `INSERT INTO kind_daten(person_id, staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache)
-          VALUES(${person_id}, 
-            ${staatsangehoerigkeit ? ("'"+staatsangehoerigkeit+"'"):(null)}, 
-            ${geburtsort ? ("'"+geburtsort+"'"):(null)}, 
-            ${geschlecht ? ("'"+geschlecht+"'"):(null)}, 
-            ${nichtdeutsche_herkunftssprache ? ("'"+nichtdeutsche_herkunftssprache+"'"):(null)})
-          ON DUPLICATE KEY UPDATE
-          staatsangehoerigkeit = ${staatsangehoerigkeit ? ("'"+staatsangehoerigkeit+"'"):(null)},
-          geburtsort = ${geburtsort ? ("'"+geburtsort+"'"):(null)},
-          geschlecht = ${geschlecht ? ("'"+geschlecht+"'"):(null)},
-          nichtdeutsche_herkunftssprache = ${nichtdeutsche_herkunftssprache ? ("'"+nichtdeutsche_herkunftssprache+"'"):(null)};`
-
-          ,(err, results) =>{
-            if(err){ //Query Error (Rollback and release connection)
-              freeOfErrors = false;
-              console.log(err)
-              //return res.send(err);
-            }else{
-              sumResults.push(results);
-            }})
-    }
-
-    //make array only with the relevant data of coming query
-    let kind_betreuung = [betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien]
-    
-    // check that at least on of the values is relevant for saving (not null or '')
-    validCoreData = 0;
-    kind_betreuung.forEach(element=> {
-      if(element === '' || element === null || element === 'null'){
-        return;
-      }else{
-        validCoreData++;
-      }
-      })
- 
-    if(validCoreData > 1 && betreuung_beginn && betreuung_ende){
-      pool.query(
-      `INSERT INTO kind_betreuung(person_id, betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien)
-        VALUES(${person_id}, 
-          ${betreuung_beginn ? ("'" + betreuung_beginn.toString() + "'"):(null)}, 
-              ${betreuung_ende ? ("'" + betreuung_ende.toString() + "'"):(null)}, 
-              ${betreuung_umfang ?("'"+betreuung_umfang+"'"):(null)}, 
-              ${betreuung_ferien ? ("'"+betreuung_ferien+"'"):('0')})
-        ON DUPLICATE KEY UPDATE
-        betreuung_beginn = ${betreuung_beginn ? ("'" + betreuung_beginn.toString() + "'"):(null)},
-        betreuung_ende = ${betreuung_ende ? ("'" + betreuung_ende.toString() + "'"):(null)},
-        betreuung_umfang = ${betreuung_umfang ?("'"+betreuung_umfang+"'"):(null)},
-        betreuung_ferien = ${betreuung_ferien ? ("'"+betreuung_ferien+"'"):('0')};`
-
-        ,(err, results) =>{
-          if(err){ //Query Error (Rollback and release connection)
-            console.log("Sending err!!!!")
-            freeOfErrors = false;
-            console.log(err)
-            //return res.send(err);
-          }else {
-            sumResults.push(results)
-          }})
-    }
-
-    //adds selected person as Bezugsperson for this Pupil
-    if(bezugsPersonToBeAdded){
-      //console.log("BZPADD: "+bezugsPersonToBeAdded)
-      pool.query(
-        `INSERT IGNORE INTO bezugsperson_kind (person_id_1, person_id_2, beziehung_zu_person2, recht_gegenueber_person_2) 
-          VALUES(${bezugsPersonToBeAdded}, 
-                  ${person_id}, 
-                  ${beziehung_zu_person2 ? ("'"+beziehung_zu_person2+"'"):(null)}, 
-                  ${recht_gegenueber_person2 ? ("'"+recht_gegenueber_person2+"'"):(null)})
-          ;`
-          ,(err,results) => {
-            if(err){ //Query Error (Rollback and release connection)
-              console.log(err)
-              freeOfErrors = false;
-              return res.send(err);
-            }else {
-              sumResults.push(results)
-            }
-          }
-      )
-    }
-
-    //removes selected person as Bezugsperson for this Pupil
-    if(bezugsPersonToBeDeleted){
-      //console.log("BZPADD: "+bezugsPersonToBeDeleted)
-      pool.query(
-        `DELETE FROM bezugsperson_kind 
-            WHERE person_id_1=${bezugsPersonToBeDeleted}
-            AND person_id_2=${person_id}
-          ;`
-          ,(err,results) => {
-            if(err){ //Query Error (Rollback and release connection)
-              console.log(err)
-              freeOfErrors = false;
-              console.log(err)
-              //return res.send(err);
-            }else {
-              sumResults.push(results)
-            }
-          }
-      )
-    }
-
-
-    //adds selected Haushalt as address for this person
-    if(haushalteToBeAdded){
-      //console.log("BZPADD: "+haushalteToBeAdded)
-      pool.query(
-        `INSERT IGNORE INTO person_haushalt (haushalt_id, person_id, meldeanschrift, datum_einzug) 
-          VALUES(${haushalteToBeAdded}, 
-                  ${person_id}, 
-                  ${meldeanschrift}, 
-                  ${datum_einzug ? ("'"+datum_einzug.toString()+"'"):(null)})
-          ;`
-          ,(err,results) => {
-            if(err){ //Query Error (Rollback and release connection)
-              console.log(err)
-              freeOfErrors = false;
-              console.log(err)
-              //return res.send(err);
-            }else {
-              sumResults.push(results)
-            }
-          }
-      )
-    }
-
-    //removes selected Haushalt for this person
-    if(haushaltToBeDeleted){
-      console.log("BZPADD: "+haushaltToBeDeleted)
-      pool.query(
-        `DELETE FROM person_haushalt 
-            WHERE haushalt_id=${haushaltToBeDeleted}
-            AND person_id=${person_id}
-          ;`
-          ,(err,results) => {
-            if(err){ //Query Error (Rollback and release connection)
-              console.log(err)
-              freeOfErrors = false;
-              //return res.send(err);
-            }else {
-              sumResults.push(results)
-            }
-          }
-      )
-    }
-
-    //adds a new lerngruppe record for this person
-    if(lerngruppeToBeAdded){
-      console.log("BZPADD: "+lerngruppeToBeAdded)
-      pool.query(
-        `INSERT IGNORE INTO kind_lerngruppe (person_id, lerngruppe_id, eintrittsdatum) 
-          VALUES(${person_id}, 
-                  ${lerngruppeToBeAdded},  
-                  ${eintrittsdatum ? ("'"+eintrittsdatum.toString()+"'"):(null)})
-          ;`
-          ,(err,results) => {
-            if(err){
-              console.log(err)
-              freeOfErrors = false;
-              console.log(err)
-              //return res.send(err);
-            }else {
-              sumResults.push(results)
-            }
-          }
-      )
-    }
-
-
-    //removes selected Lerngruppe Record for this Kid
-    if(lerngruppeToBeDeleted){
-      console.log("BZPADD: "+lerngruppeToBeDeleted)
-      pool.query(
-        `DELETE FROM kind_lerngruppe 
-            WHERE lerngruppe_id=${lerngruppeToBeDeleted}
-            AND person_id=${person_id}
-          ;`
-          ,(err,results) => {
-            if(err){
-              console.log(err)
-              freeOfErrors = false;
-              console.log(err)
-              //return res.send(err);
-            }else {
-              sumResults.push(results)
-            }
-          }
-      )
-    }
-
-    //make array only with the relevant data of coming query
-    let jahrgangswechsel = [datum, wert, grund]
-    
-    // check that at least on of the values is relevant for saving (not null or '')
-    validCoreData = 0;
-    jahrgangswechsel.forEach(element=> {
-      if(element === '' || element === null || element === 'null'){
-        return;
-      }else{
-        validCoreData++;
-      }
-      })
- 
-    // adds jahrgangswechsel record
-    if(validCoreData == 3){
-      pool.query(
-      `INSERT IGNORE INTO jahrgangswechsel(person_id, datum, wert, grund)
-        VALUES(${person_id}, ${datum ? ("'" + datum.toString() + "'"):(null)}, 
-              ${wert ? (wert):(0)}, 
-              '${grund}');`
-
-        ,(err, results) =>{
-          if(err){
-            console.log("Sending err!!!!")
-            freeOfErrors = false;
-            console.log(err)
-            //return res.send(err);
-          }else {
-            sumResults.push(results)
-          }})
-    }
-
-    //removes selected Jahrgangswechsel Record for this Kid
-    if(jahrgangToBeDeleted){
-      //console.log("BZPADD: "+jahrgangToBeDeleted)
-      pool.query(
-        `DELETE FROM jahrgangswechsel 
-            WHERE person_id=${person_id}
-            AND datum=${jahrgangToBeDeleted ? ("'" + jahrgangToBeDeleted.toString() + "'"):(null)}
-          ;`
-          ,(err,results) => {
-            if(err){
-              console.log(err)
-              freeOfErrors = false;
-              //return res.send(err);
-            }else {
-              sumResults.push(results)
-            }
-          }
-      )
-    }
-
-    //make array only with the relevant data of coming query
-    let but = [but_beginn, but_ende, berlinpass_but]
+  //array to put all results and return them at the end of the querry
+  let sumResults = [];
   
-    // check that at least on of the values is relevant for saving (not null or '')
-    validCoreData = 0;
-    but.forEach(element=> {
-      if(element === '' || element === null || element === 'null'){
-        return;
-      }else{
-        validCoreData++;
-      }
-      })
-
-    // adds but record
-    if(validCoreData == 3){
-      
-      pool.query(
-      `INSERT IGNORE INTO kind_but(person_id, but_beginn, but_ende, berlinpass_but)
-        VALUES(${person_id}, ${but_beginn ? ("'" + but_beginn.toString() + "'"):(null)},
-              ${but_ende ? ("'" + but_ende.toString() + "'"):(null)},
-              ${berlinpass_but ? (berlinpass_but):(null)}
-              );`
-
-        ,(err, results) =>{
-          if(err){
-            console.log(err)
-            freeOfErrors = false;
-            //return res.send(err);
-          }else {
-            sumResults.push(results)
-          }})
-    }
-
-    // deletes but record
-    if(butToBeDeleted){
-      console.log(butToBeDeleted)
-    pool.query(
-    `DELETE FROM kind_but
-      WHERE 
-      person_id = ${person_id}
-      AND
-      but_beginn = ${butToBeDeleted ? ("'" + butToBeDeleted.toString() + "'"):(null)} 
-    ;`
-
-      ,(err, results) =>{
-        if(err){
-          console.log(err)
-          freeOfErrors = false;
-          //return res.send(err);
-        }else {
-          sumResults.push(results)
-        }})
-  }
-
-
+  // see that no empty '' values are send in with the data, instead values that should remain empty or null are handled by the query 
+  // here in the server and their value is turned into null
+  //console.log(req.query.state)
   //make array only with the relevant data of coming query
-  let agData = [agToBeAdded, koordination_der_ag, datum_mitgliedschaftsbeginn, datum_mitgliedschaftsende]
-  
+  let coreData = [person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum];
+  //console.log(coreData)
+
   // check that at least on of the values is relevant for saving (not null or '')
-  validCoreData = 0;
-  agData.forEach(element=> {
+  let validCoreData = 0;
+  coreData.forEach(element=> {
     if(element === '' || element === null || element === 'null'){
       return;
+      
     }else{
       validCoreData++;
     }
     })
 
-  // adds AG record
-  if(validCoreData > 0 && agToBeAdded){
-    
-    pool.query(
-    `INSERT IGNORE INTO person_arbeitsgruppe(person_id, arbeitsgruppe_id, koordination_der_ag, datum_mitgliedschaftsbeginn, datum_mitgliedschaftsende)
-      VALUES(${person_id}, ${agToBeAdded},
-            ${koordination_der_ag ? (koordination_der_ag):(null)},
-            ${datum_mitgliedschaftsbeginn ? ("'" + datum_mitgliedschaftsbeginn.toString() + "'"):(null)},
-            ${datum_mitgliedschaftsende ? ("'" + datum_mitgliedschaftsende.toString() + "'"):(null)}
-            );`
+  //add or edit a person as promised based function
+  async function addPerson(){
+    await new Promise( (resolve,reject) =>  {   
+        pool.query(`INSERT INTO personen(person_id, rufname, amtlicher_vorname, nachname, 
+          geburtsdatum, einschulungsdatum, nicht_auf_listen) 
+          VALUES (${person_id}, 
+            ${rufname ? ("'"+rufname+"'"):(null)}, 
+            ${amtlicher_vorname ? ("'"+amtlicher_vorname+"'"):(null)}, 
+            ${nachname ? ("'"+nachname+"'"):(null)}, 
+                  ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
+                  ${einschulungsdatum ? ("'" + einschulungsdatum.toString() + "'"):(null)},
+                  ${nicht_auf_listen ? ("'"+nicht_auf_listen+"'"):(null)}) 
+          ON DUPLICATE KEY UPDATE 
+          rufname=${rufname ? ("'"+rufname+"'"):(null)},
+          amtlicher_vorname = ${amtlicher_vorname ? ("'"+amtlicher_vorname+"'"):(null)},
+          nachname = ${nachname ? ("'"+nachname+"'"):(null)},
+          geburtsdatum = ${geburtsdatum ? ("'" + geburtsdatum.toString() + "'"):(null)},
+          einschulungsdatum = ${einschulungsdatum ? ("'" + einschulungsdatum.toString() + "'"):(null)},
+          nicht_auf_listen = ${nicht_auf_listen ? ("'"+nicht_auf_listen+"'"):(null)};`
+          ,(err, results) =>{
 
-      ,(err, results) =>{
-        if(err){
-          console.log(err)
-          freeOfErrors = false;
-          //return res.send(err);
-        }else {
-          sumResults.push(results)
-        }})
+            if(err){ //Query Error 
+              freeOfErrors = false;
+              console.log(err)
+              return reject(err);
+            }else {
+              //console.log(results)
+              sumResults.push(results);
+              resolve (res);
+            }})
+        })
   }
 
-  // deletes AG record
-  if(agToBeDeleted){
-    
-  pool.query(
-  `DELETE FROM person_arbeitsgruppe
-    WHERE 
-    person_id = ${person_id}
-    AND
-    arbeitsgruppe_id = ${agToBeDeleted} 
-  ;`
+  //Person as an Entity takes a central role in the database!
+  // The 1st query to add/edit a person is happening as a promise based function in order to make sure
+  // that the person has been added and exists before the next queries which usually use the person as foreign key are executed
+  if(validCoreData > 1 && person_id && rufname && nachname){
+    addPerson().then(
+      (resolve) => {
+        //Some task
+      
+        //make array only with the relevant data of coming query
+        let contactData = [email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2, mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx];
+        //console.log(contactData)
 
-    ,(err, results) =>{
-      if(err){
-        console.log(err)
-        freeOfErrors = false;
-        //return res.send(err);
-      }else {
-        sumResults.push(results)
-      }})
-}
-
-
-  //make array only with the relevant data of coming query
-  let taetigkeitData = [taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit]
-  
-  // check that at least one of the values is relevant for saving (not null or '')
-  validCoreData = 0;
-  taetigkeitData.forEach(element=> {
-    if(element === '' || element === null || element === 'null'){
-      return;
-    }else{
-      validCoreData++;
-    }
-    })
-
-  // adds Tätigkeit record
-  if(validCoreData > 1 && (!einschulungsdatum || abgangsdatum_von_fsx)){
-    
-    pool.query(
-    `INSERT IGNORE INTO taetigkeit(person_id, taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit)
-      VALUES(${person_id},
-            ${taetigkeit_beginn ? ("'" + taetigkeit_beginn.toString() + "'"):(null)},
-            ${taetigkeit_ende ? ("'" + taetigkeit_ende.toString() + "'"):(null)},
-            ${typ ? ("'"+typ+"'"):(null)},
-            ${taetigkeit ? ("'"+taetigkeit+"'"):(null)})
-            ;`
-
-      ,(err, results) =>{
-        if(err){
-          console.log(err)
-          freeOfErrors = false;
-          //return res.send(err);
-        }else {
-          sumResults.push(results)
-        }})
-  }
-
-  // deletes Taetigkeit record
-  if(taetigkeitToBeDeleted){
-  let splitValues = taetigkeitToBeDeleted.split("_");
-  let beginn = splitValues[0];
-  let taetigkeit = splitValues[1];
-  console.log(taetigkeit)
-  
-  pool.query(
-  `DELETE FROM taetigkeit
-    WHERE 
-    person_id = ${person_id}
-    AND
-    taetigkeit_beginn = ${"'"+beginn.toString()+"'"}
-    
-  ;`
-
-    ,(err, results) =>{
-      if(err){
-        console.log(err)
-        freeOfErrors = false;
-        //return res.send(err);
-      }else {
-        console.log(results)
-        sumResults.push(results)
-      }})
-  }
-
-
-  //make array only with the relevant data of coming query
-  let mitgliedschaftsData = [mitgliedschaftsbeginn, typ_m, mitgliedschaftsende, grund_fuer_mitgliedschaftsende]
-  
-  // check that at least one of the values is relevant for saving (not null or '')
-  validCoreData = 0;
-  mitgliedschaftsData.forEach(element=> {
-    if(element === '' || element === null || element === 'null'){
-      return;
-    }else{
-      validCoreData++;
-    }
-    })
-
-  // adds Vereinmitgliedschaft record
-  if(validCoreData > 1 && (!einschulungsdatum || abgangsdatum_von_fsx)){
-    //console.log(mitgliedschaftsData)
-    pool.query(
-    `INSERT INTO vereinsmitgliedschaft(person_id, mitgliedschaftsbeginn, typ, mitgliedschaftsende, grund_fuer_mitgliedschaftsende)
-      VALUES(${person_id},
-            ${mitgliedschaftsbeginn ? ("'" + mitgliedschaftsbeginn.toString() + "'"):(null)},
-            ${typ_m ? ("'"+typ_m+"'"):(null)},
-            ${mitgliedschaftsende ? ("'" + mitgliedschaftsende.toString() + "'"):(null)},
-            ${grund_fuer_mitgliedschaftsende ? ("'"+grund_fuer_mitgliedschaftsende+"'"):(null)})
+        // check that at least on of the values is relevant for saving (not null or '')
+        validCoreData = 0;
+        contactData.forEach(element=> {
+          if(element === '' || element === null || element === 'null'){
+            return;
+              
+          }else{
+            validCoreData++;
+          }
+          })
+        
+        //execute query
+        if(validCoreData > 0){
+          // I dont understand why but if I remove this empty console.log statement the query below fails because of 
+          // the missing foreign key, meaning that probably the insert a new person query above is not yet complete when this query below begins
+          console.log("")
+          pool.query(
+          `INSERT INTO kontakt_daten(person_id, email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2,
+                            mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx)
+            VALUES(${person_id}, 
+              ${email_1 ? ("'"+email_1+"'"):(null)}, 
+              ${email_2 ? ("'"+email_2+"'"):(null)}, 
+              ${email_fsx ? ("'"+email_fsx+"'"):(null)}, 
+              ${mobil_telefon_1 ? ("'"+mobil_telefon_1+"'"):(null)}, 
+              ${mobil_telefon_2 ? ("'"+mobil_telefon_2+"'"):(null)}, 
+              ${mobil_telefon_fsx ? ("'"+mobil_telefon_fsx+"'"):(null)}, 
+              ${telefon_1 ? ("'"+telefon_1+"'"):(null)}, 
+              ${telefon_2 ? ("'"+telefon_2+"'"):(null)}, 
+              ${telefon_fsx ?("'"+telefon_fsx+"'"):(null)})
             ON DUPLICATE KEY UPDATE
-              typ = ${typ_m ? ("'"+typ_m+"'"):(null)},
-              mitgliedschaftsende = ${mitgliedschaftsende ? ("'" + mitgliedschaftsende.toString() + "'"):(null)},
-              grund_fuer_mitgliedschaftsende = ${grund_fuer_mitgliedschaftsende ? ("'"+grund_fuer_mitgliedschaftsende+"'"):(null)}
-            ;`
+            email_1 = ${email_1 ? ("'"+email_1+"'"):(null)},
+            email_2 = ${email_2 ? ("'"+email_2+"'"):(null)},
+            email_fsx = ${email_fsx ? ("'"+email_fsx+"'"):(null)},
+            mobil_telefon_1 = ${mobil_telefon_1 ? ("'"+mobil_telefon_1+"'"):(null)},
+            mobil_telefon_2 = ${mobil_telefon_2 ? ("'"+mobil_telefon_2+"'"):(null)},
+            mobil_telefon_fsx = ${mobil_telefon_fsx ? ("'"+mobil_telefon_fsx+"'"):(null)},
+            telefon_1 = ${telefon_1 ? ("'"+telefon_1+"'"):(null)},
+            telefon_2 = ${telefon_2 ? ("'"+telefon_2+"'"):(null)},
+            telefon_fsx = ${telefon_fsx ?("'"+telefon_fsx+"'"):(null)};`
 
-      ,(err, results) =>{
-        if(err){
-          console.log(err)
-          freeOfErrors = false;
-          //return res.send(err);
-        }else {
-          sumResults.push(results)
-        }})
-  }
+            ,(err, results) =>{
+              if(err){ //Query Error (Rollback and release connection)
+                freeOfErrors = false;
+                console.log(err)
+                //return res.send(err);
+              }else{
+                sumResults.push(results);
+              }})
+          }
+        
+        //make array only with the relevant data of coming query
+        let kind_schule_data = [zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag]
+        
+        // check that at least on of the values is relevant for saving (not null or '')
+        validCoreData = 0;
+        //console.log('validCoreData before iteration: '+ validCoreData);
+        kind_schule_data.forEach(element=> {
+          if(element === '' || element === null || element === 'null'){
+            return;
+          }else{
+            validCoreData++; 
+            //console.log(validCoreData);
+          }
+        })
+        
+        
+        //console.log(kind_schule_data, 'validCoreData after iteration: '+ validCoreData)
+        
+        if(validCoreData > 1){
+          pool.query(
+            `INSERT INTO kind_schule(person_id, zugangsdatum_zur_fsx, abgangsdatum_von_fsx, abgangsgrund, mittag)
+              VALUES(${person_id},
+                  ${zugangsdatum_zur_fsx ? ("'" + zugangsdatum_zur_fsx.toString() + "'"):(null)}, 
+                  ${abgangsdatum_von_fsx ? ("'" + abgangsdatum_von_fsx.toString() + "'"):(null)},
+                  ${abgangsgrund !== '' ? ("'"+abgangsgrund+"'"):(null)}, 
+                  ${mittag !== '' ? ("'"+mittag+"'"):(null)})
+              ON DUPLICATE KEY UPDATE
+              zugangsdatum_zur_fsx = ${zugangsdatum_zur_fsx ? ("'" + zugangsdatum_zur_fsx.toString() + "'"):(null)},
+              abgangsdatum_von_fsx = ${abgangsdatum_von_fsx ? ("'" + abgangsdatum_von_fsx.toString() + "'"):(null)},
+              abgangsgrund = ${abgangsgrund !== '' ? ("'"+abgangsgrund+"'"):(null)},
+              mittag = ${mittag ? ("'"+mittag+"'"):(null)};`
 
-  // deletes vereinmitgliedschaft record
-  if(mitgliedschaftToBeDeleted){
-    let splitValues = mitgliedschaftToBeDeleted.split("_");
-    let person_id = splitValues[0];
-    let beginn = splitValues[1];
-    console.log(taetigkeit)
-    
-    pool.query(
-    `DELETE FROM vereinsmitgliedschaft
-      WHERE 
-      person_id = ${person_id}
-      AND
-      mitgliedschaftsbeginn = ${"'"+beginn.toString()+"'"}
-    ;`
-  
-      ,(err, results) =>{
-        if(err){
-          console.log(err)
-          freeOfErrors = false;
-          //return res.send(err);
-        }else {
-          console.log(results)
-          sumResults.push(results)
-        }})
-    }
-
-
-
-    // this query's role is just as workaround soolution to send a valid response 
-    //that makes client refresh the page
-    pool.query("SELECT * from personen;",(err, results) =>{
-      if(err){ //Query Error (Rollback and release connection)
-        console.log("Sending err!!!!")
-        return res.send(err);
-      }else {
-
-        // only send results headers to client if none of the queries above has returned an error
-        // which would mean that freeOfErrors == false
-        while(freeOfErrors){
-          //sumResults.push(results)
-          //console.log("sending...")
-          //console.log(results)
-          return res.send("Results");
+              ,(err, results) =>{
+                if(err){ //Query Error (Rollback and release connection)
+                  freeOfErrors = false;
+                  console.log(err)
+                  //return res.send(err);
+                }else{
+                  sumResults.push(results);
+                }})
         }
-      }})   
-      }); 
+
+          //make array only with the relevant data of coming query
+          let kind_data = [staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache]
+          console.log(kind_data)
+          // check that at least on of the values is relevant for saving (not null or '')
+          validCoreData = 0;
+          kind_data.forEach(element=> {
+            if(element === '' || element === null || element === 'null'){
+              return;
+          }else{
+            validCoreData++;
+          }
+          });
+
+
+        if(validCoreData > 0){
+          pool.query(
+            `INSERT INTO kind_daten(person_id, staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache)
+              VALUES(${person_id}, 
+                ${staatsangehoerigkeit ? ("'"+staatsangehoerigkeit+"'"):(null)}, 
+                ${geburtsort ? ("'"+geburtsort+"'"):(null)}, 
+                ${geschlecht ? ("'"+geschlecht+"'"):(null)}, 
+                ${nichtdeutsche_herkunftssprache ? ("'"+nichtdeutsche_herkunftssprache+"'"):(null)})
+              ON DUPLICATE KEY UPDATE
+              staatsangehoerigkeit = ${staatsangehoerigkeit ? ("'"+staatsangehoerigkeit+"'"):(null)},
+              geburtsort = ${geburtsort ? ("'"+geburtsort+"'"):(null)},
+              geschlecht = ${geschlecht ? ("'"+geschlecht+"'"):(null)},
+              nichtdeutsche_herkunftssprache = ${nichtdeutsche_herkunftssprache ? ("'"+nichtdeutsche_herkunftssprache+"'"):(null)};`
+
+              ,(err, results) =>{
+                if(err){ //Query Error (Rollback and release connection)
+                  freeOfErrors = false;
+                  console.log(err)
+                  //return res.send(err);
+                }else{
+                  sumResults.push(results);
+                }})
+        }
+
+        //make array only with the relevant data of coming query
+        let kind_betreuung = [betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien]
+        
+        // check that at least on of the values is relevant for saving (not null or '')
+        validCoreData = 0;
+        kind_betreuung.forEach(element=> {
+          if(element === '' || element === null || element === 'null'){
+            return;
+          }else{
+            validCoreData++;
+          }
+          })
+
+        if(validCoreData > 1 && betreuung_beginn && betreuung_ende){
+          pool.query(
+          `INSERT INTO kind_betreuung(person_id, betreuung_beginn, betreuung_ende, betreuung_umfang, betreuung_ferien)
+            VALUES(${person_id}, 
+              ${betreuung_beginn ? ("'" + betreuung_beginn.toString() + "'"):(null)}, 
+                  ${betreuung_ende ? ("'" + betreuung_ende.toString() + "'"):(null)}, 
+                  ${betreuung_umfang ?("'"+betreuung_umfang+"'"):(null)}, 
+                  ${betreuung_ferien ? ("'"+betreuung_ferien+"'"):('0')})
+            ON DUPLICATE KEY UPDATE
+            betreuung_beginn = ${betreuung_beginn ? ("'" + betreuung_beginn.toString() + "'"):(null)},
+            betreuung_ende = ${betreuung_ende ? ("'" + betreuung_ende.toString() + "'"):(null)},
+            betreuung_umfang = ${betreuung_umfang ?("'"+betreuung_umfang+"'"):(null)},
+            betreuung_ferien = ${betreuung_ferien ? ("'"+betreuung_ferien+"'"):('0')};`
+
+            ,(err, results) =>{
+              if(err){ //Query Error (Rollback and release connection)
+                console.log("Sending err!!!!")
+                freeOfErrors = false;
+                console.log(err)
+                //return res.send(err);
+              }else {
+                sumResults.push(results)
+              }})
+        }
+
+        //adds selected person as Bezugsperson for this Pupil
+        if(bezugsPersonToBeAdded){
+          //console.log("BZPADD: "+bezugsPersonToBeAdded)
+          pool.query(
+            `INSERT IGNORE INTO bezugsperson_kind (person_id_1, person_id_2, beziehung_zu_person2, recht_gegenueber_person_2) 
+              VALUES(${bezugsPersonToBeAdded}, 
+                      ${person_id}, 
+                      ${beziehung_zu_person2 ? ("'"+beziehung_zu_person2+"'"):(null)}, 
+                      ${recht_gegenueber_person2 ? ("'"+recht_gegenueber_person2+"'"):(null)})
+              ;`
+              ,(err,results) => {
+                if(err){ //Query Error (Rollback and release connection)
+                  console.log(err)
+                  freeOfErrors = false;
+                  return res.send(err);
+                }else {
+                  sumResults.push(results)
+                }
+              }
+          )
+        }
+
+        //removes selected person as Bezugsperson for this Pupil
+        if(bezugsPersonToBeDeleted){
+          //console.log("BZPADD: "+bezugsPersonToBeDeleted)
+          pool.query(
+            `DELETE FROM bezugsperson_kind 
+                WHERE person_id_1=${bezugsPersonToBeDeleted}
+                AND person_id_2=${person_id}
+              ;`
+              ,(err,results) => {
+                if(err){ //Query Error (Rollback and release connection)
+                  console.log(err)
+                  freeOfErrors = false;
+                  console.log(err)
+                  //return res.send(err);
+                }else {
+                  sumResults.push(results)
+                }
+              }
+          )
+        }
+
+
+        //adds selected Haushalt as address for this person
+        if(haushalteToBeAdded){
+          //console.log("BZPADD: "+haushalteToBeAdded)
+          pool.query(
+            `INSERT IGNORE INTO person_haushalt (haushalt_id, person_id, meldeanschrift, datum_einzug) 
+              VALUES(${haushalteToBeAdded}, 
+                      ${person_id}, 
+                      ${meldeanschrift}, 
+                      ${datum_einzug ? ("'"+datum_einzug.toString()+"'"):(null)})
+              ;`
+              ,(err,results) => {
+                if(err){ //Query Error (Rollback and release connection)
+                  console.log(err)
+                  freeOfErrors = false;
+                  console.log(err)
+                  //return res.send(err);
+                }else {
+                  sumResults.push(results)
+                }
+              }
+          )
+        }
+
+        //removes selected Haushalt for this person
+        if(haushaltToBeDeleted){
+          console.log("BZPADD: "+haushaltToBeDeleted)
+          pool.query(
+            `DELETE FROM person_haushalt 
+                WHERE haushalt_id=${haushaltToBeDeleted}
+                AND person_id=${person_id}
+              ;`
+              ,(err,results) => {
+                if(err){ //Query Error (Rollback and release connection)
+                  console.log(err)
+                  freeOfErrors = false;
+                  //return res.send(err);
+                }else {
+                  sumResults.push(results)
+                }
+              }
+          )
+        }
+
+        //adds a new lerngruppe record for this person
+        if(lerngruppeToBeAdded){
+          console.log("BZPADD: "+lerngruppeToBeAdded)
+          pool.query(
+            `INSERT IGNORE INTO kind_lerngruppe (person_id, lerngruppe_id, eintrittsdatum) 
+              VALUES(${person_id}, 
+                      ${lerngruppeToBeAdded},  
+                      ${eintrittsdatum ? ("'"+eintrittsdatum.toString()+"'"):(null)})
+              ;`
+              ,(err,results) => {
+                if(err){
+                  console.log(err)
+                  freeOfErrors = false;
+                  console.log(err)
+                  //return res.send(err);
+                }else {
+                  sumResults.push(results)
+                }
+              }
+          )
+        }
+
+
+        //removes selected Lerngruppe Record for this Kid
+        if(lerngruppeToBeDeleted){
+          console.log("BZPADD: "+lerngruppeToBeDeleted)
+          pool.query(
+            `DELETE FROM kind_lerngruppe 
+                WHERE lerngruppe_id=${lerngruppeToBeDeleted}
+                AND person_id=${person_id}
+              ;`
+              ,(err,results) => {
+                if(err){
+                  console.log(err)
+                  freeOfErrors = false;
+                  console.log(err)
+                  //return res.send(err);
+                }else {
+                  sumResults.push(results)
+                }
+              }
+          )
+        }
+
+        //make array only with the relevant data of coming query
+        let jahrgangswechsel = [datum, wert, grund]
+        
+        // check that at least on of the values is relevant for saving (not null or '')
+        validCoreData = 0;
+        jahrgangswechsel.forEach(element=> {
+          if(element === '' || element === null || element === 'null'){
+            return;
+          }else{
+            validCoreData++;
+          }
+          })
+
+        // adds jahrgangswechsel record
+        if(validCoreData == 3){
+          pool.query(
+          `INSERT IGNORE INTO jahrgangswechsel(person_id, datum, wert, grund)
+            VALUES(${person_id}, ${datum ? ("'" + datum.toString() + "'"):(null)}, 
+                  ${wert ? (wert):(0)}, 
+                  '${grund}');`
+
+            ,(err, results) =>{
+              if(err){
+                console.log("Sending err!!!!")
+                freeOfErrors = false;
+                console.log(err)
+                //return res.send(err);
+              }else {
+                sumResults.push(results)
+              }})
+        }
+
+        //removes selected Jahrgangswechsel Record for this Kid
+        if(jahrgangToBeDeleted){
+          //console.log("BZPADD: "+jahrgangToBeDeleted)
+          pool.query(
+            `DELETE FROM jahrgangswechsel 
+                WHERE person_id=${person_id}
+                AND datum=${jahrgangToBeDeleted ? ("'" + jahrgangToBeDeleted.toString() + "'"):(null)}
+              ;`
+              ,(err,results) => {
+                if(err){
+                  console.log(err)
+                  freeOfErrors = false;
+                  //return res.send(err);
+                }else {
+                  sumResults.push(results)
+                }
+              }
+          )
+        }
+
+        //make array only with the relevant data of coming query
+        let but = [but_beginn, but_ende, berlinpass_but]
+
+        // check that at least on of the values is relevant for saving (not null or '')
+        validCoreData = 0;
+        but.forEach(element=> {
+          if(element === '' || element === null || element === 'null'){
+            return;
+          }else{
+            validCoreData++;
+          }
+          })
+
+        // adds but record
+        if(validCoreData == 3){
+          
+          pool.query(
+          `INSERT IGNORE INTO kind_but(person_id, but_beginn, but_ende, berlinpass_but)
+            VALUES(${person_id}, ${but_beginn ? ("'" + but_beginn.toString() + "'"):(null)},
+                  ${but_ende ? ("'" + but_ende.toString() + "'"):(null)},
+                  ${berlinpass_but ? (berlinpass_but):(null)}
+                  );`
+
+            ,(err, results) =>{
+              if(err){
+                console.log(err)
+                freeOfErrors = false;
+                //return res.send(err);
+              }else {
+                sumResults.push(results)
+              }})
+        }
+
+        // deletes but record
+        if(butToBeDeleted){
+          console.log(butToBeDeleted)
+        pool.query(
+        `DELETE FROM kind_but
+          WHERE 
+          person_id = ${person_id}
+          AND
+          but_beginn = ${butToBeDeleted ? ("'" + butToBeDeleted.toString() + "'"):(null)} 
+        ;`
+
+          ,(err, results) =>{
+            if(err){
+              console.log(err)
+              freeOfErrors = false;
+              //return res.send(err);
+            }else {
+              sumResults.push(results)
+            }})
+      }
+
+
+      //make array only with the relevant data of coming query
+      let agData = [agToBeAdded, koordination_der_ag, datum_mitgliedschaftsbeginn, datum_mitgliedschaftsende]
+
+      // check that at least on of the values is relevant for saving (not null or '')
+      validCoreData = 0;
+      agData.forEach(element=> {
+        if(element === '' || element === null || element === 'null'){
+          return;
+        }else{
+          validCoreData++;
+        }
+        })
+
+      // adds AG record
+      if(validCoreData > 0 && agToBeAdded){
+        
+        pool.query(
+        `INSERT IGNORE INTO person_arbeitsgruppe(person_id, arbeitsgruppe_id, koordination_der_ag, datum_mitgliedschaftsbeginn, datum_mitgliedschaftsende)
+          VALUES(${person_id}, ${agToBeAdded},
+                ${koordination_der_ag ? (koordination_der_ag):(null)},
+                ${datum_mitgliedschaftsbeginn ? ("'" + datum_mitgliedschaftsbeginn.toString() + "'"):(null)},
+                ${datum_mitgliedschaftsende ? ("'" + datum_mitgliedschaftsende.toString() + "'"):(null)}
+                );`
+
+          ,(err, results) =>{
+            if(err){
+              console.log(err)
+              freeOfErrors = false;
+              //return res.send(err);
+            }else {
+              sumResults.push(results)
+            }})
+      }
+
+      // deletes AG record
+      if(agToBeDeleted){
+        
+      pool.query(
+      `DELETE FROM person_arbeitsgruppe
+        WHERE 
+        person_id = ${person_id}
+        AND
+        arbeitsgruppe_id = ${agToBeDeleted} 
+      ;`
+
+        ,(err, results) =>{
+          if(err){
+            console.log(err)
+            freeOfErrors = false;
+            //return res.send(err);
+          }else {
+            sumResults.push(results)
+          }})
+      }
+
+
+      //make array only with the relevant data of coming query
+      let taetigkeitData = [taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit]
+
+      // check that at least one of the values is relevant for saving (not null or '')
+      validCoreData = 0;
+      taetigkeitData.forEach(element=> {
+        if(element === '' || element === null || element === 'null'){
+          return;
+        }else{
+          validCoreData++;
+        }
+        })
+
+      // adds Tätigkeit record
+      if(validCoreData > 1 && (!einschulungsdatum || abgangsdatum_von_fsx)){
+        
+        pool.query(
+        `INSERT IGNORE INTO taetigkeit(person_id, taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit)
+          VALUES(${person_id},
+                ${taetigkeit_beginn ? ("'" + taetigkeit_beginn.toString() + "'"):(null)},
+                ${taetigkeit_ende ? ("'" + taetigkeit_ende.toString() + "'"):(null)},
+                ${typ ? ("'"+typ+"'"):(null)},
+                ${taetigkeit ? ("'"+taetigkeit+"'"):(null)})
+                ;`
+
+          ,(err, results) =>{
+            if(err){
+              console.log(err)
+              freeOfErrors = false;
+              //return res.send(err);
+            }else {
+              sumResults.push(results)
+            }})
+      }
+
+      // deletes Taetigkeit record
+      if(taetigkeitToBeDeleted){
+      let splitValues = taetigkeitToBeDeleted.split("_");
+      let beginn = splitValues[0];
+      let taetigkeit = splitValues[1];
+      console.log(taetigkeit)
+
+      pool.query(
+      `DELETE FROM taetigkeit
+        WHERE 
+        person_id = ${person_id}
+        AND
+        taetigkeit_beginn = ${"'"+beginn.toString()+"'"}
+        
+      ;`
+
+        ,(err, results) =>{
+          if(err){
+            console.log(err)
+            freeOfErrors = false;
+            //return res.send(err);
+          }else {
+            console.log(results)
+            sumResults.push(results)
+          }})
+      }
+
+
+      //make array only with the relevant data of coming query
+      let mitgliedschaftsData = [mitgliedschaftsbeginn, typ_m, mitgliedschaftsende, grund_fuer_mitgliedschaftsende]
+
+      // check that at least one of the values is relevant for saving (not null or '')
+      validCoreData = 0;
+      mitgliedschaftsData.forEach(element=> {
+        if(element === '' || element === null || element === 'null'){
+          return;
+        }else{
+          validCoreData++;
+        }
+        })
+
+      // adds Vereinmitgliedschaft record
+      if(validCoreData > 1 && (!einschulungsdatum || abgangsdatum_von_fsx)){
+        //console.log(mitgliedschaftsData)
+        pool.query(
+        `INSERT INTO vereinsmitgliedschaft(person_id, mitgliedschaftsbeginn, typ, mitgliedschaftsende, grund_fuer_mitgliedschaftsende)
+          VALUES(${person_id},
+                ${mitgliedschaftsbeginn ? ("'" + mitgliedschaftsbeginn.toString() + "'"):(null)},
+                ${typ_m ? ("'"+typ_m+"'"):(null)},
+                ${mitgliedschaftsende ? ("'" + mitgliedschaftsende.toString() + "'"):(null)},
+                ${grund_fuer_mitgliedschaftsende ? ("'"+grund_fuer_mitgliedschaftsende+"'"):(null)})
+                ON DUPLICATE KEY UPDATE
+                  typ = ${typ_m ? ("'"+typ_m+"'"):(null)},
+                  mitgliedschaftsende = ${mitgliedschaftsende ? ("'" + mitgliedschaftsende.toString() + "'"):(null)},
+                  grund_fuer_mitgliedschaftsende = ${grund_fuer_mitgliedschaftsende ? ("'"+grund_fuer_mitgliedschaftsende+"'"):(null)}
+                ;`
+
+          ,(err, results) =>{
+            if(err){
+              console.log(err)
+              freeOfErrors = false;
+              //return res.send(err);
+            }else {
+              sumResults.push(results)
+            }})
+      }
+
+      // deletes vereinmitgliedschaft record
+      if(mitgliedschaftToBeDeleted){
+        let splitValues = mitgliedschaftToBeDeleted.split("_");
+        let person_id = splitValues[0];
+        let beginn = splitValues[1];
+        console.log(taetigkeit)
+        
+        pool.query(
+        `DELETE FROM vereinsmitgliedschaft
+          WHERE 
+          person_id = ${person_id}
+          AND
+          mitgliedschaftsbeginn = ${"'"+beginn.toString()+"'"}
+        ;`
+
+          ,(err, results) =>{
+            if(err){
+              console.log(err)
+              freeOfErrors = false;
+              //return res.send(err);
+            }else {
+              console.log(results)
+              sumResults.push(results)
+            }})
+        }
+
+
+
+        // this query's role is just as workaround soolution to send a valid response 
+        //that makes client refresh the page
+        pool.query("SELECT * from personen;",(err, results) =>{
+          if(err){ //Query Error (Rollback and release connection)
+            console.log("Sending err!!!!")
+            return res.send(err);
+          }else {
+
+            // only send results headers to client if none of the queries above has returned an error
+            // which would mean that freeOfErrors == false
+            while(freeOfErrors){
+              //sumResults.push(results)
+              //console.log("sending...")
+              //console.log(results)
+              return res.send(results);
+            }
+          }}) 
+          
+        },
+      (reject) => {
+        console.log(res.send(reject))
+      }
+)
+
+}else {
+  console.log("Es fehlen wichtige Persondaten wie z.B. Rufname und/oder Nachname!!!\nBitte fühlen Sie diese aus und versuchen Sie es erneut!!!")
+  res.send("Es fehlen wichtige Persondaten wie z.B. Rufname und/oder Nachname!!!\nBitte fühlen Sie diese aus und versuchen Sie es erneut!!!")
+}
+    
+    }); 
 
   // END of EDIT Query
   // ------------------------------------------------------------------------------------  
 
 
-  app.get('/deletePersonData', (req, res) => {
-    let table = req.query.table;
-    let person_id = req.query.person_id;
-    pool.query(`DELETE FROM ${table} WHERE ${table === "bezugsperson_kind" ? ("person_id_2 = " + person_id):("person_id = " + person_id)};`,
-    (err, result)=>{
-      if(err){
-        console.log(err);
-        return res.send(err);
-      }else{
-        console.log(result)
-        return res.send("Results");
-      }
-    })
-
-  });
-
-  app.get('/deleteKindData', (req, res) => {
-    let table = req.query.table;
-    let id = req.query.id;
-    let columnNames = req.query.columnNames;
-    let numIdColumns = id.length;
-
-    //console.log(table, id, numIdColumns, columnNames)
-    
-    if(numIdColumns === 2){
-      pool.query(`DELETE FROM ${table} 
-                    WHERE 
-                      person_id = ${id[0]}
-                      AND
-                      ${columnNames[0]} = '${id[1].toString()}'
-                      ;`,
-    (err, result)=>{
-      if(err){
-        console.log(err);
-        return res.send(err);
-      }else{
-        console.log(result)
-        return res.send(result);
-      }
-    })
+app.get('/deletePersonData', (req, res) => {
+  let table = req.query.table;
+  let person_id = req.query.person_id;
+  pool.query(`DELETE FROM ${table} WHERE ${table === "bezugsperson_kind" ? ("person_id_2 = " + person_id):("person_id = " + person_id)};`,
+  (err, result)=>{
+    if(err){
+      console.log(err);
+      return res.send(err);
+    }else{
+      console.log(result)
+      return res.send("Results");
     }
+  })
 
-    if(numIdColumns === 3){
-      pool.query(`DELETE FROM ${table} 
-                    WHERE 
-                      person_id = ${id[0]}
-                      AND
-                      ${columnNames[0]} = '${id[1].toString()}'
-                      AND
-                      ${columnNames[1]} = '${id[2].toString()}'
-                      ;`,
-    (err, result)=>{
-      if(err){
-        console.log(err);
-        return res.send(err);
-      }else{
-        console.log(result)
-        return res.send(result);
-      }
-    })
+});
+
+app.get('/deleteKindData', (req, res) => {
+  let table = req.query.table;
+  let id = req.query.id;
+  let columnNames = req.query.columnNames;
+  let numIdColumns = id.length;
+
+  //console.log(table, id, numIdColumns, columnNames)
+  
+  if(numIdColumns === 2){
+    pool.query(`DELETE FROM ${table} 
+                  WHERE 
+                    person_id = ${id[0]}
+                    AND
+                    ${columnNames[0]} = '${id[1].toString()}'
+                    ;`,
+  (err, result)=>{
+    if(err){
+      console.log(err);
+      return res.send(err);
+    }else{
+      console.log(result)
+      return res.send(result);
     }
-  });
+  })
+  }
+
+  if(numIdColumns === 3){
+    pool.query(`DELETE FROM ${table} 
+                  WHERE 
+                    person_id = ${id[0]}
+                    AND
+                    ${columnNames[0]} = '${id[1].toString()}'
+                    AND
+                    ${columnNames[1]} = '${id[2].toString()}'
+                    ;`,
+  (err, result)=>{
+    if(err){
+      console.log(err);
+      return res.send(err);
+    }else{
+      console.log(result)
+      return res.send(result);
+    }
+  })
+  }
+});
 
   //END OF POSTS
 //end of Personen queries
@@ -1319,7 +1329,6 @@ app.get('/ag_mitglieder', (req, res) => {
     }
   });
 });
-
 //end of arbeitsgruppen
 
 
@@ -1768,8 +1777,6 @@ FROM
     }
   });
 });
-
-
 //End of Queries
 
 
