@@ -5,6 +5,10 @@
   left: '100%';
 }
 
+.clickable-list-item{
+  cursor: pointer;
+}
+
 /* .personen-main{
   height:88vh;
   width: 100%;

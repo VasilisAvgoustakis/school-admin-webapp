@@ -2,6 +2,7 @@ import React, {useState, useEffect, setRole} from 'react';
 import { PersonSelectList } from '..';
 import axios from 'axios';
 import '../stylesheets/globalstyles.css';
+import '../stylesheets/personen.css'
 import dateToDEFormat from '../../globalFunctions';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -9,21 +10,31 @@ import { v4 as uuidv4 } from 'uuid';
 class ListRow extends React.Component{
     constructor(props){
         super(props);
+        this.clinkPerson = this.clinkPerson.bind(this);
         this.state = {
             data:[this.props.data]
         }
     }
 
+
+    clinkPerson(){
+        document.getElementById(this.state.data[0].person_id.toString()).click()
+    }
+
+    
+
     render(){
-        //console.log(this.state.data)
+        console.log(this.state.data[0].person_id.toString())
         return(
-            
             this.state.data.map(bezugspersonenRow => (
-                <tr key={uuidv4()}>
-                    {bezugspersonenRow.rufname ? (<td>{bezugspersonenRow.rufname}</td>):(<td> -- </td>)}
-                    {bezugspersonenRow.nachname ? (<td>{bezugspersonenRow.nachname}</td>):(<td> -- </td>)}
-                    {bezugspersonenRow.beziehung_zu_person2 ? (<td>{bezugspersonenRow.beziehung_zu_person2}</td>):(<td> -- </td>)}
-                    {bezugspersonenRow.recht_gegenueber_person_2 ? (<td>{bezugspersonenRow.recht_gegenueber_person_2}</td>):(<td> -- </td>)}
+                <tr key={uuidv4()} onClick={this.clinkPerson} className="clickable-list-item">
+                    {bezugspersonenRow.rufname &&
+                     bezugspersonenRow.nachname && 
+                     bezugspersonenRow.beziehung_zu_person2 && 
+                     bezugspersonenRow.recht_gegenueber_person_2 ?
+                      (<td>{bezugspersonenRow.rufname + " " + bezugspersonenRow.nachname + " (" + 
+                        bezugspersonenRow.beziehung_zu_person2 + ") (" + bezugspersonenRow.recht_gegenueber_person_2+")"}</td>):(<td> -- </td>)}
+                
                 </tr>
                 
             )) 
@@ -34,7 +45,6 @@ class ListRow extends React.Component{
 
 
 export function Bezugspersonen(props){
-    
     
     return(
         
@@ -59,12 +69,6 @@ export function Bezugspersonen(props){
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td><strong>Rufname</strong></td>
-                    <td><strong>Nachname</strong></td>
-                    <td><strong>Beziehung zum Kind</strong></td>
-                    <td><strong>recht gegenüber Kind</strong></td>
-                </tr>
                 {/* Hier comes the address row element */}
                 
                     {props.data.map(bezugspersonen => (
@@ -74,10 +78,8 @@ export function Bezugspersonen(props){
                         />
                        
                     ))}
-                
-                
-
-            </tbody>
+             </tbody>
+             
         </table>)}
     </div>
     )

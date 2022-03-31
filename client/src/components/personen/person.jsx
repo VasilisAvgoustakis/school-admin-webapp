@@ -68,8 +68,6 @@ export class Person extends React.Component{
         },
         }))
     }
-    
-
 
     async fetchAddresses(person_id){
         return (
@@ -108,10 +106,6 @@ export class Person extends React.Component{
         //this.props.updateStateAfterEdit();
         this.state.editing ? (this.setState({editing: false})):(this.setState({editing:true}))
     }
-
-    
-
-    
 
     customRender(loading){
         if(loading){
@@ -332,12 +326,14 @@ export class Person extends React.Component{
     }
 
 
-
+    
     render() {
         //console.log(this.state.bezugspersonen)
       return (
 
-        <li key={uuidv4()} onClick={this.handleClick} >
+        <li key={uuidv4()} 
+            id={this.state.core_data.personId} 
+            onClick={this.handleClick} >
               
             {this.state.core_data.rufname +' ' + this.state.core_data.nachname}
         </li>
