@@ -5,8 +5,9 @@
   left: '100%';
 }
 
-.clickable-list-item{
+.clickable-list-item:hover{
   cursor: pointer;
+  background-color: rgb(159, 159, 214);
 }
 
 /* .personen-main{
