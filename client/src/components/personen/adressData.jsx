@@ -9,9 +9,16 @@ import { v4 as uuidv4 } from 'uuid';
 class Address extends React.Component{
     constructor(props){
         super(props);
+        this.clinkHaus = this.clinkHaus.bind(this);
         this.state = {
             data:[this.props.data]
         }
+    }
+
+    clinkHaus({ navigation }){
+        this.props.navi('Haushalte')
+        document.getElementById(this.state.data[0].haushalt_id.toString()+
+        this.state.data[0].postleitzahl).click();
     }
 
     render(){
@@ -19,7 +26,7 @@ class Address extends React.Component{
         return(
             
             this.state.data.map(addrRow => (
-                <tr key={uuidv4()}>
+                <tr key={uuidv4()} onClick={this.clinkHaus} className="clickable-list-item">
                     {addrRow.meldeanschrift == 1 ? (<td>JA</td>):(<td>NEIN</td>)}
                     {addrRow.strasse ? (<td>{addrRow.strasse}</td>):(<td> -- </td>)}
                     {addrRow.aderss_zusatz ? (<td>{addrRow.adress_zusatz}</td>):(<td> -- </td>)}
@@ -76,6 +83,7 @@ export function AddressData(props){
                         
                         <Address key={uuidv4()}
                         data={address}
+                        navi={props.navi}
                         />
                        
                     ))}

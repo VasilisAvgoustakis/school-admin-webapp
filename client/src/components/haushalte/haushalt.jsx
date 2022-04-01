@@ -143,7 +143,9 @@ export class Haushalt extends React.Component{
         
       return (
 
-        <li key={uuidv4()} onClick={this.handleClick} >
+        <li key={uuidv4()}
+        id={this.state.core_data.haushalt_id + this.state.core_data.plz}
+        onClick={this.handleClick} >
               
             {this.state.core_data.strasse +' ' + this.state.core_data.plz}
         </li>

@@ -263,7 +263,8 @@ export class Person extends React.Component{
                         
                     <div className='entity-data-right'>
                         <AddressData
-                            addresses= {this.state.addresses}/>
+                            addresses= {this.state.addresses}
+                            navi={this.props.navi}/>
                         
                         {(!this.state.core_data.einschulungsdatum 
                             || 

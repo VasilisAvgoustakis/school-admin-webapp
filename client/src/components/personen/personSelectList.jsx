@@ -128,6 +128,7 @@ export class PersonSelectList extends Component{
                   geburtsdatum={person.geburtsdatum}
                   einschulungsdatum={person.einschulungsdatum}
                   nicht_auf_listen={person.nicht_auf_listen}
+                  navi={this.props.navi}
                 />
               ))}
               </ul>
