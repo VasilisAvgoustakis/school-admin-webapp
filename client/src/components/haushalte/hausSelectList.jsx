@@ -59,7 +59,7 @@ export class HausSelectList extends Component{
 
   render() {
     var hauseToRender = [];
-    // console.log(this.state.haushalte)
+    //console.log(this.props.navi)
     if(this.state.searchedHause.length >=1){
       hauseToRender = this.state.searchedHause;
     }else{
@@ -95,6 +95,7 @@ export class HausSelectList extends Component{
                   festnetz={haus.telefon}
                   zusatz={haus.adress_zusatz}
                   land={haus.land}
+                  navi={this.props.navi}
                 />
               ))}
               </ul>

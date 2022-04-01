@@ -1,15 +1,26 @@
-import React from 'react';
+import * as React from 'react';
 import '../stylesheets/globalstyles.css';
 import dateToDEFormat from '../../globalFunctions';
 import { v4 as uuidv4 } from 'uuid';
 
 
+
+
+
+
 class AnwohnerRow extends React.Component{
     constructor(props){
         super(props);
+        
+        this.clinkPerson = this.clinkPerson.bind(this);
         this.state = {
             data:[this.props.data]
         }
+    }
+
+    clinkPerson({ navigation }){
+        this.props.navi('Personen')
+        document.getElementById(this.state.data[0].person_id.toString()).click();
     }
 
     render(){
@@ -17,10 +28,12 @@ class AnwohnerRow extends React.Component{
         return(
             
             this.state.data.map(anwohnerRow => (
-                <tr key={uuidv4()}>
-                    {anwohnerRow.person_id ? (<td>{anwohnerRow.person_id}</td>):(<td> -- </td>)}
-                    {anwohnerRow.rufname ? (<td>{anwohnerRow.rufname}</td>):(<td> -- </td>)}
-                    {anwohnerRow.nachname ? (<td>{anwohnerRow.nachname}</td>):(<td> -- </td>)}
+                <tr key={uuidv4()} onClick={this.clinkPerson} className="clickable-list-item">
+                    {anwohnerRow.person_id && 
+                     anwohnerRow.rufname &&
+                     anwohnerRow.nachname
+                      ? (<td>{anwohnerRow.rufname + " " + anwohnerRow.nachname}</td>):(<td> -- </td>)}
+                    
                 </tr>
                 
             )) 
@@ -31,7 +44,7 @@ class AnwohnerRow extends React.Component{
 
 
 export function Anwohner(props){
-    
+   
     
     return(
         
@@ -56,17 +69,18 @@ export function Anwohner(props){
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                {/* <tr>
                     <td><strong>Id</strong></td>
                     <td><strong>Rufname</strong></td>
                     <td><strong>Nachname</strong></td>
-                </tr>
+                </tr> */}
                 {/* Hier comes the address row element */}
                 
                     {props.anwohner.map(anwohner => (
                         
                         <AnwohnerRow key={uuidv4()}
                         data={anwohner}
+                        navi={props.navi}
                         />
                        
                     ))}

@@ -418,6 +418,32 @@ WHERE
   });
 });
 
+app.get('/bezugskinder', (req, res) => {
+  const { person_id } = req.query;
+  pool.query(`SELECT
+  personen.person_id,
+  personen.rufname,
+  personen.nachname,
+  bezugsperson_kind.beziehung_zu_person2,
+  bezugsperson_kind.recht_gegenueber_person_2
+FROM
+  bezugsperson_kind
+      INNER JOIN
+  personen ON personen.person_id = bezugsperson_kind.person_id_2
+WHERE
+  bezugsperson_kind.person_id_1 =${ person_id } 
+  ORDER BY 
+  personen.rufname ASC;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      //console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
 //single most important for adding or editing an existing person
 app.get('/editPerson', async (req, res) => {
   //array containg all variables passed in with the request

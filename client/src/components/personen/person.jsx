@@ -46,7 +46,8 @@ export class Person extends React.Component{
             contactData: [],
             addresses: [],
             arbeitsgruppen: [],
-            bezugspersonen: []
+            bezugspersonen: [],
+            bezugskinder: []
         }
     }
 
@@ -89,6 +90,15 @@ export class Person extends React.Component{
     async fetchBezugspersonen(person_id){
         return (
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/bezugspersonen`, {
+            params: {
+                person_id: person_id,
+            },
+            }))
+        }
+
+    async fetchBezugskinder(person_id){
+        return (
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/bezugskinder`, {
             params: {
                 person_id: person_id,
             },
@@ -264,9 +274,17 @@ export class Person extends React.Component{
                                 (<p></p>)}
                         
                         {this.state.core_data.einschulungsdatum ?
-                            (<Bezugspersonen 
-                                data= {this.state.bezugspersonen}/>)
-                                :(<p></p>)}
+                            (
+                            <Bezugspersonen 
+                                tableName = "Bezugspersonen"
+                                data= {this.state.bezugspersonen}/>
+                                )
+                                :
+                                (
+                                    <Bezugspersonen
+                                        tableName= "Bezugskinder"
+                                        data={this.state.bezugskinder}/>
+                                )}
                         
                         
                     </div>
@@ -313,7 +331,13 @@ export class Person extends React.Component{
             this.setState({
                 bezugspersonen: result.data,
                 
-                })}))},
+                })})).then(
+        this.fetchBezugskinder(this.state.core_data.personId).then(result => {
+            this.setState({
+                bezugskinder: result.data,
+                
+                })})            
+                )},
         this.setState({loading:false}),
         this.setState({clicked: true}),
         ////console.log(this.state.bezugspersonen)
@@ -329,6 +353,7 @@ export class Person extends React.Component{
     
     render() {
         //console.log(this.state.bezugspersonen)
+        //console.log(this.state.bezugskinder)
       return (
 
         <li key={uuidv4()} 

@@ -6,13 +6,15 @@ import '../stylesheets/globalstyles.css'
 
 
 
-export function HaushalteScreen() {
+
+export function HaushalteScreen({ navigation: { navigate }}) {
   axios.defaults.withCredentials = true;
 
   return (
       
       <div className='main-entity-data-cont'>
-        <HausSelectList  />
+        <HausSelectList 
+        navi={navigate} />
       </div>
   );
 }

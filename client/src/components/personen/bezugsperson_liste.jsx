@@ -24,7 +24,7 @@ class ListRow extends React.Component{
     
 
     render(){
-        console.log(this.state.data[0].person_id.toString())
+        //console.log(this.state.data[0].person_id.toString())
         return(
             this.state.data.map(bezugspersonenRow => (
                 <tr key={uuidv4()} onClick={this.clinkPerson} className="clickable-list-item">
@@ -53,7 +53,7 @@ export function Bezugspersonen(props){
         {props.data.length == 0 ? (<table>
             <thead>
                 <tr>
-                    <th colSpan="2">Bezugspersonen</th>
+                    <th colSpan="2">{props.tableName}</th>
                 </tr>
             </thead>
             <tbody>
@@ -65,7 +65,7 @@ export function Bezugspersonen(props){
         <table>
             <thead>
                 <tr>
-                    <th colSpan="4">Bezugspersonen</th>
+                    <th colSpan="4">{props.tableName}</th>
                 </tr>
             </thead>
             <tbody>

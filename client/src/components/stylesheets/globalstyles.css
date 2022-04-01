@@ -92,6 +92,11 @@ Tab and are thus relevant globaly. */
             margin: 10px;
 }
 
+.clickable-list-item:hover{
+  cursor: pointer;
+  background-color: rgb(159, 159, 214);
+}
+
 
 
 
