@@ -3,7 +3,9 @@ import axios,{setPost} from 'axios';
 import ReactDOM from 'react-dom'
 import '../stylesheets/globalstyles.css';
 import { Anwohner } from './anwohner';
+import { EditHaus } from './editHaus';
 import dateToDEFormat from '../../globalFunctions'
+import { dateToENFormat } from '../../globalFunctions';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -15,7 +17,9 @@ export class Haushalt extends React.Component{
         this.fetchAnwohner = this.fetchAnwohner.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.customRender = this.customRender.bind(this);
+        this.onEdit = this.onEdit.bind(this);
         this.state = {
+            editing: false,
             clicked: false,
             loading: false,
             core_data:{
@@ -42,6 +46,11 @@ export class Haushalt extends React.Component{
           }))
       }
 
+    onEdit(){
+        //this.props.updateStateAfterEdit();
+        this.state.editing ? (this.setState({editing: false})):(this.setState({editing:true}))
+    }
+
 
     customRender(loading){
         if(loading){
@@ -49,10 +58,29 @@ export class Haushalt extends React.Component{
                                 <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
                             </svg>, document.getElementById('haus-data'))
             }else{
+
+                this.state.editing ? (ReactDOM.render(
+                    <div>
+                        <button onClick={this.onEdit}>Switch to Data view</button>
+                        <EditHaus 
     
+                            //Kerndaten to edit passed as props
+                            haushalt_id={this.state.core_data.haushalt_id} 
+                            strasse={this.props.strasse}
+                            plz={this.props.plz}
+                            ort={this.props.ort}
+                            ort_berlin={this.props.ort_berlin}
+                            quart_mgmt={this.props.quart_mgmt}
+                            festnetz={this.props.festnetz}
+                            zusatz={this.props.zusatz}
+                            land={this.props.land}
+                            />
+                        </div>
+                        , document.getElementById('haus-data'))):(
             ReactDOM.render(
     
                 <div>
+                    <button onClick={this.onEdit}>Switch to Edit View</button>
                     <div className='entity-data-left'>
                         <table>
                             <thead>
@@ -112,7 +140,9 @@ export class Haushalt extends React.Component{
                             navi={this.props.navi}/>
                     </div>
                 </div>
-                , document.getElementById('haus-data'))}
+                , document.getElementById('haus-data'))
+                        )
+            }
     }
     
 

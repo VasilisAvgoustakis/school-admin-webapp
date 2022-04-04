@@ -4,6 +4,7 @@ import '../stylesheets/globalstyles.css'
 import '../stylesheets/edits.css';
 import {dateToDEFormat, dateToENFormat} from '../../globalFunctions'
 import { TouchableNativeFeedbackBase } from 'react-native';
+import { v4 as uuidv4 } from 'uuid';
 
 
 
@@ -620,15 +621,15 @@ export class EditPerson extends React.Component{
 
                                 <label>Neues Haushalt für diese Person hinzufügen: </label>
                                 <select id='haushalteToBeAdded' onChange= {this.handleChange}>
-                                    <option selected="true" value=''>-</option>
+                                    <option defaultValue="true" value=''>-</option>
 
                                     {this.state.probableHaushalte.map((haus) => 
-                                    <option value={haus.haushalt_id}>{haus.strasse +' ' + haus.plz}</option>)}
+                                    <option key={uuidv4()} value={haus.haushalt_id}>{haus.strasse +' ' + haus.plz}</option>)}
                                     
                                 </select>
                                 <label>Meldeanschrift: </label>
                                 <select id='meldeanschrift' onChange= {this.handleChange}>
-                                    <option selected="true" value={null}>-</option>
+                                    <option defaultValue="true" value={null}>-</option>
                                     <option value='0'>False</option>
                                     <option value='1'>True</option>
                                 </select>
@@ -646,10 +647,10 @@ export class EditPerson extends React.Component{
                                 <div className='delete-section'>
                                     <label>Existierende Haushalt dieser Person entfernen: </label>
                                     <select id='haushaltToBeDeleted' onChange= {this.handleChange}>
-                                        <option selected="true" value=''>-</option>
+                                        <option defaultValue="true" value=''>-</option>
 
                                         {this.state.haushalte.map((haus) => 
-                                        <option value={haus.haushalt_id}>{haus.strasse + " " + haus.postleitzahl}</option>)}
+                                        <option key={uuidv4()} value={haus.haushalt_id}>{haus.strasse + " " + haus.postleitzahl}</option>)}
                                         
                                     </select>
                                     <br></br>
@@ -684,7 +685,7 @@ export class EditPerson extends React.Component{
                             <label>Geschlecht: </label>
                             <select id='geschlecht' value={this.state.geschlecht} 
                             onChange= {this.handleChange} >
-                                <option value='' selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                <option value='' defaultValue="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                                 <option value='m'>m</option>
                                 <option value='f'>f</option>
                                 <option value='n'>n</option>
@@ -694,7 +695,7 @@ export class EditPerson extends React.Component{
                             <label>nicht deutsche Herkunftssprache: </label>
                             <select id='nichtdeutsche_herkunftssprache' value={this.state.nichtdeutsche_herkunftssprache} 
                             onChange= {this.handleChange} >
-                                <option value='' selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                <option value='' defaultValue disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                                 <option value='0'>0</option>
                                 <option value='1'>1</option>
                             </select>
@@ -732,7 +733,7 @@ export class EditPerson extends React.Component{
                             <label>Abgangsgrund: </label>
                             <select id='abgangsgrund' value={this.state.abgangsgrund} 
                             onChange= {this.handleChange} >
-                                <option selected="true" value=''>-</option> {/*default option when no data from database for selected person*/}
+                                <option defaultValue value=''>-</option> {/*default option when no data from database for selected person*/}
                                 <option value='Elternwunsch'>Elternwunsch</option>
                                 <option value='Wegzug'>Wegzug</option>
                                 <option value='Umzug'>Umzug</option>
@@ -744,7 +745,7 @@ export class EditPerson extends React.Component{
                             <label >Mittag:</label>
                             <select id='mittag' value={this.state.mittag} 
                             onChange= {this.handleChange} >
-                                <option value='' selected="true">-</option> {/*default option when no data from database for selected person*/}
+                                <option value='' defaultValue>-</option> {/*default option when no data from database for selected person*/}
                                 <option value='0'>0</option>
                                 <option value='1'>1</option>
                             </select>
@@ -781,7 +782,7 @@ export class EditPerson extends React.Component{
                             <label >Betreuung Umfang:</label>
                             <select id='betreuung_umfang' value={this.state.betreuung_umfang} 
                             onChange= {this.handleChange} >
-                                <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                <option defaultValue disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                                 <option value='16:00'>16:00</option>
                                 <option value='18:00'>18:00</option>
                             </select>
@@ -790,7 +791,7 @@ export class EditPerson extends React.Component{
                             <label >Betreuung Ferien:</label>
                             <select id='betreuung_ferien' value={this.state.betreuung_ferien} 
                             onChange= {this.handleChange} >
-                                <option value='' selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                <option value='' defaultValue disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                                 <option value='0'>0</option>
                                 <option value='1'>1</option>
                             </select>
@@ -811,10 +812,10 @@ export class EditPerson extends React.Component{
 
                                 <label>Neuer Lerngruppe Eintrag für diese Person hinzufügen: </label>
                                 <select id='lerngruppeToBeAdded' onChange= {this.handleChange}>
-                                    <option selected="true" value=''>-</option>
+                                    <option defaultValue value=''>-</option>
 
                                     {this.state.probableLerngruppen.map((gruppe) => 
-                                    <option value={gruppe.lerngruppe_id}>{gruppe.bezeichnung}</option>)}
+                                    <option key={uuidv4()} value={gruppe.lerngruppe_id}>{gruppe.bezeichnung}</option>)}
                                     
                                 </select>
 
@@ -831,10 +832,10 @@ export class EditPerson extends React.Component{
                                 <div className='delete-section'>
                                     <label>Existierende Lerngruppe Einträge dieser Person entfernen: </label>
                                     <select id='lerngruppeToBeDeleted' onChange= {this.handleChange}>
-                                        <option selected="true" value=''>-</option>
+                                        <option defaultValue value=''>-</option>
 
                                         {this.state.lerngruppen.map((gruppe) => 
-                                        <option value={gruppe.lerngruppe_id}>{gruppe.bezeichnung 
+                                        <option key={uuidv4()} value={gruppe.lerngruppe_id}>{gruppe.bezeichnung 
                                         + " Eintritt am: " + dateToDEFormat(new Date(gruppe.eintrittsdatum))}</option>)}
                                         
                                     </select>
@@ -857,22 +858,22 @@ export class EditPerson extends React.Component{
 
                                 <label>Neue Person für dieses Kind addieren: </label>
                                 <select id='bezugsPersonToBeAdded' onChange= {this.handleChange}>
-                                    <option selected="true" value=''>-</option>
+                                    <option defaultValue value=''>-</option>
 
                                     {this.state.probableBezugspersonen.map((person) => 
-                                    <option value={person.person_id}>{person.rufname + " " + person.nachname}</option>)}
+                                    <option key={uuidv4()} value={person.person_id}>{person.rufname + " " + person.nachname}</option>)}
                                     
                                 </select>
                                 <label>Beziehung zum Kind: </label>
                                 <select id='beziehung_zu_person2' onChange= {this.handleChange}>
-                                    <option selected="true" value={null}>-</option>
+                                    <option defaultValue value={null}>-</option>
                                     <option value='Elternteil'>Elternteil</option>
                                     <option value='Andere'>Andere</option>
                                 </select>
 
                                 <label>Recht gegenüber Kind: </label>
                                 <select id='recht_gegenueber_person2' onChange= {this.handleChange}>
-                                    <option selected="true" value={null}>-</option>
+                                    <option defaultValue value={null}>-</option>
                                     <option value='Sorgerecht'>Sorgerecht</option>
                                     <option value='Umgangsrecht/Abholen'>Umgangsrecht/Abholen</option>
                                     <option value='Keine'>Keine</option>
@@ -882,10 +883,10 @@ export class EditPerson extends React.Component{
                                 <div className='delete-section'>
                                     <label>Existierende Bezugspersonen fürs Kind entfernen: </label>
                                     <select id='bezugsPersonToBeDeleted' onChange= {this.handleChange}>
-                                        <option selected="true" value=''>-</option>
+                                        <option defaultValue value=''>-</option>
 
                                         {this.state.bezugspersonen.map((person) => 
-                                        <option value={person.person_id}>{person.rufname + " " + person.nachname}</option>)}
+                                        <option key={uuidv4()} value={person.person_id}>{person.rufname + " " + person.nachname}</option>)}
                                         
                                     </select>
                                     <br></br>
@@ -919,7 +920,7 @@ export class EditPerson extends React.Component{
                                 <label >Wert:</label>
                                 <select id='wert'  
                                 onChange= {this.handleChange} >
-                                    <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                    <option defaultValue disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                                     <option value='-1'>-1</option>
                                     <option value='1'>1</option>
                                 </select>
@@ -928,7 +929,7 @@ export class EditPerson extends React.Component{
                                 <label>Grund: </label>
                                 <select id='grund' 
                                 onChange= {this.handleChange} >
-                                    <option selected="true" value=''>-</option> {/*default option when no data from database for selected person*/}
+                                    <option defaultValue value=''>-</option> {/*default option when no data from database for selected person*/}
                                     <option value='Verkuerzung Schulanfangsphase (Klasse 1 und 2)'>Verkürzung Schulanfangsphase (Klasse 1 und 2)</option>
                                     <option value='Verlaengerung Schulanfangsphase (Klasse 1 und2)'>Verlängerung Schulanfangsphase (Klasse 1 und2)</option>
                                     <option value='Ueberspringen (Klasse 3 bis 6)'>Überspringen (Klasse 3 bis 6)</option>
@@ -941,10 +942,10 @@ export class EditPerson extends React.Component{
                                 <div className='delete-section'>
                                     <label>Existierende Jahrgangswechsel Einträge dieser Person entfernen: </label>
                                     <select id='jahrgangToBeDeleted' onChange= {this.handleChange}>
-                                        <option selected="true" >-</option>
+                                        <option defaultValue >-</option>
 
                                         {this.state.jahrgangswechselRecords.map((record) => 
-                                        <option value={dateToENFormat(new Date(record.datum))}>{"Wert: "+record.wert + " Grund: " + record.grund 
+                                        <option key={uuidv4()} value={dateToENFormat(new Date(record.datum))}>{"Wert: "+record.wert + " Grund: " + record.grund 
                                         + "  von: " + dateToDEFormat(new Date(record.datum))}</option>)}
                                         
                                     </select>
@@ -988,7 +989,7 @@ export class EditPerson extends React.Component{
                                 <label >Berlinpass BuT:</label>
                                 <select id='berlinpass_but'  
                                 onChange= {this.handleChange} >
-                                    <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                    <option defaultValue disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                                     <option value='0'>0</option>
                                     <option value='1'>1</option>
                                 </select>
@@ -997,10 +998,10 @@ export class EditPerson extends React.Component{
                                 <div className='delete-section'>      
                                     <label>Existierende BuT Einträge dieser Person entfernen: </label>
                                     <select id='butToBeDeleted' onChange= {this.handleChange}>
-                                        <option selected="true" >-</option>
+                                        <option defaultValue >-</option>
 
                                         {this.state.butRecords.map((record) => 
-                                        <option value={dateToENFormat(new Date(record.but_beginn))}>{"Beginn: "+ dateToDEFormat(new Date(record.but_beginn)) 
+                                        <option key={uuidv4()} value={dateToENFormat(new Date(record.but_beginn))}>{"Beginn: "+ dateToDEFormat(new Date(record.but_beginn)) 
                                                                                                     + " Ende: " + dateToDEFormat(new Date(record.but_ende))
                                                                                                     + " Ber.Pass: " + (record.berlinpass_but ? ("True"):("False"))
                                                                                                     }
@@ -1029,17 +1030,17 @@ export class EditPerson extends React.Component{
 
                                 <label>Neuer Arbeitsgruppe hinzufügen: </label>
                                 <select id='agToBeAdded' onChange= {this.handleChange}>
-                                    <option selected="true" value=''>-</option>
+                                    <option defaultValue value=''>-</option>
 
                                     {this.state.probableAgs.map((ag) => 
-                                    <option value={ag.arbeitsgruppe_id}>{ag.bezeichnung}</option>)}
+                                    <option key={uuidv4()} value={ag.arbeitsgruppe_id}>{ag.bezeichnung}</option>)}
                                     
                                 </select>
 
                                 <label >Koordination:</label>
                                 <select id='koordination_der_ag'  
                                 onChange= {this.handleChange} >
-                                    <option selected="true" disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                    <option defaultValue disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
                                     <option value='0'>0</option>
                                     <option value='1'>1</option>
                                 </select>
@@ -1068,10 +1069,10 @@ export class EditPerson extends React.Component{
                                 <div className='delete-section'>
                                     <label>Existierende AG Mitgliedschaften dieser Person entfernen: </label>
                                     <select id='agToBeDeleted' onChange= {this.handleChange}>
-                                        <option selected="true" value=''>-</option>
+                                        <option defaultValue value=''>-</option>
 
                                         {this.state.ags.map((ag) => 
-                                        <option value={ag.arbeitsgruppe_id}>{ag.bezeichnung 
+                                        <option key={uuidv4()} value={ag.arbeitsgruppe_id}>{ag.bezeichnung 
                                         + " Eintritt am: " + dateToDEFormat(new Date(ag.datum_mitgliedschaftsbeginn))}</option>)}
                                         
                                     </select>
@@ -1116,7 +1117,7 @@ export class EditPerson extends React.Component{
                                 <label>Typ: </label>
                                 <select id='typ' 
                                 onChange= {this.handleChange} >
-                                    <option selected="true" value=''>-</option> {/*default option when no data from database for selected person*/}
+                                    <option defaultValue value=''>-</option> {/*default option when no data from database for selected person*/}
                                     <option value='Freiwilligendienst'>Freiwilligendienst</option>
                                     <option value='Ehrenamt'>Ehrenamt</option>
                                     <option value='Praktikum'>Praktikum</option>
@@ -1130,7 +1131,7 @@ export class EditPerson extends React.Component{
                                 <label>Tätigkeit: </label>
                                 <select id='taetigkeit' 
                                 onChange= {this.handleChange} >
-                                    <option selected="true" value=''>-</option> {/*default option when no data from database for selected person*/}
+                                    <option defaultValue value=''>-</option> {/*default option when no data from database for selected person*/}
                                     <option value='Lehrkraefte mit Unterrichtsbefaehigung'>Lehrkräfte mit Unterrichtsbefähigung</option>
                                     <option value='Lehrkraefte ohne Unterrichtsbefaehigung'>Lehrkräfte ohne Unterrichtsbefähigung</option>
                                     <option value='Sonstige Lehrkraft'>Sonstige Lehrkraft</option>
@@ -1149,10 +1150,10 @@ export class EditPerson extends React.Component{
                                 <div className='delete-section'>      
                                     <label>Existierende Tätigkeit dieser Person entfernen: </label>
                                     <select id='taetigkeitToBeDeleted' onChange= {this.handleChange}>
-                                        <option selected="true" >-</option>
+                                        <option defaultValue >-</option>
 
                                         {this.state.taetigkeitRecords.map((record) => 
-                                        <option value={dateToENFormat(new Date(record.taetigkeit_beginn)) + "_" + record.taetigkeit}>
+                                        <option key={uuidv4()} value={dateToENFormat(new Date(record.taetigkeit_beginn)) + "_" + record.taetigkeit}>
                                             {"Beginn: "+dateToDEFormat(new Date(record.taetigkeit_beginn)) + " Ende: " + (record.taetigkeit_ende ? (dateToDEFormat(new Date(record.taetigkeit_ende))):("null"))
                                             + " Tätigkeit: " + record.taetigkeit}</option>)}
                                         
@@ -1176,7 +1177,7 @@ export class EditPerson extends React.Component{
                                 <label>Neuer Vereinsmitgliedschaft für diese Person hinzufügen: </label>
                                 <label>Mitgliedschaftsbeginn: </label>
                                 <input type="date" id="mitgliedschaftsbeginn" name="sl-date"
-                                    defaultValue={this.state.mitgliedschaftsbeginn ? (this.state.mitgliedschaftsbeginn):(this.state.defaultDateValue)}
+                                    defaultValue={this.state.defaultDateValue}
                                     min={
                                         this.state.geburtsdatum ?
                                         (dateToENFormat(new Date(this.state.geburtsdatum))):('')    
@@ -1186,7 +1187,7 @@ export class EditPerson extends React.Component{
 
                                 <label>Mitgliedschaftsende: </label>
                                 <input type="date" id="mitgliedschaftsende" name="sl-date"
-                                    defaultValue={this.state.mitgliedschaftsende ? (this.state.mitgliedschaftsende):(null)}
+                                    defaultValue={this.state.defaultDateValue}
                                     min={
                                         this.state.taetigkeit_beginn ?
                                         (dateToENFormat(new Date(this.state.taetigkeit_beginn))):('')    
@@ -1196,9 +1197,9 @@ export class EditPerson extends React.Component{
 
                                 <label>Typ: </label>
                                 <select id='typ_m' 
-                                defaultValue={this.state.typ_m ? (this.state.typ_m):(null)}
+                                // defaultValue={this.state.typ_m ? (this.state.typ_m):(null)}
                                 onChange= {this.handleChange} >
-                                    <option selected="true" value=''>-</option> {/*default option when no data from database for selected person*/}
+                                    <option defaultValue value=''>-</option> default option when no data from database for selected person
                                     <option value='aktiv'>Aktiv</option>
                                     <option value='foerdernd'>Fördernd</option>
                                 </select>
@@ -1207,9 +1208,8 @@ export class EditPerson extends React.Component{
 
                                 <label>Grund für Mitgliedschaftsende: </label>
                                 <select id='grund_fuer_mitgliedschaftsende' 
-                                defaultValue={this.state.grund_fuer_mitgliedschaftsende ? (this.state.grund_fuer_mitgliedschaftsende):(null)}
                                 onChange= {this.handleChange} >
-                                    <option selected="true" value=''>-</option> {/*default option when no data from database for selected person*/}
+                                    <option defaultValue value=''>-</option> {/*default option when no data from database for selected person*/}
                                     <option value='Austritt'>Austritt</option>
                                     <option value='Ausschluss'>Ausschluss</option>
                                     <option value='Tod'>Tod</option>
@@ -1223,10 +1223,9 @@ export class EditPerson extends React.Component{
                                 <div className='delete-section'>
                                     <label>Existierende Vereinsmitgliedschaft dieser Person entfernen: </label>
                                     <select id='mitgliedschaftToBeDeleted' onChange= {this.handleChange}>
-                                        <option selected="true" >-</option>
-
+                                        <option defaultValue >-</option>
                                         {this.state.mitgliedschaftsRecords.map((record) => 
-                                        <option value={this.state.person_id + "_" + dateToENFormat(new Date(record.mitgliedschaftsbeginn))}>
+                                        <option key={uuidv4()} value={this.state.person_id + "_" + dateToENFormat(new Date(record.mitgliedschaftsbeginn))}>
                                             {"Beginn: "+dateToDEFormat(new Date(record.mitgliedschaftsbeginn)) + " Ende: " + (record.mitgliedschaftsende ? (dateToDEFormat(new Date(record.mitgliedschaftsende))):("null"))
                                             + " Typ: " + record.typ}</option>)}
                                         
