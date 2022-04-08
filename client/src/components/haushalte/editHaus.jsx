@@ -20,6 +20,7 @@ export class EditHaus extends React.Component{
         this.state = {
             //Kerndaten
             haushalt_id: this.props.haushalt_id,
+            bezeichnung: this.props.bezeichnung,
             strasse: this.props.strasse,
             plz: this.props.plz,
             ort: this.props.ort,
@@ -90,29 +91,34 @@ export class EditHaus extends React.Component{
                             <input type='text' className='text-input' name='haushalt_id' value={this.state.haushalt_id}readOnly></input>
                             <br></br>
 
+                            <label >Bezeichnung:</label>
+                            <input type='text' className='text-input' id='bezeichnung' value={this.state.bezeichnung} 
+                            onChange= {this.handleChange} pattern='([\w\d\sßöäüÖÄÜ \.,-?!]){0,100}' ></input>
+                            <br></br>
+
                             <label >Straße:</label>
                             <input type='text' className='text-input' id='strasse' value={this.state.strasse} 
-                            onChange= {this.handleChange} pattern='[a-zA-ZöäüßÖÄÜ]+.{1}[0-9-]{1,4}$' ></input>
+                            onChange= {this.handleChange} pattern='^([\wöäüßÖÄÜ]{3,43})(\.\s|\s)([\d-]{0,5})\b$' ></input>
                             <br></br>
 
                             <label >Zusatz:</label>
                             <input type='text' className='text-input' name='zusatz' value={this.state.zusatz}
-                            onChange= {this.handleChange} pattern='[a-zA-ZöäüßÖÄÜ]+.{1}[0-9-]{1,4}$'></input>
+                            onChange= {this.handleChange} pattern='([\w\d\sßöäüÖÄÜ \.,-?!]){0,50}'></input>
                             <br></br>
 
                             <label >PLZ:</label>
                             <input type='text' className='text-input' id='plz' value={this.state.plz} 
-                            onChange= {this.handleChange} pattern='[0-9]*$' ></input>
+                            onChange= {this.handleChange} pattern='[0-9]{5}$' ></input>
                             <br></br>
 
                             <label >Ort:</label>
                             <input type='text' className='text-input' id='ort' value={this.state.ort} 
-                            onChange= {this.handleChange} pattern='[a-zA-ZäöüÄÖÜ\s]*$' ></input>
+                            onChange= {this.handleChange} pattern='[a-zA-ZäöüÄÖÜ\s]{0,50}$' ></input>
                             <br></br>
 
                             <label >Ort-Berlin:</label>
                             <input type='text' id='ort_berlin' value={this.state.ort_berlin}
-                            onChange= {this.handleChange} pattern='[a-zA-ZäöüÄÖÜ\s]*$' ></input>
+                            onChange= {this.handleChange} pattern='[a-zA-ZäöüÄÖÜ\s]{0,50}$' ></input>
                             <br></br>
 
                             <label>Land: </label>

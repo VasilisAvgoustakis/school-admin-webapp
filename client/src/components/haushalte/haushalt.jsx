@@ -24,6 +24,7 @@ export class Haushalt extends React.Component{
             loading: false,
             core_data:{
                 haushalt_id: this.props.haushalt_id,
+                bezeichnung: this.props.bezeichnung,
                 strasse: this.props.strasse,
                 plz: this.props.plz,
                 ort: this.props.ort,
@@ -65,7 +66,8 @@ export class Haushalt extends React.Component{
                         <EditHaus 
     
                             //Kerndaten to edit passed as props
-                            haushalt_id={this.state.core_data.haushalt_id} 
+                            haushalt_id={this.state.core_data.haushalt_id}
+                            bezeichnung={this.state.core_data.bezeichnung} 
                             strasse={this.props.strasse}
                             plz={this.props.plz}
                             ort={this.props.ort}
@@ -92,6 +94,10 @@ export class Haushalt extends React.Component{
                                 <tr>
                                     <td style={{width:'30%'}}><strong>Id:</strong></td>
                                     <td>{this.state.core_data.haushalt_id}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Bezeichnung:</strong></td>
+                                    <td >{this.state.core_data.bezeichnung}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Straße:</strong></td>
@@ -170,7 +176,7 @@ export class Haushalt extends React.Component{
 
 
     render() {
-        
+      //console.log(this.state.core_data)  
       return (
 
         <li key={uuidv4()}

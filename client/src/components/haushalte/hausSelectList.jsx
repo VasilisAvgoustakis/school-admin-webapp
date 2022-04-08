@@ -58,6 +58,7 @@ export class HausSelectList extends Component{
   
 
   render() {
+    
     var hauseToRender = [];
     //console.log(this.props.navi)
     if(this.state.searchedHause.length >=1){
@@ -66,7 +67,6 @@ export class HausSelectList extends Component{
       hauseToRender = this.state.haushalte;
 
     }
-    //console.log(hauseToRender);
     
     
       return (
@@ -74,7 +74,6 @@ export class HausSelectList extends Component{
           <input
                 type="text"
                 className='entity-search'              
-                // id="header-search"
                 placeholder="Haushalte Suche"
                 name="s" 
                 onChange={(e) => {
@@ -86,6 +85,7 @@ export class HausSelectList extends Component{
               {hauseToRender.map(haus => (
                 <Haushalt key={uuidv4()}
                   haushalt_id={haus.haushalt_id}
+                  bezeichnung={haus.bezeichnung}
                   strasse={haus.strasse}
                   plz={haus.postleitzahl}
                   ort={haus.ort} 

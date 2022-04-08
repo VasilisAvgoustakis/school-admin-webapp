@@ -621,7 +621,7 @@ export class EditPerson extends React.Component{
 
                                 <label>Neues Haushalt für diese Person hinzufügen: </label>
                                 <select id='haushalteToBeAdded' onChange= {this.handleChange}>
-                                    <option defaultValue="true" value=''>-</option>
+                                    <option selected value=''>-</option>
 
                                     {this.state.probableHaushalte.map((haus) => 
                                     <option key={uuidv4()} value={haus.haushalt_id}>{haus.strasse +' ' + haus.plz}</option>)}

@@ -110,6 +110,7 @@ DROP TABLE IF EXISTS `haushalte`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `haushalte` (
   `haushalt_id` int NOT NULL AUTO_INCREMENT,
+  `bezeichnung` varchar(100) DEFAULT NULL,
   `strasse` varchar(50) DEFAULT NULL,
   `postleitzahl` varchar(6) DEFAULT NULL,
   `ort` varchar(50) DEFAULT NULL,
