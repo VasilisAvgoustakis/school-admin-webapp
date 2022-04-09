@@ -620,8 +620,8 @@ export class EditPerson extends React.Component{
                                 
 
                                 <label>Neues Haushalt für diese Person hinzufügen: </label>
-                                <select id='haushalteToBeAdded' onChange= {this.handleChange}>
-                                    <option selected value=''>-</option>
+                                <select id='haushalteToBeAdded' onChange= {this.handleChange} value={this.state.haushalteToBeAdded} >
+                                    <option defaultValue="true" value=''>-</option>
 
                                     {this.state.probableHaushalte.map((haus) => 
                                     <option key={uuidv4()} value={haus.haushalt_id}>{haus.strasse +' ' + haus.plz}</option>)}
@@ -646,7 +646,7 @@ export class EditPerson extends React.Component{
                                 
                                 <div className='delete-section'>
                                     <label>Existierende Haushalt dieser Person entfernen: </label>
-                                    <select id='haushaltToBeDeleted' onChange= {this.handleChange}>
+                                    <select id='haushaltToBeDeleted' onChange= {this.handleChange} value={this.state.haushaltToBeDeleted}>
                                         <option defaultValue="true" value=''>-</option>
 
                                         {this.state.haushalte.map((haus) => 
@@ -811,7 +811,7 @@ export class EditPerson extends React.Component{
                                 
 
                                 <label>Neuer Lerngruppe Eintrag für diese Person hinzufügen: </label>
-                                <select id='lerngruppeToBeAdded' onChange= {this.handleChange}>
+                                <select id='lerngruppeToBeAdded' onChange= {this.handleChange} value={this.state.lerngruppeToBeAdded}>
                                     <option defaultValue value=''>-</option>
 
                                     {this.state.probableLerngruppen.map((gruppe) => 
@@ -831,7 +831,7 @@ export class EditPerson extends React.Component{
                                 
                                 <div className='delete-section'>
                                     <label>Existierende Lerngruppe Einträge dieser Person entfernen: </label>
-                                    <select id='lerngruppeToBeDeleted' onChange= {this.handleChange}>
+                                    <select id='lerngruppeToBeDeleted' onChange= {this.handleChange} value={this.state.lerngruppeToBeDeleted}>
                                         <option defaultValue value=''>-</option>
 
                                         {this.state.lerngruppen.map((gruppe) => 
@@ -857,7 +857,7 @@ export class EditPerson extends React.Component{
                                 
 
                                 <label>Neue Person für dieses Kind addieren: </label>
-                                <select id='bezugsPersonToBeAdded' onChange= {this.handleChange}>
+                                <select id='bezugsPersonToBeAdded' onChange= {this.handleChange} value={this.state.bezugsPersonToBeAdded}>
                                     <option defaultValue value=''>-</option>
 
                                     {this.state.probableBezugspersonen.map((person) => 
@@ -882,7 +882,7 @@ export class EditPerson extends React.Component{
                                 
                                 <div className='delete-section'>
                                     <label>Existierende Bezugspersonen fürs Kind entfernen: </label>
-                                    <select id='bezugsPersonToBeDeleted' onChange= {this.handleChange}>
+                                    <select id='bezugsPersonToBeDeleted' onChange= {this.handleChange} value={this.state.bezugsPersonToBeDeleted}>
                                         <option defaultValue value=''>-</option>
 
                                         {this.state.bezugspersonen.map((person) => 
@@ -941,7 +941,7 @@ export class EditPerson extends React.Component{
                                 
                                 <div className='delete-section'>
                                     <label>Existierende Jahrgangswechsel Einträge dieser Person entfernen: </label>
-                                    <select id='jahrgangToBeDeleted' onChange= {this.handleChange}>
+                                    <select id='jahrgangToBeDeleted' onChange= {this.handleChange} value={this.state.jahrgangToBeDeleted}>
                                         <option defaultValue >-</option>
 
                                         {this.state.jahrgangswechselRecords.map((record) => 
@@ -997,7 +997,7 @@ export class EditPerson extends React.Component{
 
                                 <div className='delete-section'>      
                                     <label>Existierende BuT Einträge dieser Person entfernen: </label>
-                                    <select id='butToBeDeleted' onChange= {this.handleChange}>
+                                    <select id='butToBeDeleted' onChange= {this.handleChange} value={this.state.butToBeDeleted}>
                                         <option defaultValue >-</option>
 
                                         {this.state.butRecords.map((record) => 
@@ -1020,6 +1020,7 @@ export class EditPerson extends React.Component{
                         </div>
                     </div>
 
+                    {/* Erwachsenerelevante Daten */}                                                                                 
                     <div className='bg-cont' style={({backgroundColor: "#e6ebae"})}>
                         <h3 style={({textAlign: "center"})}>Erwachsenenrelevante Daten</h3>
 
@@ -1029,7 +1030,7 @@ export class EditPerson extends React.Component{
                                 
 
                                 <label>Neuer Arbeitsgruppe hinzufügen: </label>
-                                <select id='agToBeAdded' onChange= {this.handleChange}>
+                                <select id='agToBeAdded' onChange= {this.handleChange} value={this.state.agToBeAdded}>
                                     <option defaultValue value=''>-</option>
 
                                     {this.state.probableAgs.map((ag) => 
@@ -1068,7 +1069,7 @@ export class EditPerson extends React.Component{
                                 
                                 <div className='delete-section'>
                                     <label>Existierende AG Mitgliedschaften dieser Person entfernen: </label>
-                                    <select id='agToBeDeleted' onChange= {this.handleChange}>
+                                    <select id='agToBeDeleted' onChange= {this.handleChange} value={this.state.agToBeDeleted}>
                                         <option defaultValue value=''>-</option>
 
                                         {this.state.ags.map((ag) => 
@@ -1149,7 +1150,7 @@ export class EditPerson extends React.Component{
                                 
                                 <div className='delete-section'>      
                                     <label>Existierende Tätigkeit dieser Person entfernen: </label>
-                                    <select id='taetigkeitToBeDeleted' onChange= {this.handleChange}>
+                                    <select id='taetigkeitToBeDeleted' onChange= {this.handleChange} value={this.state.taetigkeitToBeDeleted}>
                                         <option defaultValue >-</option>
 
                                         {this.state.taetigkeitRecords.map((record) => 
@@ -1222,7 +1223,7 @@ export class EditPerson extends React.Component{
 
                                 <div className='delete-section'>
                                     <label>Existierende Vereinsmitgliedschaft dieser Person entfernen: </label>
-                                    <select id='mitgliedschaftToBeDeleted' onChange= {this.handleChange}>
+                                    <select id='mitgliedschaftToBeDeleted' onChange= {this.handleChange} value={this.state.mitgliedschaftToBeDeleted}>
                                         <option defaultValue >-</option>
                                         {this.state.mitgliedschaftsRecords.map((record) => 
                                         <option key={uuidv4()} value={this.state.person_id + "_" + dateToENFormat(new Date(record.mitgliedschaftsbeginn))}>
