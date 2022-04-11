@@ -14,6 +14,7 @@ export class EditHaus extends React.Component{
         this.today = new Date();
         this.defaultDateValue = this.today.getFullYear()+'-'+(this.today.getMonth()+1)+'-'+ this.today.getDate();
         this.handleChange = this.handleChange.bind(this);
+        this.updateQuery = this.updateQuery.bind(this);
         this.editData = this.editData.bind(this);
 
         
@@ -24,6 +25,7 @@ export class EditHaus extends React.Component{
             strasse: this.props.strasse,
             plz: this.props.plz,
             ort: this.props.ort,
+            region: this.props.region,
             ort_berlin: this.props.ort_berlin,
             quart_mgmt: this.props.quart_mgmt,
             festnetz: this.props.festnetz,
@@ -42,13 +44,26 @@ export class EditHaus extends React.Component{
         console.log(e.target.id + ":" + e.target.value)
     }
 
+    async updateQuery(){
+        var stateObj = this.state;
+        var dataArr = Object.values(stateObj);
+        console.log(dataArr)
+        return(
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/editHaus`, {
+           params: {
+               state: dataArr
+           } 
+      })
+       )
+    }
+
     // edits DB for changed data in the form
     editData(){
         //input validation
         let validationSuccess = false;
         //get all invalid inputs
         let invalidInputFields = document.querySelectorAll(':invalid');
-        //console.log(invalidInputFields)
+        
 
         if(invalidInputFields.length > 0){
             window.alert('Bitte kontrollieren Sie alle rot gekennzeichnete Input Felder und versuchen Sie es erneut!')
@@ -59,14 +74,11 @@ export class EditHaus extends React.Component{
             if(confirm){
             this.updateQuery().then(res =>{
                 if(typeof(res.data) == 'string'){
-                    //console.log("This is the Err: ")
                     console.log(res.data)
                     window.alert(res.data);
                 }else{
-                    //console.log("confirm")
                     confirm = false;
                     if(!confirm)window.location.reload();
-                    //console.log(res);
                 }
             }).catch(err =>{console.log(err)})
             }
@@ -93,12 +105,12 @@ export class EditHaus extends React.Component{
 
                             <label >Bezeichnung:</label>
                             <input type='text' className='text-input' id='bezeichnung' value={this.state.bezeichnung} 
-                            onChange= {this.handleChange} pattern='([\w\d\sßöäüÖÄÜ \.,-?!]){0,100}' ></input>
+                            onChange= {this.handleChange} pattern="([\w\d\sßöäüÖÄÜ' \.,-?!]){0,100}" ></input>
                             <br></br>
 
                             <label >Straße:</label>
                             <input type='text' className='text-input' id='strasse' value={this.state.strasse} 
-                            onChange= {this.handleChange} pattern='^([\wöäüßÖÄÜ]{3,43})(\.\s|\s)([\d-]{0,5})\b$' ></input>
+                            onChange= {this.handleChange} pattern='^([\wöäüßÖÄÜ\s]{3,43})(\.\s|\s)([\d-]{0,5})\b$' ></input>
                             <br></br>
 
                             <label >Zusatz:</label>
@@ -113,6 +125,11 @@ export class EditHaus extends React.Component{
 
                             <label >Ort:</label>
                             <input type='text' className='text-input' id='ort' value={this.state.ort} 
+                            onChange= {this.handleChange} pattern='[a-zA-ZäöüÄÖÜ\s]{0,50}$' ></input>
+                            <br></br>
+
+                            <label >Region:</label>
+                            <input type='text' className='text-input' id='region' value={this.state.region} 
                             onChange= {this.handleChange} pattern='[a-zA-ZäöüÄÖÜ\s]{0,50}$' ></input>
                             <br></br>
 

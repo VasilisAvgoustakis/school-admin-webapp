@@ -444,7 +444,7 @@ WHERE
   });
 });
 
-//single most important for adding or editing an existing person
+//EDIT PERSON
 app.get('/editPerson', async (req, res) => {
   //array containg all variables passed in with the request
   let [person_id, rufname, amtlicher_vorname, nachname, geburtsdatum, einschulungsdatum, nicht_auf_listen,
@@ -523,9 +523,7 @@ app.get('/editPerson', async (req, res) => {
   // The 1st query to add/edit a person is happening as a promise based function in order to make sure
   // that the person has been added and exists before the next queries which usually use the person as foreign key are executed
   if(validCoreData > 1 && person_id && rufname && nachname){
-    addPerson().then(
-      (resolve) => {
-        //Some task
+    addPerson().then( (resolve) => {
       
         //make array only with the relevant data of coming query
         let contactData = [email_1, email_2, email_fsx, mobil_telefon_1, mobil_telefon_2, mobil_telefon_fsx, telefon_1, telefon_2, telefon_fsx];
@@ -1154,7 +1152,118 @@ app.get('/editPerson', async (req, res) => {
     
     }); 
 
-  // END of EDIT Query
+
+//EDIT HAUS
+app.get('/editHaus', async (req,res) => {
+  //array containg all variables passed in with the request
+  let [haushalt_id, bezeichnung, strasse, plz, ort, region, ortsteil_berlin, quart_mgmt, festnetz,
+    zusatz, land
+  ] = req.query.state
+
+  //console.log(req.query.state)
+  // this variable will be true if the error case in one of the queries has already send headers
+  let freeOfErrors = true;
+
+  //array to put all results and return them at the end of the querry
+  let sumResults = [];
+
+  // see that no empty '' values are send in with the data, instead values that should remain empty or null are handled by the query 
+  // here in the server and their value is turned into null
+  //console.log(req.query.state)
+  //make array only with the relevant data of coming query
+  let coreData = [haushalt_id, bezeichnung, strasse, plz, ort, region, ortsteil_berlin, quart_mgmt, festnetz,
+    zusatz, land];
+
+  // check that at least on of the values is relevant for saving (not null or '')
+  let validCoreData = 0;
+  coreData.forEach(element=> {
+    if(element === '' || element === null || element === 'null'){
+      return;
+      
+    }else{
+      validCoreData++;
+    }
+    })
+
+
+  //add or edits a Haus as promised based function
+  async function addHaus(){
+    await new Promise( (resolve,reject) =>  {   
+        pool.query(`INSERT INTO haushalte(haushalt_id, bezeichnung, strasse, postleitzahl, ort, region, ortsteil_berlin,
+          quartiersmanagement_gebiet, telefon, adress_zusatz, land) 
+          VALUES (${haushalt_id}, 
+            ${bezeichnung ? ("'"+bezeichnung+"'"):(null)}, 
+            ${strasse ? ("'"+strasse+"'"):(null)}, 
+            ${plz ? ("'"+plz+"'"):(null)}, 
+            ${ort ? ("'" + ort + "'"):(null)},
+            ${region ? ("'" + region + "'"):(null)},
+            ${ortsteil_berlin ? ("'" + ortsteil_berlin + "'"):(null)},
+            ${quart_mgmt ? ("'" + quart_mgmt + "'"):(null)},
+            ${festnetz ? ("'"+festnetz+"'"):(null)},
+            ${zusatz ? ("'"+zusatz+"'"):(null)},
+            ${land ? ("'"+land+"'"):(null)})
+          ON DUPLICATE KEY UPDATE 
+          bezeichnung=${bezeichnung ? ("'"+bezeichnung+"'"):(null)},
+          strasse = ${strasse ? ("'"+strasse+"'"):(null)},
+          postleitzahl = ${plz ? ("'"+plz+"'"):(null)},
+          ort = ${ort ? ("'" + ort + "'"):(null)},
+          region = ${region ? ("'" + region + "'"):(null)},
+          ortsteil_berlin = ${ortsteil_berlin ? ("'"+ortsteil_berlin+"'"):(null)},
+          quartiersmanagement_gebiet = ${quart_mgmt ? ("'"+quart_mgmt+"'"):(null)},
+          telefon = ${festnetz ? ("'"+festnetz+"'"):(null)},
+          adress_zusatz = ${zusatz ? ("'"+zusatz+"'"):(null)},
+          land = ${land ? ("'"+land+"'"):(null)}
+          ;`
+          ,(err, results) =>{
+
+            if(err){ //Query Error 
+              freeOfErrors = false;
+              console.log(err)
+              return reject(err);
+            }else {
+              console.log(results)
+              sumResults.push(results);
+              
+              resolve (res);
+            }})
+        })
+  }
+
+
+  // The 1st query to add/edit a Haus is happening as a promise based function in order to make sure
+  // that the Haus has been added and exists before the next queries which usually use the haus as foreign key are executed
+  if(validCoreData > 1 && haushalt_id){
+    addHaus()
+    .then((resolve) => {
+      
+    // this query's role is just as workaround soolution to send a valid response 
+    //that makes client refresh the page
+    pool.query("SELECT * from personen;",(err, results) =>{
+      if(err){ //Query Error (Rollback and release connection)
+        console.log("Sending err!!!!")
+        return res.send(err);
+      }else {
+
+        // only send results headers to client if none of the queries above has returned an error
+        // which would mean that freeOfErrors == false
+        while(freeOfErrors){
+          sumResults.push(results)
+          //console.log("sending...")
+          console.log(results)
+          return res.send(results);
+        }
+      }}) 
+          
+        },
+        (reject) => {
+          console.log(res.send(reject))
+        }
+    )
+  }
+
+});
+
+// END of EDIT Query
   // ------------------------------------------------------------------------------------  
 
 

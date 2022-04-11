@@ -71,6 +71,7 @@ export class Haushalt extends React.Component{
                             strasse={this.props.strasse}
                             plz={this.props.plz}
                             ort={this.props.ort}
+                            region={this.props.region}
                             ort_berlin={this.props.ort_berlin}
                             quart_mgmt={this.props.quart_mgmt}
                             festnetz={this.props.festnetz}
@@ -97,43 +98,43 @@ export class Haushalt extends React.Component{
                                 </tr>
                                 <tr>
                                     <td><strong>Bezeichnung:</strong></td>
-                                    <td >{this.state.core_data.bezeichnung}</td>
+                                    <td >{this.state.core_data.bezeichnung ? (this.state.core_data.bezeichnung):('')}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Straße:</strong></td>
-                                    <td >{this.state.core_data.strasse}</td>
+                                    <td >{this.state.core_data.strasse ? (this.state.core_data.strasse):('')}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>PLZ:</strong></td>
-                                    <td>{this.state.core_data.plz}</td>
+                                    <td>{this.state.core_data.plz ? (this.state.core_data.plz):('')}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Ort:</strong></td>
-                                    <td>{this.state.core_data.ort}</td>
+                                    <td>{this.state.core_data.ort ? (this.state.core_data.ort):('')}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Region:</strong></td>
-                                    <td>{this.state.core_data.region}</td>
+                                    <td>{this.state.core_data.region ? (this.state.core_data.region):('')}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Ort in Berlin:</strong></td>
-                                    <td>{this.state.core_data.ort_berlin}</td>
+                                    <td>{this.state.core_data.ort_berlin ? (this.state.core_data.ort_berlin):('')}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Quart. Mgmt:</strong></td>
-                                    <td>{this.state.core_data.quart_mgmt}</td>
+                                    <td>{this.state.core_data.quart_mgmt ? (this.state.core_data.quart_mgmt):('')}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Festnetz:</strong></td>
-                                    <td>{this.state.core_data.festnetz}</td>
+                                    <td>{this.state.core_data.festnetz ? (this.state.core_data.festnetz):('')}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Adress zusatz:</strong></td>
-                                    <td>{this.state.core_data.zusatz}</td>
+                                    <td>{this.state.core_data.zusatz ? (this.state.core_data.zusatz):('')}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Land:</strong></td>
-                                    <td>{this.state.core_data.land}</td>
+                                    <td>{this.state.core_data.land ? (this.state.core_data.land):('')}</td>
                                 </tr>
                                 
                             </tbody>
