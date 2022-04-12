@@ -623,7 +623,7 @@ app.get('/editPerson', async (req, res) => {
 
           //make array only with the relevant data of coming query
           let kind_data = [staatsangehoerigkeit, geburtsort, geschlecht, nichtdeutsche_herkunftssprache]
-          console.log(kind_data)
+          //console.log(kind_data)
           // check that at least on of the values is relevant for saving (not null or '')
           validCoreData = 0;
           kind_data.forEach(element=> {
@@ -1157,7 +1157,7 @@ app.get('/editPerson', async (req, res) => {
 app.get('/editHaus', async (req,res) => {
   //array containg all variables passed in with the request
   let [haushalt_id, bezeichnung, strasse, plz, ort, region, ortsteil_berlin, quart_mgmt, festnetz,
-    zusatz, land
+    zusatz, land, anwohnerToBeAdded, probableAnwohner, meldeanschrift, datum_einzug, anwohnerToBeDeleted, anwohner,
   ] = req.query.state
 
   //console.log(req.query.state)
@@ -1173,6 +1173,8 @@ app.get('/editHaus', async (req,res) => {
   //make array only with the relevant data of coming query
   let coreData = [haushalt_id, bezeichnung, strasse, plz, ort, region, ortsteil_berlin, quart_mgmt, festnetz,
     zusatz, land];
+
+    console.log(coreData)
 
   // check that at least on of the values is relevant for saving (not null or '')
   let validCoreData = 0;
@@ -1221,7 +1223,7 @@ app.get('/editHaus', async (req,res) => {
               console.log(err)
               return reject(err);
             }else {
-              console.log(results)
+              //console.log(results)
               sumResults.push(results);
               
               resolve (res);
@@ -1235,6 +1237,62 @@ app.get('/editHaus', async (req,res) => {
   if(validCoreData > 1 && haushalt_id){
     addHaus()
     .then((resolve) => {
+
+
+       //make array only with the relevant data of coming query
+       let agData = [anwohnerToBeAdded, meldeanschrift, datum_einzug]
+
+       // check that at least on of the values is relevant for saving (not null or '')
+       validCoreData = 0;
+       agData.forEach(element=> {
+         if(element === '' || element === null || element === 'null'){
+           return;
+         }else{
+           validCoreData++;
+         }
+         })
+ 
+       // adds Anwohner record
+       if(validCoreData > 0 && anwohnerToBeAdded){
+         
+         pool.query(
+         `INSERT IGNORE INTO person_haushalt(haushalt_id, person_id, meldeanschrift, datum_einzug)
+           VALUES(${haushalt_id}, ${anwohnerToBeAdded},
+                 ${meldeanschrift ? (meldeanschrift):(null)},
+                 ${datum_einzug ? ("'" + datum_einzug.toString() + "'"):(null)}
+                 );`
+ 
+           ,(err, results) =>{
+             if(err){
+               console.log(err)
+               freeOfErrors = false;
+               //return res.send(err);
+             }else {
+               sumResults.push(results)
+             }})
+       }
+ 
+       // deletes Anwohner record
+       if(anwohnerToBeDeleted){
+         
+       pool.query(
+       `DELETE FROM person_haushalt
+         WHERE 
+         haushalt_id = ${haushalt_id}
+         AND
+         person_id = ${anwohnerToBeDeleted} 
+       ;`
+ 
+         ,(err, results) =>{
+           if(err){
+             console.log(err)
+             freeOfErrors = false;
+             //return res.send(err);
+           }else {
+             sumResults.push(results)
+           }})
+       }
+    
       
     // this query's role is just as workaround soolution to send a valid response 
     //that makes client refresh the page
@@ -1249,7 +1307,7 @@ app.get('/editHaus', async (req,res) => {
         while(freeOfErrors){
           sumResults.push(results)
           //console.log("sending...")
-          console.log(results)
+          //console.log(results)
           return res.send(results);
         }
       }}) 
@@ -1271,6 +1329,22 @@ app.get('/deletePersonData', (req, res) => {
   let table = req.query.table;
   let person_id = req.query.person_id;
   pool.query(`DELETE FROM ${table} WHERE ${table === "bezugsperson_kind" ? ("person_id_2 = " + person_id):("person_id = " + person_id)};`,
+  (err, result)=>{
+    if(err){
+      console.log(err);
+      return res.send(err);
+    }else{
+      console.log(result)
+      return res.send("Results");
+    }
+  })
+
+});
+
+app.get('/deleteHausData', (req, res) => {
+  let table = req.query.table;
+  let haushalt_id = req.query.haushalt_id;
+  pool.query(`DELETE FROM ${table} WHERE haushalt_id = ${haushalt_id};`,
   (err, result)=>{
     if(err){
       console.log(err);
@@ -1504,6 +1578,31 @@ app.get('/dataMultitablePerson', (req, res) => {
     ${table1}.person_id = ${person_id}
   ORDER BY 
       ${sortByColumn} ASC
+  ;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      // //console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+app.get('/dataMultitableHaus', (req, res) => {
+  const haushalt_id = req.query.haushalt_id;
+  
+  pool.query(
+  `SELECT
+      *
+  FROM
+      person_haushalt
+      INNER JOIN
+      personen ON personen.person_id = person_haushalt.person_id
+  WHERE
+    person_haushalt.haushalt_id = ${haushalt_id}
+  ORDER BY 
+      personen.rufname ASC
   ;`, (err, results) => {
     if (err) {
       console.log(err)

@@ -15,7 +15,11 @@ export class EditHaus extends React.Component{
         this.defaultDateValue = this.today.getFullYear()+'-'+(this.today.getMonth()+1)+'-'+ this.today.getDate();
         this.handleChange = this.handleChange.bind(this);
         this.updateQuery = this.updateQuery.bind(this);
+        this.deleteQueryHaus = this.deleteQueryHaus.bind(this);
         this.editData = this.editData.bind(this);
+        this.deleteHausData = this.deleteHausData.bind(this);
+        this.fetchProbable = this.fetchProbable.bind(this);
+        this.fetchHausDataMultitable = this.fetchHausDataMultitable.bind(this);
 
         
         this.state = {
@@ -31,6 +35,15 @@ export class EditHaus extends React.Component{
             festnetz: this.props.festnetz,
             zusatz: this.props.zusatz,
             land: this.props.land,
+
+            //Anwohner
+            anwohnerToBeAdded: '',
+            probableAnwohner: [],
+            meldeanschrift:'',
+            datum_einzug: this.defaultDateValue,
+            anwohnerToBeDeleted: '',
+            anwohner: [],
+
         
         }
     }
@@ -52,6 +65,36 @@ export class EditHaus extends React.Component{
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/editHaus`, {
            params: {
                state: dataArr
+           } 
+      })
+       )
+    }
+
+    async fetchProbable(queryName){
+        return (
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/${queryName}`, {
+            
+            }))
+    }
+
+    //general query to fetch records of given table to populate options in selects
+    async fetchHausDataMultitable(){
+        return (
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/dataMultitableHaus`, {
+            params: {
+                haushalt_id: this.state.haushalt_id,
+                },
+            }))
+    }
+
+    //deletes all records from a table with the given id
+    async deleteQueryHaus(table){
+        //console.log(table)
+        return(
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteHausData`, {
+           params: {
+               table: table,
+               haushalt_id: this.state.haushalt_id
            } 
       })
        )
@@ -85,6 +128,62 @@ export class EditHaus extends React.Component{
         }
     }
 
+    // delete general Haushalt Data by given table
+    deleteHausData(e){
+        //console.log(e.target.id)
+        let table = e.target.id;
+        console.log(table);
+
+        var confirm = window.confirm(
+                    `ACHTUNG!!! Diese Aktion wird ${table === 'haushalte' ? 
+                    ('dieser Haushalt und alle seine Daten von allen Tabellen komplett vom DB')
+                    :("alle " + table + " Einträge dieses Hauses")} löschen!`
+            )
+        
+        if(confirm){
+            this.deleteQueryHaus(table)
+            .then(result=>{
+                console.log("confirm")
+                confirm = false;
+                //last delete query refreshes the page
+                if(!confirm)window.location.reload()
+                console.log(result)
+            });
+    }
+    }
+
+    componentDidMount() {
+        this.fetchProbable('personsList').then(res => {
+          
+            let anwohner = [];
+            res.data.forEach(person => {
+                //console.log(person.rufname)
+                anwohner.push(
+                    Object.create({person_id:person.person_id, rufname:person.rufname, nachname:person.nachname})) 
+            });
+            this.setState({
+              probableAnwohner: anwohner
+            })
+          });
+
+        this.fetchHausDataMultitable().then(res => {
+    
+        let anwohner = [];
+        res.data.forEach(person => {
+            anwohner.push(
+                Object.create({ 
+                            person_id: person.person_id,
+                            rufname: person.rufname,
+                            nachname: person.nachname
+                            }))
+            
+        });
+        this.setState({
+            anwohner: anwohner
+        })
+    });
+    }
+
 
     render(){
         return(
@@ -114,8 +213,8 @@ export class EditHaus extends React.Component{
                             <br></br>
 
                             <label >Zusatz:</label>
-                            <input type='text' className='text-input' name='zusatz' value={this.state.zusatz}
-                            onChange= {this.handleChange} pattern='([\w\d\sßöäüÖÄÜ \.,-?!]){0,50}'></input>
+                            <input type='text' className='text-input' id='zusatz' value={this.state.zusatz} 
+                            onChange= {this.handleChange} pattern="([\w\d\sßöäüÖÄÜ' \.,-?!]){0,100}" ></input>
                             <br></br>
 
                             <label >PLZ:</label>
@@ -130,7 +229,7 @@ export class EditHaus extends React.Component{
 
                             <label >Region:</label>
                             <input type='text' className='text-input' id='region' value={this.state.region} 
-                            onChange= {this.handleChange} pattern='[a-zA-ZäöüÄÖÜ\s]{0,50}$' ></input>
+                            onChange= {this.handleChange} pattern='[a-zA-ZäöüÄÖÜ\s]{0,5}$' ></input>
                             <br></br>
 
                             <label >Ort-Berlin:</label>
@@ -141,6 +240,11 @@ export class EditHaus extends React.Component{
                             <label>Land: </label>
                             <input type='text' id='land' value={this.state.land} 
                             onChange= {this.handleChange} pattern='[A-Z]{0,3}'></input>
+                            <br></br>
+
+                            <label>Tel: </label>
+                            <input type='tel' id='festnetz' value={this.state.festnetz} 
+                            onChange= {this.handleChange} pattern='[0-9]{0,20}$' ></input>
                             <br></br>
 
                             <label >Quartiermanagement:</label>
@@ -156,13 +260,74 @@ export class EditHaus extends React.Component{
                             <div className='delete-section'>
                             <button 
                                 className='delete-buttons' 
-                                id='personen' type='button'
-                                
-                            >Person löschen</button>
+                                id='haushalte' type='button'
+                                onClick={this.deleteHausData}
+                            >Haushalt löschen</button>
                             </div>
+                    </div>
+                </div>
+
+
+                {/* Anwohner */}                                                                                 
+                <div className='bg-cont' style={({backgroundColor: "#e6ebae"})}>
+                    <h3 style={({textAlign: "center"})}>Anwohner editieren</h3>
+
+                        {/* Anwohner */}
+                        <div className='edit-person-data-cont'>
+                            <h4>Anwohner</h4>
+                                
+                                <label>Neuer Anwohner hinzufügen: </label>
+                                <select id='anwohnerToBeAdded' onChange= {this.handleChange} value={this.state.anwohnerToBeAdded}>
+                                    <option defaultValue value=''>-</option>
+
+                                    {this.state.probableAnwohner.map((anwohner) => 
+                                    <option key={uuidv4()} value={anwohner.person_id}>{anwohner.rufname +  " " + anwohner.nachname}</option>)}
+                                    
+                                </select>
+
+                                <label >Meldeanschrift:</label>
+                                <select id='meldeanschrift'  
+                                onChange= {this.handleChange} >
+                                    <option defaultValue disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                    <option value='0'>0</option>
+                                    <option value='1'>1</option>
+                                </select>
+                                <br></br>
+
+                                <label>Einzugsdatum: </label>
+                                <input type="date" id="datum_einzug" name="sl-date"
+                                    defaultValue={this.defaultDateValue}
+                                    min={
+                                        this.state.geburtsdatum ? 
+                                        (dateToENFormat(new Date(this.state.geburtsdatum))):('')
+                                    } 
+                                    onChange={this.handleChange}></input>
+                                <br></br>
+
+                                <div className='delete-section'>
+                                    <label>Existierende Anwohner dieses Hauses entfernen: </label>
+                                    <select id='anwohnerToBeDeleted' onChange= {this.handleChange} value={this.state.anwohnerToBeDeleted}>
+                                        <option defaultValue value=''>-</option>
+
+                                        {this.state.anwohner.map((anwohner) => 
+                                        <option key={uuidv4()} value={anwohner.person_id}>{anwohner.rufname 
+                                        + " " + anwohner.nachname}</option>)}
+                                        
+                                    </select>
+                                    <br></br>
+
+                                    <label>Oder: </label>
+                                    <button 
+                                        className='delete-buttons' 
+                                        id='person_haushalt' type='button'
+                                        onClick={this.deleteHausData}
+                                        
+                                    >Alle Anwohner löschen</button>
+                                </div>
                         </div>
                 </div>
             </div>
+           
         </div>
      </div>
         )

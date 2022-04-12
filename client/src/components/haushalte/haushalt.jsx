@@ -28,6 +28,7 @@ export class Haushalt extends React.Component{
                 strasse: this.props.strasse,
                 plz: this.props.plz,
                 ort: this.props.ort,
+                region: this.props.region,
                 ort_berlin: this.props.ort_berlin,
                 quart_mgmt: this.props.quart_mgmt,
                 festnetz: this.props.festnetz,
@@ -66,17 +67,17 @@ export class Haushalt extends React.Component{
                         <EditHaus 
     
                             //Kerndaten to edit passed as props
-                            haushalt_id={this.state.core_data.haushalt_id}
-                            bezeichnung={this.state.core_data.bezeichnung} 
-                            strasse={this.props.strasse}
-                            plz={this.props.plz}
-                            ort={this.props.ort}
-                            region={this.props.region}
-                            ort_berlin={this.props.ort_berlin}
-                            quart_mgmt={this.props.quart_mgmt}
-                            festnetz={this.props.festnetz}
-                            zusatz={this.props.zusatz}
-                            land={this.props.land}
+                            haushalt_id={this.state.core_data.haushalt_id ? (this.state.core_data.haushalt_id ):('')}
+                            bezeichnung={this.state.core_data.bezeichnung ? (this.state.core_data.bezeichnung ):('')} 
+                            strasse={this.state.core_data.strasse ? (this.state.core_data.strasse ):('')}
+                            plz={this.state.core_data.plz ? (this.state.core_data.plz ):('')}
+                            ort={this.state.core_data.ort ? (this.state.core_data.ort ):('')}
+                            region={this.state.core_data.region ? (this.state.core_data.region ):('')}
+                            ort_berlin={this.state.core_data.ort_berlin ? (this.state.core_data.ort_berlin ):('')}
+                            quart_mgmt={this.state.core_data.quart_mgmt ? (this.state.core_data.quart_mgmt ):('')}
+                            festnetz={this.state.core_data.festnetz ? (this.state.core_data.festnetz ):('')}
+                            zusatz={this.state.core_data.zusatz ? (this.state.core_data.zusatz ):('')}
+                            land={this.state.core_data.land ? (this.state.core_data.land ):('')}
                             />
                         </div>
                         , document.getElementById('haus-data'))):(
@@ -129,7 +130,7 @@ export class Haushalt extends React.Component{
                                     <td>{this.state.core_data.festnetz ? (this.state.core_data.festnetz):('')}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Adress zusatz:</strong></td>
+                                    <td><strong>Address zusatz:</strong></td>
                                     <td>{this.state.core_data.zusatz ? (this.state.core_data.zusatz):('')}</td>
                                 </tr>
                                 <tr>
@@ -170,7 +171,7 @@ export class Haushalt extends React.Component{
         },
         this.setState({loading:false}),
         this.setState({clicked: true}),
-        console.log(this.state.anwohner)
+        //console.log(this.state.anwohner)
         )
     }
 
