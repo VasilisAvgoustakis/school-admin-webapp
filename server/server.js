@@ -226,6 +226,18 @@ app.get('/lastHausId', (req, res) => {
   });
 });
 
+app.get('/lastAgId', (req, res) => {
+  const { table } = req.query;
+  pool.query(`SELECT MAX(arbeitsgruppe_id) AS id FROM arbeitsgruppen;`, (err, results) => {
+    if (err) {
+      return res.send(err);
+    } else {
+      //console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
 
 app.get('/personsData', (req, res) => {
   const { person_id } = req.query;
@@ -1333,6 +1345,157 @@ app.get('/editHaus', async (req,res) => {
 
 });
 
+//EDIT HAUS
+app.get('/editAg', async (req,res) => {
+  //array containg all variables passed in with the request
+  let [arbeitsgruppe_id, bezeichnung, beschreibung, email, mitgliedToBeAdded, probableMitglieder,
+  koordination_der_ag, datum_mitgliedschaftsbeginn, datum_mitgliedschaftsende, mitgliedToBeDeleted, mitglieder,
+  ] = req.query.state
+
+  //console.log(req.query.state)
+  // this variable will be true if the error case in one of the queries has already send headers
+  let freeOfErrors = true;
+
+  //array to put all results and return them at the end of the querry
+  let sumResults = [];
+
+  // see that no empty '' values are send in with the data, instead values that should remain empty or null are handled by the query 
+  // here in the server and their value is turned into null
+  //console.log(req.query.state)
+  //make array only with the relevant data of coming query
+  let coreData = [arbeitsgruppe_id, bezeichnung, beschreibung, email];
+
+    //console.log(coreData)
+
+  // check that at least on of the values is relevant for saving (not null or '')
+  let validCoreData = 0;
+  coreData.forEach(element=> {
+    if(element === '' || element === null || element === 'null'){
+      return;
+      
+    }else{
+      validCoreData++;
+    }
+    })
+
+
+  //add or edits a AG as promised based function
+  async function addAg(){
+    await new Promise( (resolve,reject) =>  {   
+        pool.query(`INSERT INTO arbeitsgruppen(arbeitsgruppe_id, bezeichnung, beschreibung, email) 
+          VALUES (${arbeitsgruppe_id}, 
+            ${bezeichnung ? ("'"+bezeichnung+"'"):(null)}, 
+            ${beschreibung ? ("'"+beschreibung+"'"):(null)}, 
+            ${email ? ("'"+email+"'"):(null)})
+          ON DUPLICATE KEY UPDATE 
+          bezeichnung=${bezeichnung ? ("'"+bezeichnung+"'"):(null)},
+          beschreibung = ${beschreibung ? ("'"+beschreibung+"'"):(null)},
+          email = ${email ? ("'"+email+"'"):(null)} 
+          ;`
+          ,(err, results) =>{
+
+            if(err){ //Query Error 
+              freeOfErrors = false;
+              console.log(err)
+              return reject(err);
+            }else {
+              //console.log(results)
+              sumResults.push(results);
+              
+              resolve (res);
+            }})
+        })
+  }
+
+
+  // The 1st query to add/edit a Haus is happening as a promise based function in order to make sure
+  // that the Haus has been added and exists before the next queries which usually use the haus as foreign key are executed
+  if(validCoreData > 1 && arbeitsgruppe_id){
+    addAg()
+    .then((resolve) => {
+       //make array only with the relevant data of coming query
+       let agData = [mitgliedToBeAdded, koordination_der_ag, datum_mitgliedschaftsbeginn, datum_mitgliedschaftsende]
+
+       // check that at least on of the values is relevant for saving (not null or '')
+       validCoreData = 0;
+       agData.forEach(element=> {
+         if(element === '' || element === null || element === 'null'){
+           return;
+         }else{
+           validCoreData++;
+         }
+         })
+ 
+       // adds Mitglied record
+       if(validCoreData > 0 && mitgliedToBeAdded){
+         
+         pool.query(
+         `INSERT IGNORE INTO person_arbeitsgruppe(arbeitsgruppe_id, person_id, koordination_der_ag, datum_mitgliedschaftsbeginn, datum_mitgliedschaftsende)
+           VALUES(${arbeitsgruppe_id}, ${mitgliedToBeAdded},
+                 ${koordination_der_ag ? (koordination_der_ag):(null)},
+                 ${datum_mitgliedschaftsbeginn ? ("'" + datum_mitgliedschaftsbeginn.toString() + "'"):(null)},
+                 ${datum_mitgliedschaftsende ? ("'" + datum_mitgliedschaftsende.toString() + "'"):(null)}
+                 );`
+ 
+           ,(err, results) =>{
+             if(err){
+               console.log(err)
+               freeOfErrors = false;
+               //return res.send(err);
+             }else {
+               sumResults.push(results)
+             }})
+       }
+ 
+       // deletes Mitglied record
+       if(mitgliedToBeDeleted){
+         
+       pool.query(
+       `DELETE FROM person_arbeitsgruppe
+         WHERE 
+         arbeitsgruppe_id = ${arbeitsgruppe_id}
+         AND
+         person_id = ${mitgliedToBeDeleted} 
+       ;`
+ 
+         ,(err, results) =>{
+           if(err){
+             console.log(err)
+             freeOfErrors = false;
+             //return res.send(err);
+           }else {
+             sumResults.push(results)
+           }})
+       }
+    
+      
+    // this query's role is just as workaround soolution to send a valid response 
+    //that makes client refresh the page
+    pool.query("SELECT * from personen;",(err, results) =>{
+      if(err){ //Query Error (Rollback and release connection)
+        console.log("Sending err!!!!")
+        return res.send(err);
+      }else {
+
+        // only send results headers to client if none of the queries above has returned an error
+        // which would mean that freeOfErrors == false
+        while(freeOfErrors){
+          sumResults.push(results)
+          //console.log("sending...")
+          //console.log(results)
+          return res.send(results);
+        }
+      }}) 
+          
+        },
+        (reject) => {
+          console.log(res.send(reject))
+        }
+    )
+  }
+
+});
+
 // END of EDIT Query
   // ------------------------------------------------------------------------------------  
 
@@ -1357,6 +1520,22 @@ app.get('/deleteHausData', (req, res) => {
   let table = req.query.table;
   let haushalt_id = req.query.haushalt_id;
   pool.query(`DELETE FROM ${table} WHERE haushalt_id = ${haushalt_id};`,
+  (err, result)=>{
+    if(err){
+      console.log(err);
+      return res.send(err);
+    }else{
+      console.log(result)
+      return res.send("Results");
+    }
+  })
+
+});
+
+app.get('/deleteAgData', (req, res) => {
+  let table = req.query.table;
+  let arbeitsgruppe_id = req.query.arbeitsgruppe_id;
+  pool.query(`DELETE FROM ${table} WHERE arbeitsgruppe_id = ${arbeitsgruppe_id};`,
   (err, result)=>{
     if(err){
       console.log(err);
@@ -1613,6 +1792,31 @@ app.get('/dataMultitableHaus', (req, res) => {
       personen ON personen.person_id = person_haushalt.person_id
   WHERE
     person_haushalt.haushalt_id = ${haushalt_id}
+  ORDER BY 
+      personen.rufname ASC
+  ;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      // //console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+app.get('/dataMultitableAg', (req, res) => {
+  const arbeitsgruppe_id = req.query.arbeitsgruppe_id;
+  
+  pool.query(
+  `SELECT
+      *
+  FROM
+      person_arbeitsgruppe
+      INNER JOIN
+      personen ON personen.person_id = person_arbeitsgruppe.person_id
+  WHERE
+    person_arbeitsgruppe.arbeitsgruppe_id = ${arbeitsgruppe_id}
   ORDER BY 
       personen.rufname ASC
   ;`, (err, results) => {

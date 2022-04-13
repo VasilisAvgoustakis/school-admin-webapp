@@ -1,8 +1,10 @@
 import React from 'react';
 import axios,{setPost} from 'axios';
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom';
+import {EditAg} from './editAg'
 import '../stylesheets/globalstyles.css';
 import { Mitglieder } from './mitglieder';
+
 import {dateToDEFormat} from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
 
@@ -15,7 +17,9 @@ export class Ag extends React.Component{
         this.fetchMitglieder = this.fetchMitglieder.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.customRender = this.customRender.bind(this);
+        this.onEdit = this.onEdit.bind(this);
         this.state = {
+            editing: false,
             clicked: false,
             loading: false,
             core_data:{
@@ -37,6 +41,11 @@ export class Ag extends React.Component{
           }))
       }
 
+    onEdit(){
+        //this.props.updateStateAfterEdit();
+        this.state.editing ? (this.setState({editing: false})):(this.setState({editing:true}))
+    }
+
 
     customRender(loading){
         if(loading){
@@ -44,10 +53,25 @@ export class Ag extends React.Component{
                                 <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
                             </svg>, document.getElementById('ag-data'))
             }else{
-    
+
+                this.state.editing ? (ReactDOM.render(
+                    <div>
+                        <button onClick={this.onEdit}>Switch to Data view</button>
+                        <EditAg 
+
+                            //Kerndaten to edit passed as props
+                            arbeitsgruppe_id= {this.state.core_data.arbeitsgruppe_id ? (this.state.core_data.arbeitsgruppe_id):('')}
+                            bezeichnung={this.state.core_data.bezeichnung ? (this.state.core_data.bezeichnung):('')}
+                            beschreibung={this.state.core_data.beschreibung ? (this.state.core_data.beschreibung):('')}
+                            email={this.state.core_data.email ? (this.state.core_data.email):('')}
+
+                        />
+                    </div>
+                    , document.getElementById('ag-data'))):(
             ReactDOM.render(
     
                 <div>
+                    <button onClick={this.onEdit}>Switch to Edit View</button>
                     <div className='entity-data-left'>
                         <table>
                             <thead>
@@ -81,7 +105,7 @@ export class Ag extends React.Component{
                             mietglieder= {this.state.mitglieder}/>
                     </div>
                 </div>
-                , document.getElementById('ag-data'))}
+                , document.getElementById('ag-data')))}
     }
     
 
