@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios,{setPost} from 'axios';
+import ReactDOM from 'react-dom'
 import {Haushalt} from './haushalt';
+import { EditHaus } from './editHaus';
 import '../stylesheets/personen.css';
 import '../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,9 +14,12 @@ export class HausSelectList extends Component{
     super(props);
     this.fetchData = this.fetchData.bind(this);
     this.search = this.search.bind(this);
+    this.addHaus = this.addHaus.bind(this);
+    this.getLastHausId = this.getLastHausId.bind(this);
     this.state = {
       haushalte: [],
-      searchedHause: []
+      searchedHause: [],
+      nextHaus_Id:''
     };
   }
 
@@ -26,6 +31,15 @@ export class HausSelectList extends Component{
           table: table,
         },
       }))
+  }
+
+  getLastHausId(){
+    return (
+    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lastHausId`, {
+      })).then(res=>{
+        this.setState({nextHaus_Id: res.data[0].id + 1})
+        //console.log(this.state.nextHaus_Id)
+      })
   }
   
 
@@ -53,7 +67,13 @@ export class HausSelectList extends Component{
         haushalte: res.data
       })
       this.setState.searchedHause = [];
-    });
+    }).then(this.getLastHausId());
+  }
+
+  addHaus(){
+    ReactDOM.render(<EditHaus 
+                        haushalt_id={this.state.nextHaus_Id}
+                         />, document.getElementById('haus-data'))
   }
   
 
@@ -80,6 +100,9 @@ export class HausSelectList extends Component{
                   this.search(e.target.value);
                 }}
             />
+
+          <button className='add-button' onClick={this.addHaus}>+</button>  
+
           <div className='entity-list-scroller'>
               <ul>
               {hauseToRender.map(haus => (

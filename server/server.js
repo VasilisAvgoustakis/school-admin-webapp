@@ -214,6 +214,18 @@ app.get('/lastPersonsId', (req, res) => {
   });
 });
 
+app.get('/lastHausId', (req, res) => {
+  const { table } = req.query;
+  pool.query(`SELECT MAX(haushalt_id) AS id FROM haushalte;`, (err, results) => {
+    if (err) {
+      return res.send(err);
+    } else {
+      //console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
 
 app.get('/personsData', (req, res) => {
   const { person_id } = req.query;

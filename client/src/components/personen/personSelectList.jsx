@@ -41,7 +41,7 @@ export class PersonSelectList extends Component{
     axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lastPersonsId`, {
       })).then(res=>{
         this.setState({nextPerson_Id: res.data[0].id + 1})
-        console.log(this.state.nextPerson_Id)
+        //console.log(this.state.nextPerson_Id)
       })
   }
 
