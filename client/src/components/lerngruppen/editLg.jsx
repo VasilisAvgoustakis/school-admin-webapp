@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import ReactDOM from 'react-dom';
 import '../stylesheets/globalstyles.css'
 import '../stylesheets/edits.css';
 import {dateToDEFormat, dateToENFormat} from '../../globalFunctions'
@@ -8,33 +9,32 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 
-export class EditAg extends React.Component{
+export class EditLg extends React.Component{
     constructor(props){
         super(props);
         this.today = new Date();
         this.defaultDateValue = this.today.getFullYear()+'-'+(this.today.getMonth()+1)+'-'+ this.today.getDate();
         this.handleChange = this.handleChange.bind(this);
         this.updateQuery = this.updateQuery.bind(this);
-        this.deleteQueryAg = this.deleteQueryAg.bind(this);
+        this.deleteQueryLg = this.deleteQueryLg.bind(this);
         this.editData = this.editData.bind(this);
-        this.deleteAgData = this.deleteAgData.bind(this);
+        this.deleteLgData = this.deleteLgData.bind(this);
         this.fetchProbable = this.fetchProbable.bind(this);
-        this.fetchAgDataMultitable = this.fetchAgDataMultitable.bind(this);
+        this.fetchLgDataMultitable = this.fetchLgDataMultitable.bind(this);
 
         
         this.state = {
             //Kerndaten
-            arbeitsgruppe_id: this.props.arbeitsgruppe_id ? (this.props.arbeitsgruppe_id):(''),
+            lerngruppe_id: this.props.lerngruppe_id ? (this.props.lerngruppe_id):(''),
+            email_eltern: this.props.email_eltern ? (this.props.email_eltern):(''),
+            email_team: this.props.email_team ? (this.props.email_team):(''),
+            telefon_team: this.props.telefon_team ? (this.props.telefon_team):(''),
             bezeichnung: this.props.bezeichnung ? (this.props.bezeichnung):(''),
-            beschreibung: this.props.beschreibung ? (this.props.beschreibung):(''),
-            email: this.props.email ? (this.props.email):(''),
 
-            //AG Mitglieder
+            //LG Mitglieder
             mitgliedToBeAdded: '',
             probableMitglieder: [],
-            koordination_der_ag:'',
-            datum_mitgliedschaftsbeginn: this.defaultDateValue,
-            datum_mitgliedschaftsende: this.defaultDateValue,
+            eintrittsdatum: this.defaultDateValue,
             mitgliedToBeDeleted: '',
             mitglieder: [],
 
@@ -56,7 +56,7 @@ export class EditAg extends React.Component{
         var dataArr = Object.values(stateObj);
         //console.log(dataArr)
         return(
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/editAg`, {
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/editLg`, {
            params: {
                state: dataArr
            } 
@@ -72,23 +72,23 @@ export class EditAg extends React.Component{
     }
 
     //general query to fetch records of given table to populate options in selects
-    async fetchAgDataMultitable(){
+    async fetchLgDataMultitable(){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/dataMultitableAg`, {
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/dataMultitableLg`, {
             params: {
-                arbeitsgruppe_id: this.state.arbeitsgruppe_id,
+                lerngruppe_id: this.state.lerngruppe_id,
                 },
             }))
     }
 
     //deletes all records from a table with the given id
-    async deleteQueryAg(table){
+    async deleteQueryLg(table){
         //console.log(table)
         return(
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteAgData`, {
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteLgData`, {
            params: {
                table: table,
-               arbeitsgruppe_id: this.state.arbeitsgruppe_id
+               lerngruppe_id: this.state.lerngruppe_id
            } 
       })
        )
@@ -123,19 +123,19 @@ export class EditAg extends React.Component{
     }
 
     // delete general Haushalt Data by given table
-    deleteAgData(e){
+    deleteLgData(e){
         //console.log(e.target.id)
         let table = e.target.id;
         console.log(table);
 
         var confirm = window.confirm(
-                    `ACHTUNG!!! Diese Aktion wird ${table === 'arbeitsgruppen' ? 
-                    ('dieser AG und alle seine Daten von allen Tabellen komplett vom DB')
-                    :("alle " + table + " Einträge dieses AGs")} löschen!`
+                    `ACHTUNG!!! Diese Aktion wird ${table === 'lerngruppen' ? 
+                    ('dieser LG und alle seine Daten von allen Tabellen komplett vom DB')
+                    :("alle " + table + " Einträge dieses LGs")} löschen!`
             )
         
         if(confirm){
-            this.deleteQueryAg(table)
+            this.deleteQueryLg(table)
             .then(result=>{
                 console.log("confirm")
                 confirm = false;
@@ -160,7 +160,7 @@ export class EditAg extends React.Component{
             })
           });
 
-        this.fetchAgDataMultitable().then(res => {
+        this.fetchLgDataMultitable().then(res => {
     
         let mitglieder = [];
         res.data.forEach(person => {
@@ -185,15 +185,15 @@ export class EditAg extends React.Component{
         <div>
             <button type='button' onClick={this.editData}>Speichern</button>
             <div className='edit-person-cont'>
-                {/* allgemeine AG Daten */}
+                {/* allgemeine LG Daten */}
                 <div className='bg-cont' style={({backgroundColor: "#74a3ed"})}>
-                    <h3 style={({textAlign: "center"})}>AG Daten</h3>
+                    <h3 style={({textAlign: "center"})}>LG Daten</h3>
                     {/* Kerndaten */}
                     <div className='edit-person-data-cont'>
                             <h4>Edit Kerndaten</h4>
                             
-                            <label >AG ID:</label>
-                            <input type='text' className='text-input' name='arbeitsgruppe_id' value={this.state.arbeitsgruppe_id}readOnly></input>
+                            <label >LG ID:</label>
+                            <input type='text' className='text-input' name='lerngruppe_id' value={this.state.lerngruppe_id}readOnly></input>
                             <br></br>
 
                             <label >Bezeichnung:</label>
@@ -201,14 +201,18 @@ export class EditAg extends React.Component{
                             onChange= {this.handleChange} pattern="([\w\d\sßöäüÖÄÜ' \.,-?!]){0,100}" ></input>
                             <br></br>
 
-                            <label >Beschreibung:</label>
-                            <input type='text' className='text-input' id='beschreibung' value={this.state.beschreibung} 
+                            <label >telefon_team:</label>
+                            <input type='text' className='text-input' id='telefon_team' value={this.state.telefon_team} 
                             onChange= {this.handleChange} pattern="([\w\d\sßöäüÖÄÜ' \.,-?!]){0,100}" ></input>
                             <br></br>
 
+                            <label >E-Mail Eltern:</label>
+                            <input type='text' className='text-input' id='email_eltern' value={this.state.email_eltern} 
+                            onChange= {this.handleChange}  ></input>
+                            <br></br>
 
-                            <label >E-Mail:</label>
-                            <input type='text' className='text-input' id='email' value={this.state.email} 
+                            <label >E-Mail Team:</label>
+                            <input type='text' className='text-input' id='email_team' value={this.state.email_team} 
                             onChange= {this.handleChange}  ></input>
                             <br></br>
                         
@@ -216,9 +220,9 @@ export class EditAg extends React.Component{
                             <div className='delete-section'>
                             <button 
                                 className='delete-buttons' 
-                                id='arbeitsgruppen' type='button'
-                                onClick={this.deleteAgData}
-                            >AG löschen</button>
+                                id='lerngruppen' type='button'
+                                onClick={this.deleteLgData}
+                            >LG löschen</button>
                             </div>
                     </div>
                 </div>
@@ -240,17 +244,9 @@ export class EditAg extends React.Component{
                                     <option key={uuidv4()} value={mitglied.person_id}>{mitglied.rufname +  " " + mitglied.nachname}</option>)}  
                                 </select>
 
-                                <label >Koordination der AG:</label>
-                                <select id='koordination_der_ag'  
-                                onChange= {this.handleChange} >
-                                    <option defaultValue disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
-                                    <option value='0'>0</option>
-                                    <option value='1'>1</option>
-                                </select>
-                                <br></br>
 
-                                <label>Mitgliedschaftsbeginn: </label>
-                                <input type="date" id="datum_mitgliedschaftsbeginn" name="sl-date"
+                                <label>Eintrittsdatum: </label>
+                                <input type="date" id="eintrittsdatum" name="sl-date"
                                     defaultValue={this.defaultDateValue}
                                     min={
                                         this.state.geburtsdatum ? 
@@ -259,15 +255,6 @@ export class EditAg extends React.Component{
                                     onChange={this.handleChange}></input>
                                 <br></br>
 
-                                <label>Mitgliedschaftsende: </label>
-                                <input type="date" id="datum_mitgliedschaftsende" name="sl-date"
-                                    defaultValue={this.defaultDateValue}
-                                    min={
-                                        this.state.geburtsdatum ? 
-                                        (dateToENFormat(new Date(this.state.geburtsdatum))):('')
-                                    } 
-                                    onChange={this.handleChange}></input>
-                                <br></br>
 
                                 <div className='delete-section'>
                                     <label>Existierende Mitglieder dieser AG entfernen: </label>
@@ -284,8 +271,8 @@ export class EditAg extends React.Component{
                                     <label>Oder: </label>
                                     <button 
                                         className='delete-buttons' 
-                                        id='person_arbeitsgruppe' type='button'
-                                        onClick={this.deleteAgData}
+                                        id='kind_lerngruppe' type='button'
+                                        onClick={this.deleteLgData}
                                         
                                     >Alle Mitglieder löschen</button>
                                 </div>

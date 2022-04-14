@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import ReactDOM from 'react-dom';
 import {Lg} from './lg.jsx';
+import { EditLg } from './editLg.jsx';
 import '../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -11,9 +13,12 @@ export class LgSelectList extends Component{
     super(props);
     this.fetchData = this.fetchData.bind(this);
     this.search = this.search.bind(this);
+    this.addLg = this.addLg.bind(this);
+    this.getLastLgId = this.getLastLgId.bind(this);
     this.state = {
       lerngruppen: [],
-      searchedGruppe: []
+      searchedGruppe: [],
+      nextLg_Id: ''
     };
   }
 
@@ -25,6 +30,15 @@ export class LgSelectList extends Component{
           table: table,
         },
       }))
+  }
+
+  getLastLgId(){
+    return (
+    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lastLgId`, {
+      })).then(res=>{
+        this.setState({nextLg_Id: res.data[0].id + 1})
+        //console.log(this.state.nextHaus_Id)
+      })
   }
   
 
@@ -42,6 +56,12 @@ export class LgSelectList extends Component{
     this.forceUpdate();
   }
 
+  addLg(){
+    ReactDOM.render(<EditLg 
+                        lerngruppe_id={this.state.nextLg_Id}
+                         />, document.getElementById('lg-data'))
+  }
+
   componentDidMount() {
     this.fetchData('lerngruppen').then(res => {
       
@@ -49,7 +69,7 @@ export class LgSelectList extends Component{
         lerngruppen: res.data
       })
       this.setState.searchedGruppe = [];
-    });
+    }).then(this.getLastLgId());
   }
   
 
@@ -77,6 +97,9 @@ export class LgSelectList extends Component{
                   this.search(e.target.value);
                 }}
             />
+
+          <button className='add-button' onClick={this.addLg}>+</button>
+
           <div className='entity-list-scroller'>
               <ul>
               {lgsToRender.map(lg => (

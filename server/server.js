@@ -238,6 +238,18 @@ app.get('/lastAgId', (req, res) => {
   });
 });
 
+app.get('/lastLgId', (req, res) => {
+  const { table } = req.query;
+  pool.query(`SELECT MAX(lerngruppe_id) AS id FROM lerngruppen;`, (err, results) => {
+    if (err) {
+      return res.send(err);
+    } else {
+      //console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
 
 app.get('/personsData', (req, res) => {
   const { person_id } = req.query;
@@ -1345,7 +1357,7 @@ app.get('/editHaus', async (req,res) => {
 
 });
 
-//EDIT HAUS
+//EDIT AG
 app.get('/editAg', async (req,res) => {
   //array containg all variables passed in with the request
   let [arbeitsgruppe_id, bezeichnung, beschreibung, email, mitgliedToBeAdded, probableMitglieder,
@@ -1496,6 +1508,156 @@ app.get('/editAg', async (req,res) => {
 
 });
 
+//EDIT Lerngruppe
+app.get('/editLg', async (req,res) => {
+  //array containg all variables passed in with the request
+  let [lerngruppe_id, email_eltern, email_team, telefon_team, bezeichnung, mitgliedToBeAdded, probableMitglieder, eintrittsdatum,
+  mitgliedToBeDeleted, mitglieder
+] = req.query.state
+
+  //console.log(req.query.state)
+  // this variable will be true if the error case in one of the queries has already send headers
+  let freeOfErrors = true;
+
+  //array to put all results and return them at the end of the querry
+  let sumResults = [];
+
+  // see that no empty '' values are send in with the data, instead values that should remain empty or null are handled by the query 
+  // here in the server and their value is turned into null
+  //console.log(req.query.state)
+  //make array only with the relevant data of coming query
+  let coreData = [lerngruppe_id, email_eltern, email_team, telefon_team, bezeichnung];
+
+
+  // check that at least on of the values is relevant for saving (not null or '')
+  let validCoreData = 0;
+  coreData.forEach(element=> {
+    if(element === '' || element === null || element === 'null'){
+      return;
+      
+    }else{
+      validCoreData++;
+    }
+    })
+
+
+  //add or edits a AG as promised based function
+  async function addLg(){
+    await new Promise( (resolve,reject) =>  {   
+        pool.query(`INSERT INTO lerngruppen(lerngruppe_id, email_eltern, email_team, telefon_team, bezeichnung) 
+          VALUES (${lerngruppe_id},
+            ${email_eltern ? ("'"+email_eltern+"'"):(null)},
+            ${email_team ? ("'"+email_team+"'"):(null)},
+            ${telefon_team ? ("'"+telefon_team+"'"):(null)}, 
+            ${bezeichnung ? ("'"+bezeichnung+"'"):(null)}  
+            )
+          ON DUPLICATE KEY UPDATE 
+          email_eltern=${email_eltern ? ("'"+email_eltern+"'"):(null)},
+          email_team=${email_team ? ("'"+email_team+"'"):(null)},
+          telefon_team=${telefon_team ? ("'"+telefon_team+"'"):(null)},
+          bezeichnung=${bezeichnung ? ("'"+bezeichnung+"'"):(null)} 
+          ;`
+          ,(err, results) =>{
+
+            if(err){ //Query Error 
+              freeOfErrors = false;
+              console.log(err)
+              return reject(err);
+            }else {
+              //console.log(results)
+              sumResults.push(results);
+              resolve (res);
+            }})
+        })
+  }
+
+
+  // The 1st query to add/edit a Haus is happening as a promise based function in order to make sure
+  // that the Haus has been added and exists before the next queries which usually use the haus as foreign key are executed
+  if(validCoreData > 1 && lerngruppe_id){
+    addLg()
+    .then((resolve) => {
+       //make array only with the relevant data of coming query
+       let agData = [mitgliedToBeAdded, eintrittsdatum]
+
+       // check that at least on of the values is relevant for saving (not null or '')
+       validCoreData = 0;
+       agData.forEach(element=> {
+         if(element === '' || element === null || element === 'null'){
+           return;
+         }else{
+           validCoreData++;
+         }
+         })
+ 
+       // adds Mitglied record
+       if(validCoreData > 0 && mitgliedToBeAdded){
+         
+         pool.query(
+         `INSERT IGNORE INTO kind_lerngruppe(lerngruppe_id, person_id, eintrittsdatum)
+           VALUES(${lerngruppe_id}, ${mitgliedToBeAdded},
+                 ${eintrittsdatum ? ("'" + eintrittsdatum.toString() + "'"):(null)}
+                 );`
+ 
+           ,(err, results) =>{
+             if(err){
+               console.log(err)
+               freeOfErrors = false;
+               //return res.send(err);
+             }else {
+               sumResults.push(results)
+             }})
+       }
+ 
+       // deletes Mitglied record
+       if(mitgliedToBeDeleted){
+         
+       pool.query(
+       `DELETE FROM kind_lerngruppe
+         WHERE 
+         lerngruppe_id = ${lerngruppe_id}
+         AND
+         person_id = ${mitgliedToBeDeleted} 
+       ;`
+ 
+         ,(err, results) =>{
+           if(err){
+             console.log(err)
+             freeOfErrors = false;
+             //return res.send(err);
+           }else {
+             sumResults.push(results)
+           }})
+       }
+    
+      
+    // this query's role is just as workaround soolution to send a valid response 
+    //that makes client refresh the page
+    pool.query("SELECT * from personen;",(err, results) =>{
+      if(err){ //Query Error (Rollback and release connection)
+        console.log("Sending err!!!!")
+        return res.send(err);
+      }else {
+
+        // only send results headers to client if none of the queries above has returned an error
+        // which would mean that freeOfErrors == false
+        while(freeOfErrors){
+          sumResults.push(results)
+          //console.log("sending...")
+          //console.log(results)
+          return res.send(results);
+        }
+      }}) 
+          
+        },
+        (reject) => {
+          console.log(res.send(reject))
+        }
+    )
+  }
+
+});
+
 // END of EDIT Query
   // ------------------------------------------------------------------------------------  
 
@@ -1536,6 +1698,22 @@ app.get('/deleteAgData', (req, res) => {
   let table = req.query.table;
   let arbeitsgruppe_id = req.query.arbeitsgruppe_id;
   pool.query(`DELETE FROM ${table} WHERE arbeitsgruppe_id = ${arbeitsgruppe_id};`,
+  (err, result)=>{
+    if(err){
+      console.log(err);
+      return res.send(err);
+    }else{
+      console.log(result)
+      return res.send("Results");
+    }
+  })
+
+});
+
+app.get('/deleteLgData', (req, res) => {
+  let table = req.query.table;
+  let lerngruppe_id = req.query.lerngruppe_id;
+  pool.query(`DELETE FROM ${table} WHERE lerngruppe_id = ${lerngruppe_id};`,
   (err, result)=>{
     if(err){
       console.log(err);
@@ -1817,6 +1995,31 @@ app.get('/dataMultitableAg', (req, res) => {
       personen ON personen.person_id = person_arbeitsgruppe.person_id
   WHERE
     person_arbeitsgruppe.arbeitsgruppe_id = ${arbeitsgruppe_id}
+  ORDER BY 
+      personen.rufname ASC
+  ;`, (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      // //console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+app.get('/dataMultitableLg', (req, res) => {
+  const lerngruppe_id = req.query.lerngruppe_id;
+  
+  pool.query(
+  `SELECT
+      *
+  FROM
+      kind_lerngruppe
+      INNER JOIN
+      personen ON personen.person_id = kind_lerngruppe.person_id
+  WHERE
+    kind_lerngruppe.lerngruppe_id = ${lerngruppe_id}
   ORDER BY 
       personen.rufname ASC
   ;`, (err, results) => {
