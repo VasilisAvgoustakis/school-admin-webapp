@@ -11,18 +11,22 @@ export class JobSelectList extends Component{
     super(props);
     this.fetchData = this.fetchData.bind(this);
     this.search = this.search.bind(this);
+    this.filter = this.filter.bind(this);
     this.state = {
+      filter: 'job',
       jobs: [],
+      types: [],
       searchedJobs: []
     };
   }
 
 
-  fetchData(table){
+  fetchData(table, column){
     return (
     axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/jobsList`, {
         params: {
           table: table,
+          column: column
         },
       }))
   }
@@ -42,14 +46,28 @@ export class JobSelectList extends Component{
     this.forceUpdate();
   }
 
+  filter(e) {
+    this.setState({filter: e.target.value})
+  }
+
   componentDidMount() {
-    this.fetchData('taetigkeit').then(res => {
+    this.fetchData('taetigkeit', 'taetigkeit' ).then(res => {
       
       this.setState({
         jobs: res.data
       })
       this.setState.searchedJobs = [];
     });
+
+    this.fetchData('taetigkeit', 'typ' ).then(res => {
+      
+      this.setState({
+        types: res.data
+      })
+      this.setState.searchedJobs = [];
+    });
+
+
   }
   
 
@@ -58,11 +76,15 @@ export class JobSelectList extends Component{
     // console.log(this.state.haushalte)
     if(this.state.searchedJobs.length >=1){
       jobsToRender = this.state.searchedJobs;
-    }else{
+    }else if(this.state.filter === 'job'){
       jobsToRender = this.state.jobs;
-
+    }else{
+      jobsToRender = this.state.types;
     }
-    //console.log(jobsToRender);
+
+    console.log(jobsToRender)
+    
+    
     
     
       return (
@@ -78,10 +100,17 @@ export class JobSelectList extends Component{
                 }}
             />
           <div className='entity-list-scroller'>
+              
+          
+          <button type='button' value='job' onClick={this.filter}>Tätigkeiten</button>
+          <button type='button' value='typ' onClick={this.filter}>Typen</button>
+          
+
               <ul>
               {jobsToRender.map(job => (
                 <Job key={uuidv4()}
                   taetigkeit={job.taetigkeit}
+                  typ={job.typ}
                 />
               ))}
               </ul>

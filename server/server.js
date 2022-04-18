@@ -2069,14 +2069,17 @@ app.get('/lerngruppe_mitglieder', (req, res) => {
 //Tätigkeiten
 app.get('/jobsList', (req, res) => {
   // const { person_id } = req.query;
-  const { table } = req.query;
+  let table = req.query.table;
+  let column = req.query.column;
+  console.log(table, column)
   pool.query(
   `SELECT distinct
-      taetigkeit
+      ${column}
   FROM
       ${table}
   ORDER BY 
-      taetigkeit ASC
+      ${column} ASC
+      
   ;`, (err, results) => {
     if (err) {
       console.log(err)
@@ -2090,7 +2093,7 @@ app.get('/jobsList', (req, res) => {
 
 
 app.get('/job_roles', (req, res) => {
-  const { taetigkeit } = req.query;
+  const { column } = req.query;
   pool.query(
   `SELECT
     personen.person_id,
@@ -2098,12 +2101,13 @@ app.get('/job_roles', (req, res) => {
     personen.nachname,
     taetigkeit.taetigkeit_beginn,
     taetigkeit_ende,
+    taetigkeit.taetigkeit,
     taetigkeit.typ
   FROM
     personen
   INNER JOIN
     taetigkeit on personen.person_id = taetigkeit.person_id
-  where taetigkeit.taetigkeit = "${taetigkeit}"
+  where taetigkeit.taetigkeit = "${column}" or taetigkeit.typ = "${column}"
   ORDER BY
     personen.rufname ASC,
     personen.nachname ASC

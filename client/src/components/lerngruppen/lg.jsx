@@ -125,7 +125,7 @@ export class Lg extends React.Component{
     handleClick = async() => {
         this.customRender();
         this.setState({loading: true}, () => {
-        console.log(this.state.core_data.lerngruppe_id)
+        //console.log(this.state.core_data.lerngruppe_id)
         this.fetchMitglieder(this.state.core_data.lerngruppe_id)
         .then(result => {
             console.log(result.data)

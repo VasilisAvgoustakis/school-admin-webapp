@@ -20,7 +20,7 @@ export class Job extends React.Component{
             loading: false,
             core_data:{
                 taetigkeit: this.props.taetigkeit,
-                // typ: this.props.typ,
+                typ: this.props.typ,
                 // taetigkeit_beginn: this.props.taetigkeit_beginn,
                 // taetigkeit_ende: this.props.taetigkeit_ende,
             },
@@ -28,11 +28,11 @@ export class Job extends React.Component{
         }
     }
 
-    async fetchEmployees(taetigkeit){
+    async fetchEmployees(column){
         return (
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/job_roles`, {
             params: {
-                taetigkeit: taetigkeit,
+                column: column,
             },
           }))
       }
@@ -49,6 +49,8 @@ export class Job extends React.Component{
                 <div>
                         <Employee
                             employees={this.state.employees}
+                            taetigkeit={this.props.taetigkeit}
+                            typ={this.props.typ}
                         />
                 </div>
                 , document.getElementById('job-data'))}
@@ -65,7 +67,7 @@ export class Job extends React.Component{
         this.customRender();
         this.setState({loading: true}, () => {
         //console.log(this.state.core_data.taetigkeit)
-        this.fetchEmployees(this.state.core_data.taetigkeit)
+        this.fetchEmployees(this.state.core_data.taetigkeit ? (this.state.core_data.taetigkeit):(this.state.core_data.typ))
         .then(result => {
            // console.log(result.data)
              this.setState({
@@ -81,13 +83,13 @@ export class Job extends React.Component{
 
 
     render() {
-        
+        console.log(this.state.employees)
       return (
 
         <li key={uuidv4()} onClick={this.handleClick} >
               
             <p style={{textSizeAdjust:'auto'}}>
-                {this.state.core_data.taetigkeit}</p> 
+                {this.state.core_data.taetigkeit ? (this.state.core_data.taetigkeit):(this.state.core_data.typ)}</p> 
         </li>
         
       )

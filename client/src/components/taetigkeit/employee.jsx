@@ -23,6 +23,7 @@ class EmployeeRow extends React.Component{
                     {employeeRow.nachname ? (<td>{employeeRow.nachname}</td>):(<td> -- </td>)}
                     {employeeRow.taetigkeit_beginn ? (<td>{dateToDEFormat(new Date(employeeRow.taetigkeit_beginn))}</td>):(<td> -- </td>)}
                     {employeeRow.taetigkeit_ende ? (<td>{dateToDEFormat(new Date(employeeRow.taetigkeit_ende))}</td>):(<td> -- </td>)}
+                    {employeeRow.taetigkeit ? (<td>{employeeRow.taetigkeit}</td>):(<td> -- </td>)}
                     {employeeRow.typ ? (<td>{employeeRow.typ}</td>):(<td> -- </td>)}
                 </tr>
                 
@@ -43,7 +44,7 @@ export function Employee(props){
         {props.employees.length == 0 ? (<table>
             <thead>
                 <tr>
-                    <th colSpan="3">Mietglieder</th>
+                    <th colSpan="3">Mitarbeiter nach </th>
                 </tr>
             </thead>
             <tbody>
@@ -55,7 +56,7 @@ export function Employee(props){
         <table>
             <thead>
                 <tr>
-                    <th colSpan="6">Mitarbeiter</th>
+                    <th colSpan="7">Mitarbeiter nach {props.taetigkeit ? ("Tätigkeit"):("Typ")} </th>
                 </tr>
             </thead>
             <tbody>
@@ -65,6 +66,7 @@ export function Employee(props){
                     <td><strong>Nachname</strong></td>
                     <td><strong>Beginn</strong></td>
                     <td><strong>Ende</strong></td>
+                    <td><strong>Tätigkeit</strong></td>
                     <td><strong>Typ</strong></td>
                 </tr>
                 {/* Hier comes the address row element */}

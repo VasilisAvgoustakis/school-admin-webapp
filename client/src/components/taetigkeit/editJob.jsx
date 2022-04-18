@@ -9,18 +9,18 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 
-export class EditLg extends React.Component{
+export class EditJob extends React.Component{
     constructor(props){
         super(props);
         this.today = new Date();
         this.defaultDateValue = this.today.getFullYear()+'-'+(this.today.getMonth()+1)+'-'+ this.today.getDate();
         this.handleChange = this.handleChange.bind(this);
         this.updateQuery = this.updateQuery.bind(this);
-        this.deleteQueryLg = this.deleteQueryLg.bind(this);
+        this.deleteQueryJob = this.deleteQueryJob.bind(this);
         this.editData = this.editData.bind(this);
-        this.deleteLgData = this.deleteLgData.bind(this);
+        this.deleteJobData = this.deleteJobData.bind(this);
         this.fetchProbable = this.fetchProbable.bind(this);
-        this.fetchLgDataMultitable = this.fetchLgDataMultitable.bind(this);
+        this.fetchJobDataMultitable = this.fetchJobDataMultitable.bind(this);
 
         
         this.state = {
@@ -72,7 +72,7 @@ export class EditLg extends React.Component{
     }
 
     //general query to fetch records of given table to populate options in selects
-    async fetchLgDataMultitable(){
+    async fetchJobDataMultitable(){
         return (
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/dataMultitableLg`, {
             params: {
@@ -82,10 +82,10 @@ export class EditLg extends React.Component{
     }
 
     //deletes all records from a table with the given id
-    async deleteQueryLg(table){
+    async deleteQueryJob(table){
         //console.log(table)
         return(
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteLgData`, {
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteJobData`, {
            params: {
                table: table,
                lerngruppe_id: this.state.lerngruppe_id
@@ -123,7 +123,7 @@ export class EditLg extends React.Component{
     }
 
     // delete general Haushalt Data by given table
-    deleteLgData(e){
+    deleteJobData(e){
         //console.log(e.target.id)
         let table = e.target.id;
         console.log(table);
@@ -135,7 +135,7 @@ export class EditLg extends React.Component{
             )
         
         if(confirm){
-            this.deleteQueryLg(table)
+            this.deleteQueryJob(table)
             .then(result=>{
                 console.log("confirm")
                 confirm = false;
@@ -160,7 +160,7 @@ export class EditLg extends React.Component{
             })
           });
 
-        this.fetchLgDataMultitable().then(res => {
+        this.fetchJobDataMultitable().then(res => {
     
         let mitglieder = [];
         res.data.forEach(person => {
@@ -222,7 +222,7 @@ export class EditLg extends React.Component{
                             <button 
                                 className='delete-buttons' 
                                 id='lerngruppen' type='button'
-                                onClick={this.deleteLgData}
+                                onClick={this.deleteJobData}
                             >LG löschen</button>
                             </div>
                     </div>
@@ -273,7 +273,7 @@ export class EditLg extends React.Component{
                                     <button 
                                         className='delete-buttons' 
                                         id='kind_lerngruppe' type='button'
-                                        onClick={this.deleteLgData}
+                                        onClick={this.deleteJobData}
                                         
                                     >Alle Mitglieder löschen</button>
                                 </div>
