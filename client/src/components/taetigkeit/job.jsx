@@ -3,6 +3,7 @@ import axios from 'axios';
 import ReactDOM from 'react-dom'
 import '../stylesheets/globalstyles.css';
 import { Employee } from './employee';
+import { EditJob } from './editJob';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -15,7 +16,9 @@ export class Job extends React.Component{
         this.fetchEmployees = this.fetchEmployees.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.customRender = this.customRender.bind(this);
+        this.onEdit = this.onEdit.bind(this);
         this.state = {
+            editing: false,
             clicked: false,
             loading: false,
             core_data:{
@@ -37,6 +40,10 @@ export class Job extends React.Component{
           }))
       }
 
+    onEdit(){
+        //this.props.updateStateAfterEdit();
+        this.state.editing ? (this.setState({editing: false})):(this.setState({editing:true}))
+    }
 
     customRender(loading){
         if(loading){
@@ -44,16 +51,30 @@ export class Job extends React.Component{
                                 <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
                             </svg>, document.getElementById('job-data'))
             }else{
+
+                this.state.editing ? (ReactDOM.render(
+                    <div>
+                        <button onClick={this.onEdit}>Switch to Data view</button>
+                        <EditJob 
+
+                            //Kerndaten to edit passed as props
+                            typ= {this.state.core_data.typ ? (this.state.core_data.typ):('')}
+                            taetigkeit={this.state.core_data.taetigkeit ? (this.state.core_data.taetigkeit):('')}
+
+                        />
+                    </div>
+                    , document.getElementById('job-data'))):(
     
             ReactDOM.render(
                 <div>
+                    <button onClick={this.onEdit}>Switch to Edit View</button>
                         <Employee
                             employees={this.state.employees}
                             taetigkeit={this.props.taetigkeit}
                             typ={this.props.typ}
                         />
                 </div>
-                , document.getElementById('job-data'))}
+                , document.getElementById('job-data')))}
     }
     
 

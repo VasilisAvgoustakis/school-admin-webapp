@@ -98,7 +98,7 @@ export class EditPerson extends React.Component{
             //BuT
             but_beginn: this.defaultDateValue,
             but_ende: this.defaultDateValue,
-            berlinpass_but: '',
+            berlinpass_but: '0',
             butToBeDeleted: '',
             butRecords: [],
 
@@ -989,7 +989,7 @@ export class EditPerson extends React.Component{
                                 <label >Berlinpass BuT:</label>
                                 <select id='berlinpass_but'  
                                 onChange= {this.handleChange} >
-                                    <option defaultValue disabled="disabled">-</option> {/*default option when no data from database for selected person*/}
+                                    {/* <option defaultValue disabled="disabled">-</option> default option when no data from database for selected person */}
                                     <option value='0'>0</option>
                                     <option value='1'>1</option>
                                 </select>

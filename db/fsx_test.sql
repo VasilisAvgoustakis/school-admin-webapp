@@ -465,6 +465,7 @@ CREATE TABLE `taetigkeit` (
   `taetigkeit_ende` date DEFAULT NULL,
   `typ` enum('Freiwilligendienst','Ehrenamt','Praktikum','Honorartaetigkeit','extern','Kollektiv','Arbeitsverhaeltniss') DEFAULT NULL,
   `taetigkeit` enum('Lehrkraefte mit Unterrichtsbefaehigung','Lehrkraefte ohne Unterrichtsbefaehigung','Sonstige Lehrkraft','Paedagogische Fachkraefte eFoeB','Sonstige paedagogische Kraft Ganztag','Verwaltungskraft','Kuechenkraft','Kuechenhilfe','Reinigungskraft','Hausmeister*in','Schulhilfe') DEFAULT NULL,
+  PRIMARY KEY(`person_id`, `taetigkeit_beginn`),
   KEY `fk_Taetigkeit_Person_idx` (`person_id`),
   CONSTRAINT `fk_Taetigkeit_Person` FOREIGN KEY (`person_id`) REFERENCES `personen` (`person_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -25,19 +25,18 @@ export class EditJob extends React.Component{
         
         this.state = {
             //Kerndaten
-            lerngruppe_id: this.props.lerngruppe_id ? (this.props.lerngruppe_id):(''),
-            email_eltern: this.props.email_eltern ? (this.props.email_eltern):(''),
-            email_team: this.props.email_team ? (this.props.email_team):(''),
-            telefon_team: this.props.telefon_team ? (this.props.telefon_team):(''),
-            bezeichnung: this.props.bezeichnung ? (this.props.bezeichnung):(''),
+            person_id: this.props.person_id ? (this.props.person_id):(''),
+            taetigkeit_beginn: this.props.taetigkeit_beginn ? (this.props.taetigkeit_beginn):(''),
+            taetigkeit_ende: this.props.taetigkeit_ende ? (this.props.taetigkeit_ende):(''),
+            typ: this.props.typ ? (this.props.typ):(''),
+            taetigkeit: this.props.taetigkeit ? (this.props.taetigkeit):(''),
 
-            //LG Mitglieder
+            //Mitglieder
             mitgliedToBeAdded: '',
             probableMitglieder: [],
             eintrittsdatum: this.defaultDateValue,
             mitgliedToBeDeleted: '',
             mitglieder: [],
-
         
         }
     }
@@ -56,7 +55,7 @@ export class EditJob extends React.Component{
         var dataArr = Object.values(stateObj);
         //console.log(dataArr)
         return(
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/editLg`, {
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/editJob`, {
            params: {
                state: dataArr
            } 
@@ -71,24 +70,24 @@ export class EditJob extends React.Component{
             }))
     }
 
-    //general query to fetch records of given table to populate options in selects
+    //general query to fetch mitglieds of given table to populate options in selects
     async fetchJobDataMultitable(){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/dataMultitableLg`, {
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/dataMultitableJob`, {
             params: {
-                lerngruppe_id: this.state.lerngruppe_id,
+                person_id: this.state.person_id,
                 },
             }))
     }
 
-    //deletes all records from a table with the given id
+    //deletes all mitglieds from a table with the given id
     async deleteQueryJob(table){
         //console.log(table)
         return(
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteJobData`, {
            params: {
                table: table,
-               lerngruppe_id: this.state.lerngruppe_id
+               person_id: this.state.person_id
            } 
       })
        )
@@ -122,16 +121,16 @@ export class EditJob extends React.Component{
         }
     }
 
-    // delete general Haushalt Data by given table
+    // delete general Job Data by given table
     deleteJobData(e){
         //console.log(e.target.id)
         let table = e.target.id;
         console.log(table);
 
         var confirm = window.confirm(
-                    `ACHTUNG!!! Diese Aktion wird ${table === 'lerngruppen' ? 
-                    ('dieser LG und alle seine Daten von allen Tabellen komplett vom DB')
-                    :("alle " + table + " Einträge dieses LGs")} löschen!`
+                    `ACHTUNG!!! Diese Aktion wird ${table === 'taetigkeit' ? 
+                    ('dieser Tätigkeit und alle seine Daten von allen Tabellen komplett vom DB')
+                    :("alle " + table + " Einträge dieser Tätigkeit")} löschen!`
             )
         
         if(confirm){
@@ -180,7 +179,7 @@ export class EditJob extends React.Component{
 
 
     render(){
-        console.log(this.state.mitgliedToBeDeleted)
+        //console.log(this.state.taetigkeit, this.state.typ)
         return(
      <div>
         <div>
@@ -188,56 +187,11 @@ export class EditJob extends React.Component{
             <div className='edit-person-cont'>
                 {/* allgemeine LG Daten */}
                 <div className='bg-cont' style={({backgroundColor: "#74a3ed"})}>
-                    <h3 style={({textAlign: "center"})}>LG Daten</h3>
-                    {/* Kerndaten */}
+                    <h3 style={({textAlign: "center"})}>Daten</h3>
+                    {/* Tätigkeit */}
                     <div className='edit-person-data-cont'>
-                            <h4>Edit Kerndaten</h4>
-                            
-                            <label >LG ID:</label>
-                            <input type='text' className='text-input' name='lerngruppe_id' value={this.state.lerngruppe_id}readOnly></input>
-                            <br></br>
-
-                            <label >Bezeichnung:</label>
-                            <input type='text' className='text-input' id='bezeichnung' value={this.state.bezeichnung} 
-                            onChange= {this.handleChange} pattern="([\w\d\sßöäüÖÄÜ' \.,-?!]){0,100}" ></input>
-                            <br></br>
-
-                            <label >telefon_team:</label>
-                            <input type='text' className='text-input' id='telefon_team' value={this.state.telefon_team} 
-                            onChange= {this.handleChange} pattern="([\w\d\sßöäüÖÄÜ' \.,-?!]){0,100}" ></input>
-                            <br></br>
-
-                            <label >E-Mail Eltern:</label>
-                            <input type='text' className='text-input' id='email_eltern' value={this.state.email_eltern} 
-                            onChange= {this.handleChange}  ></input>
-                            <br></br>
-
-                            <label >E-Mail Team:</label>
-                            <input type='text' className='text-input' id='email_team' value={this.state.email_team} 
-                            onChange= {this.handleChange}  ></input>
-                            <br></br>
-                        
-
-                            <div className='delete-section'>
-                            <button 
-                                className='delete-buttons' 
-                                id='lerngruppen' type='button'
-                                onClick={this.deleteJobData}
-                            >LG löschen</button>
-                            </div>
-                    </div>
-                </div>
-
-
-                {/* Mitglieder */}                                                                                 
-                <div className='bg-cont' style={({backgroundColor: "#e6ebae"})}>
-                    <h3 style={({textAlign: "center"})}>Mitglieder editieren</h3>
-
-                        {/* Mitglieder */}
-                        <div className='edit-person-data-cont'>
-                            <h4>Mitglieder</h4>
-                                
-                                <label>Neuer Mitglied hinzufügen: </label>
+                            <h4>{this.props.taetigkeit ? ("Tätigkeit"):("Typ")}</h4>
+                                <label>Neue Person für diese Tätigkeit hinzufügen: </label>
                                 <select id='mitgliedToBeAdded' onChange= {this.handleChange} value={this.state.mitgliedToBeAdded}>
                                     <option defaultValue value=''>-</option>
 
@@ -245,40 +199,89 @@ export class EditJob extends React.Component{
                                     <option key={uuidv4()} value={mitglied.person_id}>{mitglied.rufname +  " " + mitglied.nachname}</option>)}  
                                 </select>
 
-
-                                <label>Eintrittsdatum: </label>
-                                <input type="date" id="eintrittsdatum" name="sl-date"
+                                <label>Beginn: </label>
+                                <input type="date" id="taetigkeit_beginn" name="sl-date"
                                     defaultValue={this.defaultDateValue}
                                     min={
-                                        this.state.geburtsdatum ? 
-                                        (dateToENFormat(new Date(this.state.geburtsdatum))):('')
+                                        this.state.einschulungsdatum ? 
+                                        (dateToENFormat(new Date(this.state.einschulungsdatum))):('')    
                                     } 
                                     onChange={this.handleChange}></input>
                                 <br></br>
 
+                                <label>Ende: </label>
+                                <input type="date" id="taetigkeit_ende" name="sl-date"
+                                    defaultValue={this.defaultDateValue}
+                                    min={
+                                        this.state.but_beginn ? 
+                                        (dateToENFormat(new Date(this.state.but_beginn))):('')    
+                                    } 
+                                    onChange={this.handleChange}></input>
+                                <br></br>
 
-                                <div className='delete-section'>
-                                    <label>Existierende Mitglieder dieser AG entfernen: </label>
+                                
+                                <label>Typ: </label>
+                                <select id='typ' 
+                                onChange= {this.handleChange}
+                                defaultValue= {this.state.typ}
+                                disabled={this.state.typ ? (true):(false)} >
+                                    <option defaultValue value=''>-</option> {/*default option when no data from database for selected person*/}
+                                    <option value='Freiwilligendienst'>Freiwilligendienst</option>
+                                    <option value='Ehrenamt'>Ehrenamt</option>
+                                    <option value='Praktikum'>Praktikum</option>
+                                    <option value='Honorartaetigkeit'>Honorartaetigkeit</option>
+                                    <option value='extern'>extern</option>
+                                    <option value='Kollektiv'>Kollektiv</option>
+                                    <option value='Arbeitsverhaeltniss'>Arbeitsverhaeltniss</option>
+                                </select>
+                                <br></br>
+                                
+                                <label>Tätigkeit: </label>
+                                <select id='taetigkeit' 
+                                onChange= {this.handleChange}
+                                defaultValue={this.state.taetigkeit}
+                                disabled={this.state.taetigkeit ? (true):(false)} >
+                                    <option defaultValue value=''>-</option> 
+                                    <option value='Lehrkraefte mit Unterrichtsbefaehigung'>Lehrkräfte mit Unterrichtsbefähigung</option>
+                                    <option value='Lehrkraefte ohne Unterrichtsbefaehigung'>Lehrkräfte ohne Unterrichtsbefähigung</option>
+                                    <option value='Sonstige Lehrkraft'>Sonstige Lehrkraft</option>
+                                    <option value='Paedagogische Fachkraefte eFoeB'>Pädagogische Fachkräfte eFoeB</option>
+                                    <option value='Sonstige paedagogische Kraft Ganztag'>Sonstige pädagogische Kraft Ganztag</option>
+                                    <option value='Verwaltungskraft'>Verwaltungskraft</option>
+                                    <option value='Kuechenkraft'>Küchenkraft</option>
+                                    <option value='Kuechenhilfe'>Küchenhilfe</option>
+                                    <option value='Reinigungskraft'>Reinigungskraft</option>
+                                    <option value='Hausmeister*in'>Hausmeister*in</option>
+                                    <option value='Schulhilfe'>Schulhilfe</option>
+                                </select>
+                                <br></br>
+
+                                <div className='delete-section'>      
+                                    <label>Existierende Person entfernen: </label>
                                     <select id='mitgliedToBeDeleted' onChange= {this.handleChange} value={this.state.mitgliedToBeDeleted}>
-                                        <option defaultValue value=''>-</option>
+                                        <option defaultValue >-</option>
 
                                         {this.state.mitglieder.map((mitglied) => 
-                                        <option key={uuidv4()} value={mitglied.person_id}>{mitglied.rufname 
-                                        + " " + mitglied.nachname}</option>)}
+                                        <option key={uuidv4()} value={dateToENFormat(new Date(mitglied.taetigkeit_beginn))}>{"Beginn: "+ dateToDEFormat(new Date(mitglied.taetigkeit_beginn)) 
+                                                                                                    + " Ende: " + dateToDEFormat(new Date(mitglied.taetigkeit_ende))
+            
+                                                                                                    }
+                                                                                                    </option>)}
                                         
                                     </select>
                                     <br></br>
 
-                                    <label>Oder: </label>
+                                    <label>Oder: </label>                                                   
                                     <button 
                                         className='delete-buttons' 
-                                        id='kind_lerngruppe' type='button'
+                                        id='kind_but' type='button'
                                         onClick={this.deleteJobData}
-                                        
                                     >Alle Mitglieder löschen</button>
-                                </div>
-                        </div>
+                                </div>  
+                    </div>
                 </div>
+
+
             </div>
            
         </div>
