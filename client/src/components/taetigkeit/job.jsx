@@ -60,7 +60,7 @@ export class Job extends React.Component{
                             //Kerndaten to edit passed as props
                             typ= {this.state.core_data.typ ? (this.state.core_data.typ):('')}
                             taetigkeit={this.state.core_data.taetigkeit ? (this.state.core_data.taetigkeit):('')}
-
+                            mitglieder = {this.state.employees ? (this.state.employees):('')}
                         />
                     </div>
                     , document.getElementById('job-data'))):(

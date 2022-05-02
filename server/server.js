@@ -1668,11 +1668,12 @@ app.get('/editLg', async (req,res) => {
 //EDIT Lerngruppe
 app.get('/editJob', async (req,res) => {
   //array containg all variables passed in with the request
-  let [lerngruppe_id, email_eltern, email_team, telefon_team, bezeichnung, mitgliedToBeAdded, probableMitglieder, eintrittsdatum,
-  mitgliedToBeDeleted, mitglieder
+  let [
+    taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit, mitgliedToBeAdded,
+            probableMitglieder, eintrittsdatum, mitgliedToBeDeleted, mitglieder,
 ] = req.query.state
 
-  //console.log(req.query.state)
+  
   // this variable will be true if the error case in one of the queries has already send headers
   let freeOfErrors = true;
 
@@ -1683,7 +1684,7 @@ app.get('/editJob', async (req,res) => {
   // here in the server and their value is turned into null
   //console.log(req.query.state)
   //make array only with the relevant data of coming query
-  let coreData = [lerngruppe_id, email_eltern, email_team, telefon_team, bezeichnung];
+  let coreData = [mitgliedToBeAdded, mitgliedToBeDeleted, taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit];
 
 
   // check that at least on of the values is relevant for saving (not null or '')
@@ -1698,21 +1699,21 @@ app.get('/editJob', async (req,res) => {
     })
 
 
-  //add or edits a AG as promised based function
-  async function addLg(){
+  //add or edits a Job as promised based function
+  async function addJob(){
     await new Promise( (resolve,reject) =>  {   
-        pool.query(`INSERT INTO lerngruppen(lerngruppe_id, email_eltern, email_team, telefon_team, bezeichnung) 
-          VALUES (${lerngruppe_id},
-            ${email_eltern ? ("'"+email_eltern+"'"):(null)},
-            ${email_team ? ("'"+email_team+"'"):(null)},
-            ${telefon_team ? ("'"+telefon_team+"'"):(null)}, 
-            ${bezeichnung ? ("'"+bezeichnung+"'"):(null)}  
+        pool.query(`INSERT INTO taetigkeit(person_id, taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit ) 
+          VALUES (${mitgliedToBeAdded},
+            ${taetigkeit_beginn ? ("'" + taetigkeit_beginn.toString() + "'"):(null)},
+            ${taetigkeit_ende ? ("'" + taetigkeit_ende.toString() + "'"):(null)},
+            ${typ ? ("'"+typ+"'"):(null)}, 
+            ${taetigkeit ? ("'"+taetigkeit+"'"):(null)}  
             )
           ON DUPLICATE KEY UPDATE 
-          email_eltern=${email_eltern ? ("'"+email_eltern+"'"):(null)},
-          email_team=${email_team ? ("'"+email_team+"'"):(null)},
-          telefon_team=${telefon_team ? ("'"+telefon_team+"'"):(null)},
-          bezeichnung=${bezeichnung ? ("'"+bezeichnung+"'"):(null)} 
+          taetigkeit_beginn=${taetigkeit_beginn ? ("'" + taetigkeit_beginn.toString() + "'"):(null)},
+          taetigkeit_ende=${taetigkeit_ende ? ("'" + taetigkeit_ende.toString() + "'"):(null)},
+          typ=${typ ? ("'"+typ+"'"):(null)},
+          taetigkeit=${taetigkeit ? ("'"+taetigkeit+"'"):(null)} 
           ;`
           ,(err, results) =>{
 
@@ -1731,50 +1732,50 @@ app.get('/editJob', async (req,res) => {
 
   // The 1st query to add/edit a Haus is happening as a promise based function in order to make sure
   // that the Haus has been added and exists before the next queries which usually use the haus as foreign key are executed
-  if(validCoreData > 1 && lerngruppe_id){
-    addLg()
+  if(validCoreData > 0 ){
+    addJob()
     .then((resolve) => {
-       //make array only with the relevant data of coming query
-       let agData = [mitgliedToBeAdded, eintrittsdatum]
+      //  //make array only with the relevant data of coming query
+      //  let agData = [mitgliedToBeAdded, eintrittsdatum]
 
-       // check that at least on of the values is relevant for saving (not null or '')
-       validCoreData = 0;
-       agData.forEach(element=> {
-         if(element === '' || element === null || element === 'null'){
-           return;
-         }else{
-           validCoreData++;
-         }
-         })
+      //  // check that at least on of the values is relevant for saving (not null or '')
+      //  validCoreData = 0;
+      //  agData.forEach(element=> {
+      //    if(element === '' || element === null || element === 'null'){
+      //      return;
+      //    }else{
+      //      validCoreData++;
+      //    }
+      //    })
  
-       // adds Mitglied record
-       if(validCoreData > 0 && mitgliedToBeAdded){
+      //  // adds Mitglied record
+      //  if(validCoreData > 0 && mitgliedToBeAdded){
          
-         pool.query(
-         `INSERT IGNORE INTO kind_lerngruppe(lerngruppe_id, person_id, eintrittsdatum)
-           VALUES(${lerngruppe_id}, ${mitgliedToBeAdded},
-                 ${eintrittsdatum ? ("'" + eintrittsdatum.toString() + "'"):(null)}
-                 );`
+      //    pool.query(
+      //    `INSERT IGNORE INTO kind_lerngruppe(lerngruppe_id, person_id, eintrittsdatum)
+      //      VALUES(${lerngruppe_id}, ${mitgliedToBeAdded},
+      //            ${eintrittsdatum ? ("'" + eintrittsdatum.toString() + "'"):(null)}
+      //            );`
  
-           ,(err, results) =>{
-             if(err){
-               console.log(err)
-               freeOfErrors = false;
-               //return res.send(err);
-             }else {
-               sumResults.push(results)
-             }})
-       }
+      //      ,(err, results) =>{
+      //        if(err){
+      //          console.log(err)
+      //          freeOfErrors = false;
+      //          //return res.send(err);
+      //        }else {
+      //          sumResults.push(results)
+      //        }})
+      //  }
  
        // deletes Mitglied record
        if(mitgliedToBeDeleted){
          
        pool.query(
-       `DELETE FROM kind_lerngruppe
+       `DELETE FROM taetigkeit
          WHERE 
-         lerngruppe_id = ${lerngruppe_id}
+         person_id = ${mitgliedToBeDeleted}
          AND
-         person_id = ${mitgliedToBeDeleted} 
+         typ = ${typ} OR taetigkeit = ${taetigkeit} 
        ;`
  
          ,(err, results) =>{

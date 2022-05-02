@@ -20,12 +20,12 @@ export class EditJob extends React.Component{
         this.editData = this.editData.bind(this);
         this.deleteJobData = this.deleteJobData.bind(this);
         this.fetchProbable = this.fetchProbable.bind(this);
-        this.fetchJobDataMultitable = this.fetchJobDataMultitable.bind(this);
+        // this.fetchJobDataMultitable = this.fetchJobDataMultitable.bind(this);
 
         
         this.state = {
             //Kerndaten
-            person_id: this.props.person_id ? (this.props.person_id):(''),
+            // person_id: this.props.person_id ? (this.props.person_id):(''),
             taetigkeit_beginn: this.props.taetigkeit_beginn ? (this.props.taetigkeit_beginn):(''),
             taetigkeit_ende: this.props.taetigkeit_ende ? (this.props.taetigkeit_ende):(''),
             typ: this.props.typ ? (this.props.typ):(''),
@@ -36,7 +36,7 @@ export class EditJob extends React.Component{
             probableMitglieder: [],
             eintrittsdatum: this.defaultDateValue,
             mitgliedToBeDeleted: '',
-            mitglieder: [],
+            mitglieder: this.props.mitglieder,
         
         }
     }
@@ -71,14 +71,14 @@ export class EditJob extends React.Component{
     }
 
     //general query to fetch mitglieds of given table to populate options in selects
-    async fetchJobDataMultitable(){
-        return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/dataMultitableJob`, {
-            params: {
-                person_id: this.state.person_id,
-                },
-            }))
-    }
+    // async fetchJobDataMultitable(){
+    //     return (
+    //     await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/dataMultitableJob`, {
+    //         params: {
+    //             person_id: this.state.person_id,
+    //             },
+    //         }))
+    // }
 
     //deletes all mitglieds from a table with the given id
     async deleteQueryJob(table){
@@ -95,6 +95,7 @@ export class EditJob extends React.Component{
 
     // edits DB for changed data in the form
     editData(){
+        // console.log(this.state)
         //input validation
         let validationSuccess = false;
         //get all invalid inputs
@@ -148,38 +149,39 @@ export class EditJob extends React.Component{
     componentDidMount() {
         this.fetchProbable('personsList').then(res => {
           
-            let mitglieder = [];
+            let probMitglieder = [];
             res.data.forEach(person => {
                 //console.log(person.rufname)
-                mitglieder.push(
+                probMitglieder.push(
                     Object.create({person_id:person.person_id, rufname:person.rufname, nachname:person.nachname})) 
             });
             this.setState({
-              probableMitglieder: mitglieder
+              probableMitglieder: probMitglieder
             })
           });
 
-        this.fetchJobDataMultitable().then(res => {
+    //     this.fetchJobDataMultitable().then(res => {
     
-        let mitglieder = [];
-        res.data.forEach(person => {
-            mitglieder.push(
-                Object.create({ 
-                            person_id: person.person_id,
-                            rufname: person.rufname,
-                            nachname: person.nachname
-                            }))
+    //     let mitglieder = [];
+    //     res.data.forEach(person => {
+    //         mitglieder.push(
+    //             Object.create({ 
+    //                         person_id: person.person_id,
+    //                         rufname: person.rufname,
+    //                         nachname: person.nachname
+    //                         }))
             
-        });
-        this.setState({
-            mitglieder: mitglieder
-        })
-    });
+    //     });
+    //     this.setState({
+    //         mitglieder: mitglieder
+    //     })
+    // }
+    // );
     }
 
 
     render(){
-        //console.log(this.state.taetigkeit, this.state.typ)
+        console.log(this.state)
         return(
      <div>
         <div>
@@ -262,11 +264,12 @@ export class EditJob extends React.Component{
                                         <option defaultValue >-</option>
 
                                         {this.state.mitglieder.map((mitglied) => 
-                                        <option key={uuidv4()} value={dateToENFormat(new Date(mitglied.taetigkeit_beginn))}>{"Beginn: "+ dateToDEFormat(new Date(mitglied.taetigkeit_beginn)) 
-                                                                                                    + " Ende: " + dateToDEFormat(new Date(mitglied.taetigkeit_ende))
-            
-                                                                                                    }
-                                                                                                    </option>)}
+                                        <option key={uuidv4()} value={mitglied.person_id}>
+                                            {mitglied.rufname + ' ' + mitglied.nachname + ' ' + 
+                                            "Beginn: "+ dateToDEFormat(new Date(mitglied.taetigkeit_beginn)) 
+                                            + " Ende: " + dateToDEFormat(new Date(mitglied.taetigkeit_ende))
+                                            }
+                                             </option>)}
                                         
                                     </select>
                                     <br></br>
