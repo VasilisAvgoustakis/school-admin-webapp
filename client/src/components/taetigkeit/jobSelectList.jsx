@@ -14,6 +14,26 @@ export class JobSelectList extends Component{
     this.filter = this.filter.bind(this);
     this.state = {
       filter: 'job',
+      jobsToList: ['Lehrkraefte mit Unterrichtsbefaehigung',
+            'Lehrkraefte ohne Unterrichtsbefaehigung',
+            'Sonstige Lehrkraft',
+            'Paedagogische Fachkraefte eFoeB',
+            'Sonstige paedagogische Kraft Ganztag',
+            'Verwaltungskraft',
+            'Kuechenkraft',
+            'Kuechenhilfe',
+            'Reinigungskraft',
+            'Hausmeister*in',
+            'Schulhilfe'],
+      typesToList: [
+        'Freiwilligendienst',
+        'Ehrenamt',
+        'Praktikum',
+        'Honorartaetigkeit',
+        'extern',
+        'Kollektiv',
+        'Arbeitsverhaeltniss'
+      ],
       jobs: [],
       types: [],
       searchedJobs: []
@@ -36,7 +56,7 @@ export class JobSelectList extends Component{
     this.setState.searchedJobs = [];
     // console.log(this.state.searchedJobs);
     const results = [];
-    this.state.jobs.forEach(function(job){
+    this.state.jobsToList.forEach(function(job){
       const job_credentials = job.taetigkeit + job.typ;
       if(job_credentials.toLowerCase().includes(jobName.toLowerCase()) && jobName != '' ){
         results.push(job);
@@ -73,7 +93,7 @@ export class JobSelectList extends Component{
 
   render() {
     var jobsToRender = [];
-    // console.log(this.state.haushalte)
+    console.log(this.state.haushalte)
     if(this.state.searchedJobs.length >=1){
       jobsToRender = this.state.searchedJobs;
     }else if(this.state.filter === 'job'){
@@ -82,6 +102,7 @@ export class JobSelectList extends Component{
       jobsToRender = this.state.types;
     }
 
+
     console.log(jobsToRender)
     
     
@@ -89,7 +110,7 @@ export class JobSelectList extends Component{
     
       return (
         <div className='entity-list-scroller-cont' >
-          <input
+          {/* <input
                 type="text"
                 className='entity-search'              
                 // id="header-search"
@@ -98,7 +119,7 @@ export class JobSelectList extends Component{
                 onChange={(e) => {
                   this.search(e.target.value);
                 }}
-            />
+            /> */}
           <div className='entity-list-scroller'>
               
           
@@ -107,10 +128,13 @@ export class JobSelectList extends Component{
           
 
               <ul>
+
               {jobsToRender.map(job => (
                 <Job key={uuidv4()}
+                  name={this.state.jobsToList[jobsToRender.indexOf(job)]}
                   taetigkeit={job.taetigkeit}
                   typ={job.typ}
+                  filter={this.state.filter}
                 />
               ))}
               </ul>

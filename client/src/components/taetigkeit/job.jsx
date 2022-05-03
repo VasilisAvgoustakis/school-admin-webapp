@@ -17,15 +17,18 @@ export class Job extends React.Component{
         this.handleClick = this.handleClick.bind(this);
         this.customRender = this.customRender.bind(this);
         this.onEdit = this.onEdit.bind(this);
+        this.replaceAllChars = this.replaceAllChars.bind(this);
         this.state = {
             editing: false,
             clicked: false,
             loading: false,
+            filter: this.props.filter,
             core_data:{
+                name: this.props.name,
                 taetigkeit: this.props.taetigkeit,
                 typ: this.props.typ,
-                // taetigkeit_beginn: this.props.taetigkeit_beginn,
-                // taetigkeit_ende: this.props.taetigkeit_ende,
+                taetigkeit_beginn: this.props.taetigkeit_beginn,
+                taetigkeit_ende: this.props.taetigkeit_ende,
             },
             employees:[],
         }
@@ -61,6 +64,7 @@ export class Job extends React.Component{
                             typ= {this.state.core_data.typ ? (this.state.core_data.typ):('')}
                             taetigkeit={this.state.core_data.taetigkeit ? (this.state.core_data.taetigkeit):('')}
                             mitglieder = {this.state.employees ? (this.state.employees):('')}
+                            filter= {this.state.filter}
                         />
                     </div>
                     , document.getElementById('job-data'))):(
@@ -101,16 +105,23 @@ export class Job extends React.Component{
         )
     }
 
+    replaceAllChars(str, find, replace) {
+        var escapedFind=find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+        return str.replace(new RegExp(escapedFind, 'g'), replace);
+    }
+
 
 
     render() {
-        console.log(this.state.employees)
+        //console.log(this.state.core_data.taetigkeit)
       return (
 
         <li key={uuidv4()} onClick={this.handleClick} >
               
             <p style={{textSizeAdjust:'auto'}}>
-                {this.state.core_data.taetigkeit ? (this.state.core_data.taetigkeit):(this.state.core_data.typ)}</p> 
+                {this.state.core_data.taetigkeit ? 
+                (this.state.core_data.taetigkeit)
+                :(this.state.core_data.typ)}</p> 
         </li>
         
       )

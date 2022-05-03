@@ -1673,7 +1673,8 @@ app.get('/editJob', async (req,res) => {
             probableMitglieder, eintrittsdatum, mitgliedToBeDeleted, mitglieder,
 ] = req.query.state
 
-  
+  let dataToBeDeleted = mitgliedToBeDeleted.split(',')
+  console.log(dataToBeDeleted[0])
   // this variable will be true if the error case in one of the queries has already send headers
   let freeOfErrors = true;
 
@@ -1717,10 +1718,12 @@ app.get('/editJob', async (req,res) => {
           ;`
           ,(err, results) =>{
 
-            if(err){ //Query Error 
+            if(err){ //Query Error
+              if(mitgliedToBeAdded){
               freeOfErrors = false;
-              console.log(err)
+              //console.log(err)
               return reject(err);
+              }else resolve();
             }else {
               //console.log(results)
               sumResults.push(results);
@@ -1735,47 +1738,16 @@ app.get('/editJob', async (req,res) => {
   if(validCoreData > 0 ){
     addJob()
     .then((resolve) => {
-      //  //make array only with the relevant data of coming query
-      //  let agData = [mitgliedToBeAdded, eintrittsdatum]
-
-      //  // check that at least on of the values is relevant for saving (not null or '')
-      //  validCoreData = 0;
-      //  agData.forEach(element=> {
-      //    if(element === '' || element === null || element === 'null'){
-      //      return;
-      //    }else{
-      //      validCoreData++;
-      //    }
-      //    })
- 
-      //  // adds Mitglied record
-      //  if(validCoreData > 0 && mitgliedToBeAdded){
-         
-      //    pool.query(
-      //    `INSERT IGNORE INTO kind_lerngruppe(lerngruppe_id, person_id, eintrittsdatum)
-      //      VALUES(${lerngruppe_id}, ${mitgliedToBeAdded},
-      //            ${eintrittsdatum ? ("'" + eintrittsdatum.toString() + "'"):(null)}
-      //            );`
- 
-      //      ,(err, results) =>{
-      //        if(err){
-      //          console.log(err)
-      //          freeOfErrors = false;
-      //          //return res.send(err);
-      //        }else {
-      //          sumResults.push(results)
-      //        }})
-      //  }
  
        // deletes Mitglied record
-       if(mitgliedToBeDeleted){
+       if(dataToBeDeleted.length == 5){
          
        pool.query(
        `DELETE FROM taetigkeit
          WHERE 
-         person_id = ${mitgliedToBeDeleted}
+         person_id = ${dataToBeDeleted[0]}
          AND
-         typ = ${typ} OR taetigkeit = ${taetigkeit} 
+         typ = '${dataToBeDeleted[3]}' AND taetigkeit = '${dataToBeDeleted[4]}' 
        ;`
  
          ,(err, results) =>{
@@ -1802,7 +1774,7 @@ app.get('/editJob', async (req,res) => {
         while(freeOfErrors){
           sumResults.push(results)
           //console.log("sending...")
-          //console.log(results)
+          console.log(results)
           return res.send(results);
         }
       }}) 
@@ -1885,9 +1857,14 @@ app.get('/deleteLgData', (req, res) => {
 });
 
 app.get('/deleteJobData', (req, res) => {
-  let table = req.query.table;
-  // let person_id = req.query.lerngruppe_id;
-  pool.query(`DELETE FROM ${table} WHERE lerngruppe_id = ${lerngruppe_id};`,
+  let filter = req.query.filter;
+  let taetigkeit = req.query.taetigkeit;
+  let typ = req.query.typ;
+
+  pool.query(`DELETE FROM taetigkeit 
+                WHERE 
+                  ${filter == 'job' ? ('taetigkeit='+ "'"+taetigkeit+"'"):('typ='+"'"+typ+"'")} 
+                ;`,
   (err, result)=>{
     if(err){
       console.log(err);

@@ -24,6 +24,7 @@ export class EditJob extends React.Component{
 
         
         this.state = {
+            filter: this.props.filter,
             //Kerndaten
             // person_id: this.props.person_id ? (this.props.person_id):(''),
             taetigkeit_beginn: this.props.taetigkeit_beginn ? (this.props.taetigkeit_beginn):(''),
@@ -35,7 +36,7 @@ export class EditJob extends React.Component{
             mitgliedToBeAdded: '',
             probableMitglieder: [],
             eintrittsdatum: this.defaultDateValue,
-            mitgliedToBeDeleted: '',
+            mitgliedToBeDeleted: [],
             mitglieder: this.props.mitglieder,
         
         }
@@ -70,24 +71,15 @@ export class EditJob extends React.Component{
             }))
     }
 
-    //general query to fetch mitglieds of given table to populate options in selects
-    // async fetchJobDataMultitable(){
-    //     return (
-    //     await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/dataMultitableJob`, {
-    //         params: {
-    //             person_id: this.state.person_id,
-    //             },
-    //         }))
-    // }
-
     //deletes all mitglieds from a table with the given id
-    async deleteQueryJob(table){
+    async deleteQueryJob(filter, taetigkeit, typ){
         //console.log(table)
         return(
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteJobData`, {
            params: {
-               table: table,
-               person_id: this.state.person_id
+               filter: filter,
+               taetigkeit: this.state.taetigkeit,
+               typ: this.state.typ
            } 
       })
        )
@@ -125,17 +117,17 @@ export class EditJob extends React.Component{
     // delete general Job Data by given table
     deleteJobData(e){
         //console.log(e.target.id)
-        let table = e.target.id;
-        console.log(table);
+        let filter = e.target.id;
+        console.log(filter);
 
         var confirm = window.confirm(
-                    `ACHTUNG!!! Diese Aktion wird ${table === 'taetigkeit' ? 
-                    ('dieser Tätigkeit und alle seine Daten von allen Tabellen komplett vom DB')
-                    :("alle " + table + " Einträge dieser Tätigkeit")} löschen!`
+                    `ACHTUNG!!! Diese Aktion wird ${filter === 'job' ? 
+                    ('dieser Tätigkeit und alle damit verknüpften Personen vom DB')
+                    :('dieser Tätigkeitstyp und alle damit verknüpften Personen vom DB')} löschen!`
             )
         
         if(confirm){
-            this.deleteQueryJob(table)
+            this.deleteQueryJob(filter)
             .then(result=>{
                 console.log("confirm")
                 confirm = false;
@@ -181,7 +173,7 @@ export class EditJob extends React.Component{
 
 
     render(){
-        console.log(this.state)
+        //console.log(this.state)
         return(
      <div>
         <div>
@@ -260,12 +252,23 @@ export class EditJob extends React.Component{
 
                                 <div className='delete-section'>      
                                     <label>Existierende Person entfernen: </label>
-                                    <select id='mitgliedToBeDeleted' onChange= {this.handleChange} value={this.state.mitgliedToBeDeleted}>
+                                    <select 
+                                        id='mitgliedToBeDeleted' 
+                                        onChange= {this.handleChange} 
+                                        value={this.state.mitgliedToBeDeleted}
+                                        //multiple={true}
+                                        >
                                         <option defaultValue >-</option>
 
                                         {this.state.mitglieder.map((mitglied) => 
-                                        <option key={uuidv4()} value={mitglied.person_id}>
-                                            {mitglied.rufname + ' ' + mitglied.nachname + ' ' + 
+                                        <option 
+                                            key={uuidv4()} 
+                                            value={[mitglied.person_id, mitglied.taetigkeit_beginn, mitglied.taetigkeit_ende,
+                                            mitglied.typ, mitglied.taetigkeit]}
+                                            >
+
+                                            {
+                                            mitglied.rufname + ' ' + mitglied.nachname + ' ' + 
                                             "Beginn: "+ dateToDEFormat(new Date(mitglied.taetigkeit_beginn)) 
                                             + " Ende: " + dateToDEFormat(new Date(mitglied.taetigkeit_ende))
                                             }
@@ -277,7 +280,7 @@ export class EditJob extends React.Component{
                                     <label>Oder: </label>                                                   
                                     <button 
                                         className='delete-buttons' 
-                                        id='kind_but' type='button'
+                                        id={this.state.filter} type='button'
                                         onClick={this.deleteJobData}
                                     >Alle Mitglieder löschen</button>
                                 </div>  
