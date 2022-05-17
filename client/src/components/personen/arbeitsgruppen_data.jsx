@@ -9,9 +9,15 @@ import { v4 as uuidv4 } from 'uuid';
 class AG extends React.Component{
     constructor(props){
         super(props);
+        this.clickAg=this.clickAg.bind(this);
         this.state = {
             data:[this.props.data]
         }
+    }
+
+    clickAg({ navigation }){
+        this.props.navi('Arbeitsgruppen')
+        document.getElementById(this.state.data[0].arbeitsgruppe_id.toString()).click();
     }
 
     render(){
@@ -19,7 +25,7 @@ class AG extends React.Component{
         return(
             
             this.state.data.map(arbGrpRow => (
-                <tr key={arbGrpRow.person_id+arbGrpRow.bezeichnung}>
+                <tr key={arbGrpRow.person_id+arbGrpRow.bezeichnung} onClick={this.clickAg} className="clickable-list-item">
                     {arbGrpRow.koordination_der_ag == 1 ? (<td>JA</td>):(<td>NEIN</td>)}
                     {arbGrpRow.bezeichnung ? (<td>{arbGrpRow.bezeichnung}</td>):(<td> -- </td>)}
                     {arbGrpRow.email ? (<td>{arbGrpRow.email}</td>):(<td> -- </td>)}
@@ -53,7 +59,7 @@ export function AGData(props){
                 </tr>
             </thead>
             <tbody>
-                <tr colSpan="5" style={{position:'absolute'}, {width:'100%'}}>
+                <tr colSpan="5" style={({position:'absolute', width:'100%'})}>
                     <td><strong>Keine aktuelle AG Mitgliedschaft!</strong></td>
                 </tr>
             </tbody>
@@ -78,6 +84,7 @@ export function AGData(props){
                         
                         <AG key={uuidv4()}
                         data={ag}
+                        navi={props.navi}
                         />
                        
                     ))}

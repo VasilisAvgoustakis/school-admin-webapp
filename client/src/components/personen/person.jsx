@@ -270,7 +270,8 @@ export class Person extends React.Component{
                             || 
                           !this.state.data.zugangsdatum_zur_fsx) ? 
                             (<AGData
-                                ags={this.state.arbeitsgruppen} />)
+                                ags={this.state.arbeitsgruppen}
+                                navi={this.props.navi} />)
                                 :
                                 (<p></p>)}
                         

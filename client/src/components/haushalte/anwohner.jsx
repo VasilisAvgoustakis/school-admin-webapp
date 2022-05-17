@@ -12,13 +12,13 @@ class AnwohnerRow extends React.Component{
     constructor(props){
         super(props);
         
-        this.clinkPerson = this.clinkPerson.bind(this);
+        this.clickPerson = this.clickPerson.bind(this);
         this.state = {
             data:[this.props.data]
         }
     }
 
-    clinkPerson({ navigation }){
+    clickPerson({ navigation }){
         this.props.navi('Personen')
         document.getElementById(this.state.data[0].person_id.toString()).click();
     }
@@ -28,7 +28,7 @@ class AnwohnerRow extends React.Component{
         return(
             
             this.state.data.map(anwohnerRow => (
-                <tr key={uuidv4()} onClick={this.clinkPerson} className="clickable-list-item">
+                <tr key={uuidv4()} onClick={this.clickPerson} className="clickable-list-item">
                     {anwohnerRow.person_id && 
                      anwohnerRow.rufname &&
                      anwohnerRow.nachname
@@ -57,7 +57,7 @@ export function Anwohner(props){
                 </tr>
             </thead>
             <tbody>
-                <tr colSpan="3" style={{position:'absolute'}, {width:'100%'}}>
+                <tr colSpan="3" style={({position:'absolute', width:'100%'})}>
                     <td><strong>Keine Anwohner gefunden!</strong></td>
                 </tr>
             </tbody>

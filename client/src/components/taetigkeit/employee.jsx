@@ -7,9 +7,22 @@ import { v4 as uuidv4 } from 'uuid';
 class EmployeeRow extends React.Component{
     constructor(props){
         super(props);
+        this.replaceAllChars=this.replaceAllChars.bind(this);
+        this.clickPerson = this.clickPerson.bind(this);
         this.state = {
             data:[this.props.data]
         }
+    }
+
+    replaceAllChars(str, find, replace) {
+        var escapedFind=find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+        return str.replace(new RegExp(escapedFind, 'g'), replace);
+    }
+
+    clickPerson({ navigation }){
+       this.props.navi('Personen')
+        //console.log(this.state.data[0].person_id.toString())
+        document.getElementById(this.state.data[0].person_id.toString()).click();
     }
 
     render(){
@@ -17,13 +30,13 @@ class EmployeeRow extends React.Component{
         return(
             
             this.state.data.map(employeeRow => (
-                <tr key={uuidv4()}>
+                <tr key={uuidv4()} onClick={this.clickPerson} className="clickable-list-item">
                     {employeeRow.person_id ? (<td>{employeeRow.person_id}</td>):(<td> -- </td>)}
                     {employeeRow.rufname ? (<td>{employeeRow.rufname}</td>):(<td> -- </td>)}
                     {employeeRow.nachname ? (<td>{employeeRow.nachname}</td>):(<td> -- </td>)}
                     {employeeRow.taetigkeit_beginn ? (<td>{dateToDEFormat(new Date(employeeRow.taetigkeit_beginn))}</td>):(<td> -- </td>)}
                     {employeeRow.taetigkeit_ende ? (<td>{dateToDEFormat(new Date(employeeRow.taetigkeit_ende))}</td>):(<td> -- </td>)}
-                    {employeeRow.taetigkeit ? (<td>{employeeRow.taetigkeit}</td>):(<td> -- </td>)}
+                    {employeeRow.taetigkeit ? (<td>{this.replaceAllChars(this.replaceAllChars(employeeRow.taetigkeit,'ae', 'ä'),'ue', 'ü')}</td>):(<td> -- </td>)}
                     {employeeRow.typ ? (<td>{employeeRow.typ}</td>):(<td> -- </td>)}
                 </tr>
                 
@@ -48,7 +61,7 @@ export function Employee(props){
                 </tr>
             </thead>
             <tbody>
-                <tr colSpan="3" style={{position:'absolute'}, {width:'80%'}}>
+                <tr colSpan="3" style={({position:'absolute', width:'80%'})}>
                     <td><strong>Keine Mitarbeiter gefunden!</strong></td>
                 </tr>
             </tbody>
@@ -75,6 +88,7 @@ export function Employee(props){
                         
                         <EmployeeRow key={uuidv4()}
                         data={employee}
+                        navi={props.navi}
                         />
                        
                     ))}

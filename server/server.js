@@ -1669,9 +1669,9 @@ app.get('/editLg', async (req,res) => {
 app.get('/editJob', async (req,res) => {
   //array containg all variables passed in with the request
   let [
-    taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit, mitgliedToBeAdded,
-            probableMitglieder, eintrittsdatum, mitgliedToBeDeleted, mitglieder,
-] = req.query.state
+    filter, taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit, mitgliedToBeAdded,
+    probableMitglieder, eintrittsdatum, mitgliedToBeDeleted, mitglieder,
+  ] = req.query.state
 
   let dataToBeDeleted = mitgliedToBeDeleted.split(',')
   console.log(dataToBeDeleted[0])
@@ -1700,7 +1700,7 @@ app.get('/editJob', async (req,res) => {
     })
 
 
-  //add or edits a Job as promised based function
+  //adds or edits a Job as promised based function
   async function addJob(){
     await new Promise( (resolve,reject) =>  {   
         pool.query(`INSERT INTO taetigkeit(person_id, taetigkeit_beginn, taetigkeit_ende, typ, taetigkeit ) 
@@ -1720,12 +1720,12 @@ app.get('/editJob', async (req,res) => {
 
             if(err){ //Query Error
               if(mitgliedToBeAdded){
-              freeOfErrors = false;
-              //console.log(err)
-              return reject(err);
-              }else resolve();
+                freeOfErrors = false;
+                console.log(err)
+                return reject(err);
+                }else resolve();
             }else {
-              //console.log(results)
+              console.log(results)
               sumResults.push(results);
               resolve (res);
             }})

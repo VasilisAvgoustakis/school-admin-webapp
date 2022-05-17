@@ -109,7 +109,8 @@ export class Lg extends React.Component{
                         
                     <div className='entity-data-right'>
                         <Schuller
-                            schuller= {this.state.schuller}/>
+                            schuller= {this.state.schuller}
+                            navi={this.props.navi}/>
                     </div>
                 </div>
                 , document.getElementById('lg-data')))}
@@ -128,14 +129,14 @@ export class Lg extends React.Component{
         //console.log(this.state.core_data.lerngruppe_id)
         this.fetchMitglieder(this.state.core_data.lerngruppe_id)
         .then(result => {
-            console.log(result.data)
+            //console.log(result.data)
              this.setState({
                 schuller: result.data,
                  })})
         },
         this.setState({loading:false}),
         this.setState({clicked: true}),
-        console.log(this.state.schuller)
+        //console.log(this.state.schuller)
         )
     }
 

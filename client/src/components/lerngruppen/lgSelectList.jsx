@@ -108,7 +108,8 @@ export class LgSelectList extends Component{
                   bezeichnung={lg.bezeichnung}
                   email_eltern={lg.email_eltern}
                   email_team={lg.email_team}
-                  telefon_team={lg.telefon_team} 
+                  telefon_team={lg.telefon_team}
+                  navi={this.props.navi} 
                 />
               ))}
               </ul>

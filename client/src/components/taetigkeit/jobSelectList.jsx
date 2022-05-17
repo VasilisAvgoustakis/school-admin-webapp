@@ -93,7 +93,7 @@ export class JobSelectList extends Component{
 
   render() {
     var jobsToRender = [];
-    console.log(this.state.haushalte)
+    //console.log(this.state.haushalte)
     if(this.state.searchedJobs.length >=1){
       jobsToRender = this.state.searchedJobs;
     }else if(this.state.filter === 'job'){
@@ -103,7 +103,7 @@ export class JobSelectList extends Component{
     }
 
 
-    console.log(jobsToRender)
+    //console.log(jobsToRender)
     
     
     
@@ -129,14 +129,27 @@ export class JobSelectList extends Component{
 
               <ul>
 
-              {jobsToRender.map(job => (
+              {this.state.filter == 'job' ? (this.state.jobsToList.map(job => (
                 <Job key={uuidv4()}
-                  name={this.state.jobsToList[jobsToRender.indexOf(job)]}
-                  taetigkeit={job.taetigkeit}
-                  typ={job.typ}
+                  name={job}
+                  taetigkeit={this.state.filter == 'job' ?  (job):(null)}
+                  typ={this.state.filter == 'typ' ? (job):(null)}
                   filter={this.state.filter}
+                  navi={this.props.navi}
                 />
-              ))}
+              ))):
+              (this.state.typesToList.map(job => (
+                <Job key={uuidv4()}
+                  name={job}
+                  taetigkeit={this.state.filter == 'job' ?  (job):(null)}
+                  typ={this.state.filter == 'typ' ? (job):(null)}
+                  filter={this.state.filter}
+                  navi={this.props.navi}
+                />
+              )))
+              
+              
+              }
               </ul>
           </div>
           <div className='entity-data-cont'  id='job-data'>

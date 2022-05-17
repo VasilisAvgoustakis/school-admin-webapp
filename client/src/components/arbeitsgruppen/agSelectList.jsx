@@ -108,7 +108,8 @@ export class AgSelectList extends Component{
                   arbeitsgruppe_id={ag.arbeitsgruppe_id}
                   bezeichnung={ag.bezeichnung}
                   beschreibung={ag.beschreibung}
-                  email={ag.email} 
+                  email={ag.email}
+                  navi={this.props.navi} 
                 />
               ))}
               </ul>

@@ -76,6 +76,7 @@ export class Job extends React.Component{
                             employees={this.state.employees}
                             taetigkeit={this.props.taetigkeit}
                             typ={this.props.typ}
+                            navi={this.props.navi}
                         />
                 </div>
                 , document.getElementById('job-data')))}
@@ -120,8 +121,8 @@ export class Job extends React.Component{
               
             <p style={{textSizeAdjust:'auto'}}>
                 {this.state.core_data.taetigkeit ? 
-                (this.state.core_data.taetigkeit)
-                :(this.state.core_data.typ)}</p> 
+                (this.replaceAllChars(this.replaceAllChars(this.state.core_data.taetigkeit,'ae', 'ä'),'ue', 'ü'))
+                :(this.replaceAllChars(this.state.core_data.typ,'ae','ä'))}</p> 
         </li>
         
       )

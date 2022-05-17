@@ -5,13 +5,14 @@ import '../stylesheets/globalstyles.css'
 
 
 
-export function ArbeitsgruppenScreen() {
+export function ArbeitsgruppenScreen({ navigation: { navigate }}) {
   axios.defaults.withCredentials = true;
 
   return (
       
       <div className='main-entity-data-cont'>
-        <AgSelectList  />
+        <AgSelectList 
+        navi={navigate} />
       </div>
   );
 }

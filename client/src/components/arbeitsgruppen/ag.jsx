@@ -102,7 +102,8 @@ export class Ag extends React.Component{
                         
                     <div className='entity-data-right'>
                         <Mitglieder
-                            mietglieder= {this.state.mitglieder}/>
+                            mietglieder= {this.state.mitglieder}
+                            navi={this.props.navi}/>
                     </div>
                 </div>
                 , document.getElementById('ag-data')))}

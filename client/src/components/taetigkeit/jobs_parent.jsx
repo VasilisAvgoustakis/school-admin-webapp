@@ -5,13 +5,14 @@ import '../stylesheets/globalstyles.css'
 
 
 
-export function JobsScreen() {
+export function JobsScreen({ navigation: { navigate }}) {
   axios.defaults.withCredentials = true;
 
   return (
       
       <div className='main-entity-data-cont'>
-        <JobSelectList  />
+        <JobSelectList 
+        navi={navigate} />
       </div>
   );
 }

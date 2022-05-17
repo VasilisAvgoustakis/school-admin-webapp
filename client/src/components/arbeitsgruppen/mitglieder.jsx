@@ -7,9 +7,15 @@ import { v4 as uuidv4 } from 'uuid';
 class MitgliederRow extends React.Component{
     constructor(props){
         super(props);
+        this.clickPerson = this.clickPerson.bind(this);
         this.state = {
             data:[this.props.data]
         }
+    }
+
+    clickPerson({ navigation }){
+        this.props.navi('Personen')
+        document.getElementById(this.state.data[0].person_id.toString()).click();
     }
 
     render(){
@@ -17,7 +23,7 @@ class MitgliederRow extends React.Component{
         return(
             
             this.state.data.map(mitgliederRow => (
-                <tr key={uuidv4()}>
+                <tr key={uuidv4()} onClick={this.clickPerson} className="clickable-list-item">
                     {mitgliederRow.person_id ? (<td>{mitgliederRow.person_id}</td>):(<td> -- </td>)}
                     {mitgliederRow.rufname ? (<td>{mitgliederRow.rufname}</td>):(<td> -- </td>)}
                     {mitgliederRow.nachname ? (<td>{mitgliederRow.nachname}</td>):(<td> -- </td>)}
@@ -44,7 +50,7 @@ export function Mitglieder(props){
                 </tr>
             </thead>
             <tbody>
-                <tr colSpan="2" style={{position:'absolute'}, {width:'80%'}}>
+                <tr colSpan="2" style={({position:'absolute', width:'80%'})}>
                     <td><strong>Keine Mietglieder gefunden!</strong></td>
                 </tr>
             </tbody>
@@ -67,6 +73,7 @@ export function Mitglieder(props){
                         
                         <MitgliederRow key={uuidv4()}
                         data={mietglied}
+                        navi={props.navi}
                         />
                        
                     ))}

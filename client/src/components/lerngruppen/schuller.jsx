@@ -7,9 +7,15 @@ import { v4 as uuidv4 } from 'uuid';
 class SchullerRow extends React.Component{
     constructor(props){
         super(props);
+        this.clickPerson = this.clickPerson.bind(this);
         this.state = {
             data:[this.props.data]
         }
+    }
+
+    clickPerson({ navigation }){
+        this.props.navi('Personen')
+        document.getElementById(this.state.data[0].person_id.toString()).click();
     }
 
     render(){
@@ -17,7 +23,7 @@ class SchullerRow extends React.Component{
         return(
             
             this.state.data.map(schullerRow => (
-                <tr key={uuidv4()}>
+                <tr key={uuidv4()} onClick={this.clickPerson} className="clickable-list-item">
                     {schullerRow.person_id ? (<td>{schullerRow.person_id}</td>):(<td> -- </td>)}
                     {schullerRow.rufname ? (<td>{schullerRow.rufname}</td>):(<td> -- </td>)}
                     {schullerRow.nachname ? (<td>{schullerRow.nachname}</td>):(<td> -- </td>)}
@@ -45,7 +51,7 @@ export function Schuller(props){
                 </tr>
             </thead>
             <tbody>
-                <tr colSpan="2" style={{position:'absolute'}, {width:'80%'}}>
+                <tr colSpan="2" style={({position:'absolute', width:'80%'})}>
                     <td><strong>Keine Mietglieder gefunden!</strong></td>
                 </tr>
             </tbody>
@@ -69,6 +75,7 @@ export function Schuller(props){
                         
                         <SchullerRow key={uuidv4()}
                         data={schull_kind}
+                        navi={props.navi}
                         />
                        
                     ))}

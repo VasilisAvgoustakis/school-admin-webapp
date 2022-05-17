@@ -36,7 +36,7 @@ export class EditJob extends React.Component{
             mitgliedToBeAdded: '',
             probableMitglieder: [],
             eintrittsdatum: this.defaultDateValue,
-            mitgliedToBeDeleted: [],
+            mitgliedToBeDeleted: '',
             mitglieder: this.props.mitglieder,
         
         }
@@ -54,7 +54,7 @@ export class EditJob extends React.Component{
     async updateQuery(){
         var stateObj = this.state;
         var dataArr = Object.values(stateObj);
-        //console.log(dataArr)
+        console.log(dataArr)
         return(
         await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/editJob`, {
            params: {
@@ -218,7 +218,7 @@ export class EditJob extends React.Component{
                                 <select id='typ' 
                                 onChange= {this.handleChange}
                                 defaultValue= {this.state.typ}
-                                disabled={this.state.typ ? (true):(false)} >
+                                disabled={this.state.filter=='typ' ? (true):(false)} >
                                     <option defaultValue value=''>-</option> {/*default option when no data from database for selected person*/}
                                     <option value='Freiwilligendienst'>Freiwilligendienst</option>
                                     <option value='Ehrenamt'>Ehrenamt</option>
@@ -234,7 +234,7 @@ export class EditJob extends React.Component{
                                 <select id='taetigkeit' 
                                 onChange= {this.handleChange}
                                 defaultValue={this.state.taetigkeit}
-                                disabled={this.state.taetigkeit ? (true):(false)} >
+                                disabled={this.state.filter=='job' ? (true):(false)} >
                                     <option defaultValue value=''>-</option> 
                                     <option value='Lehrkraefte mit Unterrichtsbefaehigung'>Lehrkräfte mit Unterrichtsbefähigung</option>
                                     <option value='Lehrkraefte ohne Unterrichtsbefaehigung'>Lehrkräfte ohne Unterrichtsbefähigung</option>
@@ -255,7 +255,7 @@ export class EditJob extends React.Component{
                                     <select 
                                         id='mitgliedToBeDeleted' 
                                         onChange= {this.handleChange} 
-                                        value={this.state.mitgliedToBeDeleted}
+                                        value={this.state.mitgliedToBeDeleted ? (this.state.mitgliedToBeDeleted):('')}
                                         //multiple={true}
                                         >
                                         <option defaultValue >-</option>

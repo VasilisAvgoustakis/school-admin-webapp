@@ -145,7 +145,8 @@ export class Haushalt extends React.Component{
                     <div className='entity-data-right'>
                         <Anwohner
                             anwohner= {this.state.anwohner}
-                            navi={this.props.navi}/>
+                            navi={this.props.navi}
+                        />
                     </div>
                 </div>
                 , document.getElementById('haus-data'))

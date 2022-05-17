@@ -5,13 +5,14 @@ import '../stylesheets/globalstyles.css'
 
 
 
-export function LerngruppenScreen() {
+export function LerngruppenScreen({ navigation: { navigate }}) {
   axios.defaults.withCredentials = true;
 
   return (
       
       <div className='main-entity-data-cont'>
-        <LgSelectList  />
+        <LgSelectList 
+        navi={navigate} />
       </div>
   );
 }
