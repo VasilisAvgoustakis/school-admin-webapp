@@ -4,20 +4,24 @@ import ReactDOM from 'react-dom';
 import {EditAg} from './editAg'
 import '../stylesheets/globalstyles.css';
 import { Mitglieder } from './mitglieder';
-
-import {dateToDEFormat} from '../../globalFunctions'
+import {CSVLink, CSVDownload} from "react-csv";
+import {dateToDEFormat, Sleep} from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
 
 
 
 export class Ag extends React.Component{
+    csvLink = React.createRef()
     constructor(props){
         super(props);
         this.target = document.getElementById('ag-data');
         this.fetchMitglieder = this.fetchMitglieder.bind(this);
+        this.fetchContactData = this.fetchContactData.bind(this);
+        this.fetchContactDataCompliment = this.fetchContactDataCompliment.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.customRender = this.customRender.bind(this);
         this.onEdit = this.onEdit.bind(this);
+        this.generateCSV = this.generateCSV.bind(this);
         this.state = {
             editing: false,
             clicked: false,
@@ -29,6 +33,8 @@ export class Ag extends React.Component{
                 email: this.props.email,
             },
             mitglieder:[],
+            csvFilename: '',
+            csvData: []
         }
     }
 
@@ -40,6 +46,24 @@ export class Ag extends React.Component{
             },
           }))
       }
+
+    async fetchContactData(person_id){
+    return (
+    await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/contactData`, {
+        params: {
+            person_id: person_id,
+        },
+        }))
+    }
+
+    async fetchContactDataCompliment(idsArr){
+        return (
+        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/contactDataCompliment`, {
+            params: {
+                ids: idsArr,
+            },
+            }))
+        }
 
     onEdit(){
         //this.props.updateStateAfterEdit();
@@ -72,6 +96,15 @@ export class Ag extends React.Component{
     
                 <div>
                     <button onClick={this.onEdit}>Switch to Edit View</button>
+                    <button onClick={this.generateCSV}>Mailing Liste</button>
+                    <CSVLink 
+                        data={this.state.csvData} 
+                        filename= {this.state.csvFilename}
+                        className="hidden"
+                        ref={this.csvLink}
+                        target="_blank"
+                        hidden
+                        >Download me</CSVLink>
                     <div className='entity-data-left'>
                         <table>
                             <thead>
@@ -121,15 +154,95 @@ export class Ag extends React.Component{
         this.setState({loading: true}, () => {
         this.fetchMitglieder(this.state.core_data.arbeitsgruppe_id)
         .then(result => {
-            console.log(result.data)
+            //console.log(result.data)
              this.setState({
                  mitglieder: result.data,
                  })})
         },
         this.setState({loading:false}),
         this.setState({clicked: true}),
-        console.log(this.state.mitglieder)
+        //console.log(this.state.mitglieder)
         )
+    }
+
+    async generateCSV() {
+        
+        let data =[
+                    ["aktuelle Mitglieder in:", this.state.core_data.bezeichnung],
+                    ["Rufname", "E-Mail Addresse"],
+                ]
+        
+        this.state.mitglieder.forEach(mitglied =>{
+            let lineArray = [];
+            var resultObject = {};
+            
+
+            //einzutragende Mitglieder
+            this.setState({loading: true}, () => {
+                this.fetchContactData(mitglied.person_id)
+                .then(result => {
+                    Object.assign(resultObject, result.data[0])
+                    lineArray.push(mitglied.rufname)
+
+                    if (resultObject.email_1) lineArray.push(resultObject.email_1)
+                    else if (resultObject.email_2) lineArray.push(resultObject.email_2)
+                    else lineArray.push("Keine E-Mail Addressen vorhanden!")
+                })
+        
+                
+                },
+                this.setState({loading:false}),
+                )
+
+                data.push(lineArray)
+                
+                
+
+        })
+
+        //auszutragende Mitglieder
+        data.push([" ", " "])
+        data.push(["auszutragende Mitglieder in:", this.state.core_data.bezeichnung])
+
+        let mitgliederIdArr = [];
+        
+        this.state.mitglieder.forEach(mitglied =>{
+            mitgliederIdArr.push(mitglied.person_id)
+        })
+        
+        //console.log(mitgliederIdArr)
+        this.setState({loading: true}, () => {
+            this.fetchContactDataCompliment(mitgliederIdArr)
+            .then(result => {
+                //console.log(result.data)
+                for (let i = 0; i < result.data.length; i++) 
+                {   
+                    let lineArray = [];
+                    lineArray.push(result.data[i].rufname)
+
+                    if (result.data[i].email_1) lineArray.push(result.data[i].email_1)
+                    else if (result.data[i].email_2) lineArray.push(result.data[i].email_2)
+                    else lineArray.push("Keine E-Mail Addressen vorhanden!")
+
+                    //console.log(lineArray)
+                    data.push(lineArray)
+                }
+            })
+    
+            
+            },
+            this.setState({loading:false}),
+        )
+        
+
+
+
+        await Sleep(1000);
+        this.setState({csvData: data, csvFilename: `maillingList_${this.state.core_data.bezeichnung}_${dateToDEFormat(new Date(this.defaultDateValue))}` + ".csv"})
+        
+        //console.log(this.state.csvData)
+
+        this.csvLink.current.link.click()   
     }
 
 

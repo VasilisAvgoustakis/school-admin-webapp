@@ -17,7 +17,7 @@ export function KontaktDaten(props) {
                 </tr>
             </thead>
             <tbody>
-                <tr colSpan="5" style={{position:'absolute'}, {width:'100%'}}>
+                <tr colSpan="5" style={({position:'absolute', width:'100%'})}>
                     <td><strong>Keine Kontaktdaten vorhanden!</strong></td>
                 </tr>
             </tbody>

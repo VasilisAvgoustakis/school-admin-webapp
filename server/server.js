@@ -369,6 +369,31 @@ WHERE
   });
 });
 
+app.get('/contactDataCompliment', (req, res) => {
+  const ids = req.query;
+  console.log(ids)
+  pool.query(`SELECT
+  kontakt_daten.email_1,
+  kontakt_daten.email_2,
+  personen.rufname
+FROM
+  kontakt_daten
+INNER JOIN 
+  personen ON personen.person_id = kontakt_daten.person_id
+WHERE
+  kontakt_daten.person_id NOT IN ? ;`, [Object.values(ids)],
+  
+  (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      //console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
 
 app.get('/addresses', (req, res) => {
   const { person_id } = req.query;
