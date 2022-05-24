@@ -240,7 +240,8 @@ export class EditPerson extends React.Component{
             res.data.forEach(haus => {
                 //console.log(person.rufname)
                 haushalte.push(
-                    Object.create({haushalt_id:haus.haushalt_id, 
+                    Object.create({haushalt_id:haus.haushalt_id,
+                                bez: haus.bezeichnung, 
                                 strasse:haus.strasse,
                                 plz:haus.postleitzahl}))
                 
@@ -624,7 +625,13 @@ export class EditPerson extends React.Component{
                                     <option defaultValue="true" value=''>-</option>
 
                                     {this.state.probableHaushalte.map((haus) => 
-                                    <option key={uuidv4()} value={haus.haushalt_id}>{haus.strasse +' ' + haus.plz}</option>)}
+                                    <option 
+                                        key={uuidv4()} 
+                                        value={haus.haushalt_id}
+                                    >
+                                        {haus.bez ? (haus.bez +  " "+ haus.strasse + ' ' + haus.plz)
+                                        :
+                                        (haus.strasse +' ' + haus.plz)}</option>)}
                                     
                                 </select>
                                 <label>Meldeanschrift: </label>
