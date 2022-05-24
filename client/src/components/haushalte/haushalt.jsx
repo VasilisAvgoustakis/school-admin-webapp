@@ -186,7 +186,13 @@ export class Haushalt extends React.Component{
         id={this.state.core_data.haushalt_id + this.state.core_data.plz}
         onClick={this.handleClick} >
               
-            {this.state.core_data.strasse +' ' + this.state.core_data.plz}
+            {this.state.core_data.bezeichnung ? ("("+ this.state.core_data.bezeichnung+")" 
+            + " " +this.state.core_data.strasse +' ' 
+            + this.state.core_data.plz)
+            :
+            (this.state.core_data.strasse +' ' 
+            + this.state.core_data.plz)  
+            }
         </li>
         
       )
