@@ -375,6 +375,7 @@ app.get('/contactDataCompliment', (req, res) => {
   pool.query(`SELECT
   kontakt_daten.email_1,
   kontakt_daten.email_2,
+  kontakt_daten.email_fsx,
   personen.rufname
 FROM
   kontakt_daten

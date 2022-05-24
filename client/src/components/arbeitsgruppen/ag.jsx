@@ -14,6 +14,8 @@ export class Ag extends React.Component{
     csvLink = React.createRef()
     constructor(props){
         super(props);
+        this.today = new Date();
+        this.defaultDateValue = this.today.getFullYear()+'-'+(this.today.getMonth()+1)+'-'+ this.today.getDate();
         this.target = document.getElementById('ag-data');
         this.fetchMitglieder = this.fetchMitglieder.bind(this);
         this.fetchContactData = this.fetchContactData.bind(this);
@@ -168,25 +170,32 @@ export class Ag extends React.Component{
     async generateCSV() {
         
         let data =[
-                    ["aktuelle Mitglieder in:", this.state.core_data.bezeichnung],
-                    ["Rufname", "E-Mail Addresse"],
+                    ["aktuelle Mitglieder in:", this.state.core_data.bezeichnung]
+                    //['"Rufname" <E-Mail Addresse>']
                 ]
         
         this.state.mitglieder.forEach(mitglied =>{
+
             let lineArray = [];
             var resultObject = {};
             
-
             //einzutragende Mitglieder
             this.setState({loading: true}, () => {
                 this.fetchContactData(mitglied.person_id)
                 .then(result => {
                     Object.assign(resultObject, result.data[0])
-                    lineArray.push(mitglied.rufname)
 
-                    if (resultObject.email_1) lineArray.push(resultObject.email_1)
-                    else if (resultObject.email_2) lineArray.push(resultObject.email_2)
-                    else lineArray.push("Keine E-Mail Addressen vorhanden!")
+
+                    let email = '';
+
+                    if (resultObject.email_fsx) email = resultObject.email_fsx;
+                    else if (resultObject.email_1) email = resultObject.email_1;
+                    else if (resultObject.email_2) email = resultObject.email_2;
+                    else email = '';
+
+                    lineArray.push(mitglied.rufname + " " + "<" + email + ">")
+
+                    
                 })
         
                 
@@ -218,11 +227,12 @@ export class Ag extends React.Component{
                 for (let i = 0; i < result.data.length; i++) 
                 {   
                     let lineArray = [];
-                    lineArray.push(result.data[i].rufname)
+                    //lineArray.push(result.data[i].rufname)
 
-                    if (result.data[i].email_1) lineArray.push(result.data[i].email_1)
+                    if (result.data[i].email_fsx) lineArray.push(result.data[i].email_fsx)
+                    else if (result.data[i].email_1) lineArray.push(result.data[i].email_1)
                     else if (result.data[i].email_2) lineArray.push(result.data[i].email_2)
-                    else lineArray.push("Keine E-Mail Addressen vorhanden!")
+                    else lineArray.push("")
 
                     //console.log(lineArray)
                     data.push(lineArray)
