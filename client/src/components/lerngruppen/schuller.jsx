@@ -24,9 +24,10 @@ class SchullerRow extends React.Component{
             
             this.state.data.map(schullerRow => (
                 <tr key={uuidv4()} onClick={this.clickPerson} className="clickable-list-item">
-                    {schullerRow.person_id ? (<td>{schullerRow.person_id}</td>):(<td> -- </td>)}
-                    {schullerRow.rufname ? (<td>{schullerRow.rufname}</td>):(<td> -- </td>)}
-                    {schullerRow.nachname ? (<td>{schullerRow.nachname}</td>):(<td> -- </td>)}
+                    {/* {schullerRow.person_id ? (<td>{schullerRow.person_id}</td>):(<td> -- </td>)} */}
+                    {schullerRow.rufname ? (<td>{schullerRow.rufname + " " + (schullerRow.nachname ? (schullerRow.nachname):("")) }</td>)
+                    :
+                    (<td> -- </td>)}
                     {schullerRow.eintrittsdatum ? (<td>{dateToDEFormat(new Date(schullerRow.eintrittsdatum))}</td>):(<td> -- </td>)}
                 </tr>
                 
@@ -64,9 +65,10 @@ export function Schuller(props){
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>Id</strong></td>
+                    {/* <td><strong>Id</strong></td>
                     <td><strong>Rufname</strong></td>
-                    <td><strong>Nachname</strong></td>
+                    <td><strong>Nachname</strong></td> */}
+                    <td><strong>Kind</strong></td>
                     <td><strong>Eintrittsdatum</strong></td>
                 </tr>
                 {/* Hier comes the address row element */}

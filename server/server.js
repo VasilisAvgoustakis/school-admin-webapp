@@ -2330,11 +2330,12 @@ app.get('/job_roles', (req, res) => {
 app.get('/simpleList', (req, res) => {
   const { group, date } = req.query;
   
-  console.log(group + date)
+  console.log(group + " " + date)
   pool.query(
   `SELECT DISTINCT
   *
-  FROM (SELECT 
+  FROM 
+  (SELECT 
     personen.rufname AS Rufname,
         @jahrgang:=FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365) + 1 + COALESCE((SELECT 
                 SUM(jahrgangswechsel.wert)
@@ -2346,14 +2347,14 @@ app.get('/simpleList', (req, res) => {
         lerngruppen.bezeichnung AS Lerngruppe,
         kind_lerngruppe.eintrittsdatum,
         kind_daten.*
-FROM
+  FROM
     personen
-INNER JOIN kind_schule ON personen.person_id = kind_schule.person_id
-INNER JOIN kind_lerngruppe ON personen.person_id = kind_lerngruppe.person_id
-INNER JOIN lerngruppen ON kind_lerngruppe.lerngruppe_id = lerngruppen.lerngruppe_id
-INNER JOIN kind_daten ON personen.person_id = kind_daten.person_id
-WHERE
-    kind_schule.zugangsdatum_zur_fsx <= '${date}'
+  INNER JOIN kind_schule ON personen.person_id = kind_schule.person_id
+  INNER JOIN kind_lerngruppe ON personen.person_id = kind_lerngruppe.person_id
+  INNER JOIN lerngruppen ON kind_lerngruppe.lerngruppe_id = lerngruppen.lerngruppe_id
+  INNER JOIN kind_daten ON personen.person_id = kind_daten.person_id
+  WHERE
+        kind_schule.zugangsdatum_zur_fsx <= '${date}'
         AND kind_lerngruppe.eintrittsdatum = (SELECT 
             MAX(kind_lerngruppe.eintrittsdatum)
         FROM
@@ -2374,7 +2375,7 @@ ORDER BY Jahrgangsstufe ASC , Rufname ASC;`, (err, results) => {
       console.log(err)
       return res.send(err);
     } else {
-      //console.log(results)
+      console.log(results)
       return res.send(results);
     }
   });
