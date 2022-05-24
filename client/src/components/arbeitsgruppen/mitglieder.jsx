@@ -24,9 +24,15 @@ class MitgliederRow extends React.Component{
             
             this.state.data.map(mitgliederRow => (
                 <tr key={uuidv4()} onClick={this.clickPerson} className="clickable-list-item">
-                    {mitgliederRow.person_id ? (<td>{mitgliederRow.person_id}</td>):(<td> -- </td>)}
-                    {mitgliederRow.rufname ? (<td>{mitgliederRow.rufname}</td>):(<td> -- </td>)}
-                    {mitgliederRow.nachname ? (<td>{mitgliederRow.nachname}</td>):(<td> -- </td>)}
+                    {/* {mitgliederRow.person_id ? (<td>{mitgliederRow.person_id}</td>):(<td> -- </td>)} */}
+                    {mitgliederRow.rufname ? (<td>
+                        {mitgliederRow.rufname + " "}
+                        {mitgliederRow.nachname ? (mitgliederRow.nachname + " "):(" ")}
+                        {mitgliederRow.koordination_der_ag ? ("(Koordination)"): ("")}
+                        </td>)
+                        :
+                        (<td> -- </td>)}
+                    
                 </tr>
                 
             )) 
@@ -62,11 +68,11 @@ export function Mitglieder(props){
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                {/* <tr>
                     <td><strong>Id</strong></td>
                     <td><strong>Rufname</strong></td>
                     <td><strong>Nachname</strong></td>
-                </tr>
+                </tr> */}
                 {/* Hier comes the address row element */}
                 
                     {props.mietglieder.map(mietglied => (

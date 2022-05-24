@@ -2064,7 +2064,8 @@ app.get('/ag_mitglieder', (req, res) => {
   `SELECT
     personen.person_id,
     personen.rufname,
-    personen.nachname
+    personen.nachname,
+    person_arbeitsgruppe.koordination_der_ag
   FROM
     personen
   INNER JOIN
