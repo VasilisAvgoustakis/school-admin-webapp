@@ -432,7 +432,8 @@ app.get('/arb_grp', (req, res) => {
   person_arbeitsgruppe.datum_mitgliedschaftsbeginn,
   person_arbeitsgruppe.datum_mitgliedschaftsende,
   arbeitsgruppen.bezeichnung,
-  arbeitsgruppen.email
+  arbeitsgruppen.email,
+  arbeitsgruppen.arbeitsgruppe_id
 FROM
   personen
       INNER JOIN
