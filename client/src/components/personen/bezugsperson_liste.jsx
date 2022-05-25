@@ -16,15 +16,13 @@ class ListRow extends React.Component{
         }
     }
 
-
     clinkPerson(){
-        document.getElementById(this.state.data[0].person_id.toString()).click()
+        document.getElementById(this.state.data[0].person_id).click()
     }
 
-    
 
     render(){
-        //console.log(this.state.data[0].person_id.toString())
+    
         return(
             this.state.data.map(bezugspersonenRow => (
                 <tr key={uuidv4()} onClick={this.clinkPerson} className="clickable-list-item">
@@ -43,7 +41,6 @@ class ListRow extends React.Component{
 }
 
 
-
 export function Bezugspersonen(props){
     
     return(
@@ -57,7 +54,7 @@ export function Bezugspersonen(props){
                 </tr>
             </thead>
             <tbody>
-                <tr colSpan="2" style={{position:'absolute'}, {width:'100%'}}>
+                <tr colSpan="2" style={({position:'absolute', width:'100%'})}>
                     <td><strong>Keine Bezugspersonen gefunden!</strong></td>
                 </tr>
             </tbody>

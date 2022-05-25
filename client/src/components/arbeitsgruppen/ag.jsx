@@ -183,6 +183,7 @@ export class Ag extends React.Component{
             this.setState({loading: true}, () => {
                 this.fetchContactData(mitglied.person_id)
                 .then(result => {
+                    
                     Object.assign(resultObject, result.data[0])
 
 
@@ -250,7 +251,7 @@ export class Ag extends React.Component{
         await Sleep(1000);
         this.setState({csvData: data, csvFilename: `maillingList_${this.state.core_data.bezeichnung}_${dateToDEFormat(new Date(this.defaultDateValue))}` + ".csv"})
         
-        //console.log(this.state.csvData)
+        console.log(this.state.csvData)
 
         this.csvLink.current.link.click()   
     }
