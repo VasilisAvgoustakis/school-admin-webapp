@@ -2333,7 +2333,7 @@ app.get('/jobsList', (req, res) => {
   // const { person_id } = req.query;
   let table = req.query.table;
   let column = req.query.column;
-  console.log(table, column)
+  //console.log(table, column)
   pool.query(
   `SELECT distinct
       ${column}
@@ -2379,6 +2379,81 @@ app.get('/job_roles', (req, res) => {
       return res.send(err);
     } else {
       // //console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+
+app.get('/teamContacts', (req, res) => {
+  const [job1, job2, job3] = req.query.teamJobs;
+  const kollektiv = req.query.kollektiv;
+  //console.log(job1, job2, job3)
+  pool.query(
+  `SELECT
+    taetigkeit.person_id,
+    personen.rufname,
+    taetigkeit.taetigkeit,
+    kontakt_daten.email_1,
+    kontakt_daten.email_2,
+    kontakt_daten.email_fsx
+  FROM
+    personen
+  INNER JOIN
+    taetigkeit on personen.person_id = taetigkeit.person_id
+  INNER JOIN
+    kontakt_daten ON taetigkeit.person_id = kontakt_daten.person_id
+  where 
+    IF (${kollektiv} = 'false',
+    (taetigkeit.taetigkeit = '${job1}' OR taetigkeit.taetigkeit = '${job2}' OR taetigkeit.taetigkeit = '${job3}'),
+    taetigkeit.typ = 'Kollektiv')
+  ORDER BY
+    personen.rufname ASC
+  ;`, 
+  
+  (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
+      return res.send(results);
+    }
+  });
+});
+
+app.get('/teamContactsCompliment', (req, res) => {
+  const [job1, job2, job3] = req.query.teamJobs;
+  const kollektiv = req.query.kollektiv;
+  console.log(job1, job2, job3)
+  pool.query(
+  `SELECT
+    taetigkeit.person_id,
+    personen.rufname,
+    taetigkeit.taetigkeit,
+    kontakt_daten.email_1,
+    kontakt_daten.email_2,
+    kontakt_daten.email_fsx
+  FROM
+    personen
+  INNER JOIN
+    taetigkeit on personen.person_id = taetigkeit.person_id
+  INNER JOIN
+    kontakt_daten ON taetigkeit.person_id = kontakt_daten.person_id
+  where 
+    IF (${kollektiv} = 'false',
+    (taetigkeit.taetigkeit <> '${job1}' AND taetigkeit.taetigkeit <> '${job2}' AND taetigkeit.taetigkeit <> '${job3}'),
+    taetigkeit.typ <> 'Kollektiv')
+  ORDER BY
+    personen.rufname ASC
+  ;`, 
+  
+  (err, results) => {
+    if (err) {
+      console.log(err)
+      return res.send(err);
+    } else {
+      console.log(results)
       return res.send(results);
     }
   });

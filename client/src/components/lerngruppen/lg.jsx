@@ -251,11 +251,8 @@ export class Lg extends React.Component{
                         //console.log(bezugspersonContactData)
                         lineArray.push(bezugspersonContactData.contactMail)
                         data.push(lineArray)
-                    }
-                    
-                    
+                    }  
                 }
-                
             })
     
             
@@ -264,12 +261,8 @@ export class Lg extends React.Component{
         )
         
 
-        
-
         await Sleep(1000);
         this.setState({csvData: data, csvFilename: `maillingList_${this.state.core_data.bezeichnung}_${dateToDEFormat(new Date(this.defaultDateValue))}` + ".csv"})
-        //console.log(data)
-        //console.log(this.state.csvData)
 
         this.csvLink.current.link.click()   
     }
