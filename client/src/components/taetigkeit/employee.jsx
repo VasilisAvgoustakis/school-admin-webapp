@@ -31,9 +31,9 @@ class EmployeeRow extends React.Component{
             
             this.state.data.map(employeeRow => (
                 <tr key={uuidv4()} onClick={this.clickPerson} className="clickable-list-item">
-                    {employeeRow.person_id ? (<td>{employeeRow.person_id}</td>):(<td> -- </td>)}
-                    {employeeRow.rufname ? (<td>{employeeRow.rufname}</td>):(<td> -- </td>)}
-                    {employeeRow.nachname ? (<td>{employeeRow.nachname}</td>):(<td> -- </td>)}
+                    {/* {employeeRow.person_id ? (<td>{employeeRow.person_id}</td>):(<td> -- </td>)} */}
+                    {employeeRow.rufname ? (<td>{employeeRow.rufname + " " + employeeRow.nachname}</td>):(<td> -- </td>)}
+                    {/* {employeeRow.nachname ? (<td>{employeeRow.nachname}</td>):(<td> -- </td>)} */}
                     {employeeRow.taetigkeit_beginn ? (<td>{dateToDEFormat(new Date(employeeRow.taetigkeit_beginn))}</td>):(<td> -- </td>)}
                     {employeeRow.taetigkeit_ende ? (<td>{dateToDEFormat(new Date(employeeRow.taetigkeit_ende))}</td>):(<td> -- </td>)}
                     {employeeRow.taetigkeit ? (<td>{this.replaceAllChars(this.replaceAllChars(employeeRow.taetigkeit,'ae', 'ä'),'ue', 'ü')}</td>):(<td> -- </td>)}
@@ -74,9 +74,9 @@ export function Employee(props){
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>Id</strong></td>
-                    <td><strong>Rufname</strong></td>
-                    <td><strong>Nachname</strong></td>
+                    {/* <td><strong>Id</strong></td> */}
+                    <td><strong>Rufname Nachname</strong></td>
+                    {/* <td><strong>Nachname</strong></td> */}
                     <td><strong>Beginn</strong></td>
                     <td><strong>Ende</strong></td>
                     <td><strong>Tätigkeit</strong></td>
