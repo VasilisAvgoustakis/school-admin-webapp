@@ -179,7 +179,7 @@ export class SimpleList extends React.Component{
     clickPerson(e){
         this.props.navi('Personen')
         let target = e.target.id
-        //console.log(targeted)
+        //console.log(this.state.data[target])
         document.getElementById(this.state.data[target].person_id).click();
     }
 
@@ -243,6 +243,7 @@ export class SimpleList extends React.Component{
                                     className="clickable-list-item"
                                     onClick={this.clickPerson} 
                                     >
+                                        <td style={{width:'05%'}} id = {studentIndex}>{Number(studentIndex) + 1}</td>
                                         <td style={{width:'10%'}} id = {studentIndex}>{Rufname}</td>
                                         <td id = {studentIndex}>{Jahrgangsstufe}</td>
                                         <td id = {studentIndex}>{Lerngruppe}</td>

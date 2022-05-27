@@ -2466,43 +2466,57 @@ app.get('/simpleList', (req, res) => {
   const { group, date } = req.query;
   
   console.log(group + " " + date)
+
   pool.query(
   `SELECT DISTINCT
   *
   FROM 
+
   (SELECT 
     personen.rufname AS Rufname,
-        @jahrgang:=FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365) + 1 + COALESCE((SELECT 
+        FLOOR(DATEDIFF('${date}', personen.einschulungsdatum) / 365) + 1 + COALESCE((
+            SELECT 
                 SUM(jahrgangswechsel.wert)
             FROM
                 jahrgangswechsel
             WHERE
                 jahrgangswechsel.person_id = personen.person_id
-                    AND jahrgangswechsel.datum <= '${date}'), 0) AS Jahrgangsstufe,
+                  AND 
+                jahrgangswechsel.datum <= '${date}'),
+                0) AS Jahrgangsstufe,       
         lerngruppen.bezeichnung AS Lerngruppe,
         kind_lerngruppe.eintrittsdatum,
         kind_daten.*
   FROM
     personen
-  INNER JOIN kind_schule ON personen.person_id = kind_schule.person_id
-  INNER JOIN kind_lerngruppe ON personen.person_id = kind_lerngruppe.person_id
-  INNER JOIN lerngruppen ON kind_lerngruppe.lerngruppe_id = lerngruppen.lerngruppe_id
-  INNER JOIN kind_daten ON personen.person_id = kind_daten.person_id
+      INNER JOIN 
+    kind_schule ON personen.person_id = kind_schule.person_id
+      INNER JOIN 
+    kind_lerngruppe ON personen.person_id = kind_lerngruppe.person_id
+      INNER JOIN 
+    lerngruppen ON kind_lerngruppe.lerngruppe_id = lerngruppen.lerngruppe_id
+      INNER JOIN 
+    kind_daten ON personen.person_id = kind_daten.person_id
   WHERE
-        kind_schule.zugangsdatum_zur_fsx <= '${date}'
-        AND kind_lerngruppe.eintrittsdatum = (SELECT 
-            MAX(kind_lerngruppe.eintrittsdatum)
-        FROM
-            kind_lerngruppe
-        WHERE
-            kind_lerngruppe.person_id = kind_daten.person_id
-            AND kind_lerngruppe.eintrittsdatum <= '${date}')
-        AND (kind_schule.abgangsdatum_von_fsx IS NULL
-        OR kind_schule.abgangsdatum_von_fsx > '${date}')) AS simpleList
+    kind_schule.zugangsdatum_zur_fsx <= '${date}'
+      AND 
+    kind_lerngruppe.eintrittsdatum = (SELECT 
+                                        MAX(kind_lerngruppe.eintrittsdatum)
+                                      FROM
+                                          kind_lerngruppe
+                                      WHERE
+                                        kind_lerngruppe.person_id = kind_daten.person_id
+                                          AND 
+                                        kind_lerngruppe.eintrittsdatum <= '${date}')
+      AND 
+    (kind_schule.abgangsdatum_von_fsx IS NULL
+    OR kind_schule.abgangsdatum_von_fsx > '${date}')) AS simpleList
 WHERE
-      Jahrgangsstufe < 7
-      AND (((Jahrgangsstufe = ${isNaN(group) ? (0):(group) }
-      XOR Lerngruppe= '${group}') XOR ${group == 'alle' ? (true):(false)}
+    Jahrgangsstufe < 7
+      AND 
+      (((Jahrgangsstufe = ${isNaN(group) ? (0):(group) }
+          XOR 
+        Lerngruppe= '${group}') XOR ${group == 'alle' ? (true):(false)}
       ))
       
 ORDER BY Jahrgangsstufe ASC , Rufname ASC;`, (err, results) => {
