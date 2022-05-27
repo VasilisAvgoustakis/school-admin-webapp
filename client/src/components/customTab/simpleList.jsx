@@ -27,6 +27,7 @@ export class SimpleList extends React.Component{
         this.showData = this.showData.bind(this);
         this.generatePDF = this.generatePDF.bind(this);
         this.generateCSV = this.generateCSV.bind(this);
+        this.clickPerson = this.clickPerson.bind(this);
         
         
         this.state = {
@@ -76,7 +77,11 @@ export class SimpleList extends React.Component{
             <Anwesenheitsliste 
                 id= {'anwesenheitsTable'} 
                 selectedDate= {this.state.selectedDate} 
-                data= {this.state.data} />, document.getElementById('hiddenTable')
+                data= {this.state.data} 
+                navi={this.props.navi}
+                />, document.getElementById('hiddenTable')
+
+
             ))
 
           
@@ -171,9 +176,15 @@ export class SimpleList extends React.Component{
         x.document.close();
     }
 
+    clickPerson(e){
+        this.props.navi('Personen')
+        let target = e.target.id
+        //console.log(targeted)
+        document.getElementById(this.state.data[target].person_id).click();
+    }
 
     render(){
-        console.log(this.csvFilename)
+        //console.log(this.state.data)
         return(
             <div className='simple-list-cont'>
                 <div>
@@ -222,14 +233,19 @@ export class SimpleList extends React.Component{
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.data.map((student, index) => {
+                            {this.state.data.map((student) => {
                                 const { Rufname, Jahrgangsstufe, Lerngruppe} = student
-                                //console.log(student)
+                                let studentIndex = this.state.data.indexOf(student).toString()
+                                //console.log(studentIndex)
                                 return (
-                                    <tr key={uuidv4+Rufname}>
-                                        <td style={{width:'10%'}}>{Rufname}</td>
-                                        <td>{Jahrgangsstufe}</td>
-                                        <td>{Lerngruppe}</td>
+                                    <tr key={uuidv4+Rufname} 
+                                    id = {studentIndex}
+                                    className="clickable-list-item"
+                                    onClick={this.clickPerson} 
+                                    >
+                                        <td style={{width:'10%'}} id = {studentIndex}>{Rufname}</td>
+                                        <td id = {studentIndex}>{Jahrgangsstufe}</td>
+                                        <td id = {studentIndex}>{Lerngruppe}</td>
                             
                                     </tr>
                                 )

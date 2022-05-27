@@ -1,5 +1,6 @@
 import React from 'react';
 import dateToDEFormat from '../../globalFunctions'
+import '../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
 import { jsPDF } from "jspdf";
 
@@ -7,12 +8,15 @@ import { jsPDF } from "jspdf";
 export class CustomCell extends React.Component {
     constructor(props){
         super(props);
+
         this.state={
             dayCode: this.props.dayCode,
             content: this.props.content,
             abbr: this.props.abbr
         }
     }
+
+    
 
     render(){
         return(
@@ -30,6 +34,7 @@ export class CustomCell extends React.Component {
 export class Anwesenheitsliste extends React.Component {
     constructor(props){
         super(props);
+        
         this.getDaysInMonth = this.getDaysInMonth.bind(this);
         this.dateToListeFormat = this.dateToListeFormat.bind(this);
         this.state={
@@ -72,7 +77,8 @@ export class Anwesenheitsliste extends React.Component {
         }
         return days;
         }
-        
+    
+    
     
     render() {
         // console.log(this.state.data)
@@ -112,7 +118,7 @@ export class Anwesenheitsliste extends React.Component {
                                 {this.state.data.map((student, index) => {
                                     const { Rufname, Jahrgangsstufe, Lerngruppe, Etage} = student
                                     return (
-                                        <tr key={uuidv4()}>
+                                        <tr key={uuidv4()} >
                                             <td abbr={Jahrgangsstufe} accessKey= 'mustNotBeZero' style={{width:'10%'}}>{Rufname}</td>
                                             <td abbr={Jahrgangsstufe} accessKey= 'mustNotBeZero'>{Jahrgangsstufe}</td>
                                             <td abbr={Jahrgangsstufe} accessKey= 'mustNotBeZero'>{Lerngruppe}</td>
@@ -126,6 +132,7 @@ export class Anwesenheitsliste extends React.Component {
                                                         key={uuidv4()} 
                                                         dayCode= {day[1]} 
                                                         abbr={Jahrgangsstufe}
+                                                        navi={this.props.navi}
                                                         />
                                                 
                                                 )

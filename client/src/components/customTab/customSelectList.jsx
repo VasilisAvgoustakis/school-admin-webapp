@@ -43,19 +43,11 @@ export class CustomSelectList extends Component{
   }
 
   componentDidUpdate(){
-    //console.log(this.state.customQuery)
-    //perhpas a switch statement will be better for later
-    // if(this.state.customQuery = 'sl'){
-    //     ReactDOM.render(<SimpleList />, document.getElementById("custom-data"));
-    // }
-    // else if(this.state.customQuery = 'sb'){
-    //   ReactDOM.render(<p>Here comes the bewegung scomponen</p>, document.getElementById("custom-data"));
-    // }
 
     switch (this.state.customQuery) {
       case 'sl':
         console.log(this.state.customQuery);
-        ReactDOM.render(<SimpleList />, document.getElementById("custom-data"));
+        ReactDOM.render(<SimpleList navi={this.props.navi}/>, document.getElementById("custom-data"));
         break;
       case 'sb':
         console.log(this.state.customQuery);

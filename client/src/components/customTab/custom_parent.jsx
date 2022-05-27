@@ -5,13 +5,14 @@ import '../stylesheets/globalstyles.css'
 
 
 
-export function CustomScreen() {
+export function CustomScreen({ navigation: { navigate }}) {
   axios.defaults.withCredentials = true;
 
   return (
       
       <div className='main-entity-data-cont'>
-        <CustomSelectList  />
+        <CustomSelectList 
+        navi={navigate} />
       </div>
   );
 }
