@@ -121,7 +121,11 @@ export class EditHaus extends React.Component{
                     window.alert(res.data);
                 }else{
                     confirm = false;
-                    if(!confirm)window.location.reload();
+                    if(!confirm){
+                        sessionStorage.setItem("lastLocation", "Haushalte")
+                        sessionStorage.setItem("lastId", this.state.haushalt_id+this.state.plz)
+                        window.location.reload();
+                    }
                 }
             }).catch(err =>{console.log(err)})
             }
@@ -146,8 +150,12 @@ export class EditHaus extends React.Component{
                 console.log("confirm")
                 confirm = false;
                 //last delete query refreshes the page
-                if(!confirm)window.location.reload()
-                console.log(result)
+                if(!confirm){
+                    sessionStorage.setItem("lastLocation", "Haushalte")
+                    sessionStorage.setItem("lastId", this.state.haushalt_id+this.state.plz)
+                    window.location.reload()
+                    //console.log(result)
+                }
             });
     }
     }

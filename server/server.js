@@ -67,10 +67,23 @@ app.use(session({
       //sameSite: 'None',
       //secure: "development",
       httpOnly: true
-  }
+  },
+  lastLocation: '',
+  lastId:''
 }))
 
+app.get("/lastLocation", (req, res) => {
+  ssn = req.session;
+  const tab = req.query.tab;
+  const id = req.query.person_id;
 
+  //console.log("Test: ", tab, id)
+  ssn.lastLocation = tab;
+  ssn.lastId = id;
+  
+  console.log(ssn.lastLocation)
+  console.log(ssn.lastId)
+});
 
 
 

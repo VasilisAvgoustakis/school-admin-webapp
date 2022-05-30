@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 
+
 export class EditPerson extends React.Component{
     constructor(props){
         super(props);
@@ -24,6 +25,7 @@ export class EditPerson extends React.Component{
         this.deleteQueryKind = this.deleteQueryKind.bind(this);
         this.deletePersonData = this.deletePersonData.bind(this);
         this.deleteKindData = this.deleteKindData.bind(this);
+        // this.sendLocationToServer = this.sendLocationToServer.bind(this);
 
         
         this.state = {
@@ -391,8 +393,16 @@ export class EditPerson extends React.Component{
         
 
 
-      }
+    }
 
+    // sendLocationToServer(){
+    //     axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lastLocation`, {
+    //        params: {
+    //            tab: "Personen",
+    //            person_id: this.state.person_id
+    //        } 
+    //   })
+    // }
     
     // edits DB for changed data in the form
     editData(){
@@ -417,8 +427,15 @@ export class EditPerson extends React.Component{
                 }else{
                     //console.log("confirm")
                     confirm = false;
-                    if(!confirm)window.location.reload();
+                    if(!confirm){
+                        //this.sendLocationToServer()
+                        sessionStorage.setItem("lastLocation", "Personen")
+                        sessionStorage.setItem("lastId", this.state.person_id)
+                        window.location.reload();
+
+                        //this.componentDidMount();
                     //console.log(res);
+                    }
                 }
             }).catch(err =>{console.log(err)})
             }
@@ -473,8 +490,12 @@ export class EditPerson extends React.Component{
                 console.log("confirm")
                 confirm = false;
                 //last delete query refreshes the page
-                if(!confirm)window.location.reload()
-                console.log(result)
+                if(!confirm){
+                    sessionStorage.setItem("lastLocation", "Personen")
+                    sessionStorage.setItem("lastId", this.state.person_id)
+                    window.location.reload()
+                    //console.log(result)
+                }
             });
     }
     }

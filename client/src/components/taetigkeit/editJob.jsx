@@ -29,8 +29,8 @@ export class EditJob extends React.Component{
             // person_id: this.props.person_id ? (this.props.person_id):(''),
             taetigkeit_beginn: this.props.taetigkeit_beginn ? (this.props.taetigkeit_beginn):(''),
             taetigkeit_ende: this.props.taetigkeit_ende ? (this.props.taetigkeit_ende):(''),
-            typ: this.props.typ ? (this.props.typ):(''),
-            taetigkeit: this.props.taetigkeit ? (this.props.taetigkeit):(''),
+            typ: this.props.typ ? (this.props.typ):('Kollektiv'),
+            taetigkeit: this.props.taetigkeit ? (this.props.taetigkeit):('Lehrkraefte mit Unterrichtsbefaehigung'),
 
             //Mitglieder
             mitgliedToBeAdded: '',
@@ -107,7 +107,13 @@ export class EditJob extends React.Component{
                     window.alert(res.data);
                 }else{
                     confirm = false;
-                    if(!confirm)window.location.reload();
+                    if(!confirm){
+                        sessionStorage.setItem("lastLocation", "Tätigkeiten")
+                        //console.log(this.props.nameId)
+                        sessionStorage.setItem("lastId", this.props.nameId)
+                        window.location.reload();
+                        
+                    }
                 }
             }).catch(err =>{console.log(err)})
             }
@@ -132,8 +138,12 @@ export class EditJob extends React.Component{
                 console.log("confirm")
                 confirm = false;
                 //last delete query refreshes the page
-                if(!confirm)window.location.reload()
-                console.log(result)
+                if(!confirm){
+                    sessionStorage.setItem("lastLocation", "Tätigkeiten")
+                    sessionStorage.setItem("lastId", this.props.nameId)
+                    window.location.reload()
+                    //console.log(result)
+                }
             });
     }
     }
@@ -219,7 +229,7 @@ export class EditJob extends React.Component{
                                 onChange= {this.handleChange}
                                 defaultValue= {this.state.typ}
                                 disabled={this.state.filter=='typ' ? (true):(false)} >
-                                    <option defaultValue value=''>-</option> {/*default option when no data from database for selected person*/}
+                                    {/* <option defaultValue value=''>-</option> default option when no data from database for selected person */}
                                     <option value='Freiwilligendienst'>Freiwilligendienst</option>
                                     <option value='Ehrenamt'>Ehrenamt</option>
                                     <option value='Praktikum'>Praktikum</option>
@@ -235,7 +245,7 @@ export class EditJob extends React.Component{
                                 onChange= {this.handleChange}
                                 defaultValue={this.state.taetigkeit}
                                 disabled={this.state.filter=='job' ? (true):(false)} >
-                                    <option defaultValue value=''>-</option> 
+                                    {/* <option defaultValue value=''>-</option>  */}
                                     <option value='Lehrkraefte mit Unterrichtsbefaehigung'>Lehrkräfte mit Unterrichtsbefähigung</option>
                                     <option value='Lehrkraefte ohne Unterrichtsbefaehigung'>Lehrkräfte ohne Unterrichtsbefähigung</option>
                                     <option value='Sonstige Lehrkraft'>Sonstige Lehrkraft</option>

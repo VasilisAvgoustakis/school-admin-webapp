@@ -69,7 +69,8 @@ export function Employee(props){
         <table>
             <thead>
                 <tr>
-                    <th colSpan="7">Mitarbeiter nach {props.taetigkeit ? ("Tätigkeit"):("Typ")} </th>
+                    <th colSpan="7">Mitarbeiter nach {props.taetigkeit ? ("Tätigkeit: "+ props.name)
+                    :("Typ: "+props.name)} </th>
                 </tr>
             </thead>
             <tbody>

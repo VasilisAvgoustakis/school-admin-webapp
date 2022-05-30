@@ -273,7 +273,7 @@ export class Lg extends React.Component{
         //console.log(this.state.schuller)
       return (
 
-        <li key={uuidv4()} onClick={this.handleClick} >
+        <li id={this.state.core_data.lerngruppe_id+this.state.core_data.bezeichnung} key={uuidv4()} onClick={this.handleClick} >
               
             {this.state.core_data.bezeichnung}
         </li>

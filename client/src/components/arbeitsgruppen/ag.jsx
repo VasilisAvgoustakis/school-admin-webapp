@@ -262,7 +262,7 @@ export class Ag extends React.Component{
         
       return (
 
-        <li key={uuidv4()} onClick={this.handleClick} >
+        <li id={this.state.core_data.arbeitsgruppe_id+this.state.core_data.bezeichnung} key={uuidv4()} onClick={this.handleClick} >
               
             {this.state.core_data.bezeichnung}
         </li>

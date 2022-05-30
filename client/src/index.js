@@ -17,7 +17,7 @@ ReactDOM.render(
         <Routes>
             <Route path='/' element= {<Landing />} />
             <Route path="/dashboard" element={<Navigation />} />
-            {/* <Route path="/popUpPDF" element={<PopUpPDF />} /> */}
+
         </Routes>
     </BrowserRouter>, document.getElementById('root'));
 

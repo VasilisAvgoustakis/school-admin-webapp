@@ -1,4 +1,5 @@
 import React, {useState, useEffect, setRole} from 'react';
+import axios from 'axios';
 import {createMaterialTopTabNavigator}  from "@react-navigation/material-top-tabs";
 import { Personen, PersonSelectList, Logout, PersonenScreen, HaushalteScreen,
 ArbeitsgruppenScreen, LerngruppenScreen, JobsScreen, CustomScreen } from '.';
@@ -9,6 +10,7 @@ import './stylesheets/dashboard.css';
 const Tab = createMaterialTopTabNavigator();
 
 export function Navigation() {
+
   return (
     
     <NavigationContainer >
@@ -20,7 +22,7 @@ export function Navigation() {
           <Tab.Screen name="Haushalte" component={HaushalteScreen} />
           <Tab.Screen name="Arbeitsgruppen" component={ArbeitsgruppenScreen} />
           <Tab.Screen name="Lerngruppen" component={LerngruppenScreen} />
-          <Tab.Screen name="Tätigkeiten" component={JobsScreen} />
+          <Tab.Screen id="jobs_tab" name="Tätigkeiten" component={JobsScreen} />
           <Tab.Screen name="allg. Abfragen" component={CustomScreen} />
         </Tab.Navigator>
       

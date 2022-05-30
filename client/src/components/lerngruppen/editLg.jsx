@@ -115,7 +115,11 @@ export class EditLg extends React.Component{
                     window.alert(res.data);
                 }else{
                     confirm = false;
-                    if(!confirm)window.location.reload();
+                    if(!confirm){
+                        sessionStorage.setItem("lastLocation", "Lerngruppen")
+                        sessionStorage.setItem("lastId", this.state.lerngruppe_id+this.state.bezeichnung)
+                        window.location.reload();
+                    }
                 }
             }).catch(err =>{console.log(err)})
             }
@@ -140,8 +144,12 @@ export class EditLg extends React.Component{
                 console.log("confirm")
                 confirm = false;
                 //last delete query refreshes the page
-                if(!confirm)window.location.reload()
-                console.log(result)
+                if(!confirm){
+                    sessionStorage.setItem("lastLocation", "Lerngruppen")
+                    sessionStorage.setItem("lastId", this.state.lerngruppe_id+this.state.bezeichnung)
+                    window.location.reload()
+                    //console.log(result)
+                }
             });
     }
     }

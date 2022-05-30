@@ -9,6 +9,9 @@ import '../stylesheets/globalstyles.css'
 
 export function PersonenScreen({ navigation: { navigate }}) {
   axios.defaults.withCredentials = true;
+  //var lastLoc = sessionStorage.getItem("lastLocation");
+  //var lastId = sessionStorage.getItem("lastId");
+  
   
 
   return (

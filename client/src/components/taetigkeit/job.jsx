@@ -80,7 +80,7 @@ export class Job extends React.Component{
     customRender(loading){
         if(loading){
             ReactDOM.render(<svg className="spinner" viewBox="0 0 50 50">
-                                <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
+                            <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"></circle>
                             </svg>, document.getElementById('job-data'))
             }else{
 
@@ -94,6 +94,9 @@ export class Job extends React.Component{
                             taetigkeit={this.state.core_data.taetigkeit ? (this.state.core_data.taetigkeit):('')}
                             mitglieder = {this.state.employees ? (this.state.employees):('')}
                             filter= {this.state.filter}
+                            navi={this.props.navi}
+                            nameId={this.state.core_data.name}
+
                         />
                     </div>
                     , document.getElementById('job-data'))):(
@@ -112,12 +115,13 @@ export class Job extends React.Component{
                         hidden
                         >Download me</CSVLink>
 
-                        <Employee
-                            employees={this.state.employees}
-                            taetigkeit={this.props.taetigkeit}
-                            typ={this.props.typ}
-                            navi={this.props.navi}
-                        />
+                    <Employee
+                        employees={this.state.employees}
+                        taetigkeit={this.props.taetigkeit}
+                        typ={this.props.typ}
+                        navi={this.props.navi}
+                        name={this.replaceAllChars(this.replaceAllChars(this.state.core_data.name,'ae', 'ä'),'ue', 'ü')}
+                    />
                 </div>
                 , document.getElementById('job-data')))}
     }
@@ -314,7 +318,7 @@ export class Job extends React.Component{
         //console.log(this.state.core_data.taetigkeit)
       return (
 
-        <li key={uuidv4()} onClick={this.handleClick} >
+        <li id={this.state.core_data.name} key={uuidv4()} onClick={this.handleClick} >
               
             <p style={{textSizeAdjust:'auto'}}>
                 {this.state.core_data.taetigkeit ? 
