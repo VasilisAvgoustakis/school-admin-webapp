@@ -64,8 +64,8 @@ app.use(session({
   secret: "secret",
   cookie: {
       maxAge: 60000,
-      //sameSite: 'None',
-      //secure: "development",
+      // sameSite: 'None',
+      // secure: "production",
       httpOnly: true
   },
   lastLocation: '',
