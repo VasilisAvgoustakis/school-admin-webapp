@@ -54,7 +54,7 @@ export class JobSelectList extends Component{
 
   search(jobName){
     this.setState.searchedJobs = [];
-    // console.log(this.state.searchedJobs);
+    
     const results = [];
     this.state.jobsToList.forEach(function(job){
       const job_credentials = job.taetigkeit + job.typ;
@@ -67,6 +67,8 @@ export class JobSelectList extends Component{
   }
 
   filter(e) {
+    sessionStorage.setItem("filter", e.target.value)
+    
     this.setState({filter: e.target.value})
   }
 
@@ -124,7 +126,7 @@ export class JobSelectList extends Component{
               
           
           <button type='button' value='job' onClick={this.filter}>Tätigkeiten</button>
-          <button type='button' value='typ' onClick={this.filter}>Typen</button>
+          <button type='button' value='typ' id="job_typ_btn" onClick={this.filter}>Typen</button>
           
 
               <ul>

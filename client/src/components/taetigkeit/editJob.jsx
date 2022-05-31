@@ -110,7 +110,7 @@ export class EditJob extends React.Component{
                     if(!confirm){
                         sessionStorage.setItem("lastLocation", "Tätigkeiten")
                         //console.log(this.props.nameId)
-                        sessionStorage.setItem("lastId", this.props.nameId)
+                        sessionStorage.setItem("lastId", this.props.nameId+this.state.filter)
                         window.location.reload();
                         
                     }
@@ -140,7 +140,7 @@ export class EditJob extends React.Component{
                 //last delete query refreshes the page
                 if(!confirm){
                     sessionStorage.setItem("lastLocation", "Tätigkeiten")
-                    sessionStorage.setItem("lastId", this.props.nameId)
+                    sessionStorage.setItem("lastId", this.props.nameId+this.state.filter)
                     window.location.reload()
                     //console.log(result)
                 }

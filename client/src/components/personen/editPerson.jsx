@@ -126,7 +126,7 @@ export class EditPerson extends React.Component{
             typ_m: this.props.typ === "aktiv" ? (this.props.typ):(''),
             mitgliedschaftsende: (this.props.typ === "aktiv" && this.props.mitgliedschaftsende !== null) ? 
                 (dateToENFormat(new Date(this.props.mitgliedschaftsende))):(''),
-            grund_fuer_mitgliedschaftsende: this.props.typ === "aktiv" ? (this.props.grund_fuer_mitgliedschaftsende):(''),
+            grund_fuer_mitgliedschaftsende: this.props.grund_fuer_mitgliedschaftsende ? (this.props.grund_fuer_mitgliedschaftsende):(''),
             mitgliedschaftToBeDeleted: '',
             mitgliedschaftsRecords: [],
 
@@ -502,7 +502,7 @@ export class EditPerson extends React.Component{
    
 
     render(){
-        
+        console.log("grund " , this.state.grund_fuer_mitgliedschaftsende)
         return(
             <div>
                 <button type='button' onClick={this.editData}>Speichern</button>
@@ -1228,7 +1228,7 @@ export class EditPerson extends React.Component{
                                 <select id='typ_m' 
                                 // defaultValue={this.state.typ_m ? (this.state.typ_m):(null)}
                                 onChange= {this.handleChange} >
-                                    <option defaultValue value=''>-</option> default option when no data from database for selected person
+                                     <option defaultValue value=''>-</option>{ /*default option when no data from database for selected person */}
                                     <option value='aktiv'>Aktiv</option>
                                     <option value='foerdernd'>Fördernd</option>
                                 </select>

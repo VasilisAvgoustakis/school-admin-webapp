@@ -315,10 +315,10 @@ export class Job extends React.Component{
 
 
     render() {
-        //console.log(this.state.core_data.taetigkeit)
+        //console.log(this.state.filter)
       return (
 
-        <li id={this.state.core_data.name} key={uuidv4()} onClick={this.handleClick} >
+        <li id={this.state.core_data.name+this.state.filter} key={uuidv4()} onClick={this.handleClick} >
               
             <p style={{textSizeAdjust:'auto'}}>
                 {this.state.core_data.taetigkeit ? 

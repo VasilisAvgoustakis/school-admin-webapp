@@ -354,8 +354,8 @@ export class Person extends React.Component{
 
     
     render() {
-        //console.log(this.state.bezugspersonen)
-        //console.log(this.state.bezugskinder)
+        //console.log(this.state.data.typ)
+        //console.log(this.state.data.grund_fuer_mitgliedschaftsende)
       return (
 
         <li key={uuidv4()} 

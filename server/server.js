@@ -69,7 +69,8 @@ app.use(session({
       httpOnly: true
   },
   lastLocation: '',
-  lastId:''
+  lastId:'',
+  filter:''
 }))
 
 app.get("/lastLocation", (req, res) => {
@@ -1208,6 +1209,8 @@ app.get('/editPerson', async (req, res) => {
           validCoreData++;
         }
         })
+
+      console.log(validCoreData, mitgliedschaftsData)
 
       // adds Vereinmitgliedschaft record
       if(validCoreData > 1 && (!einschulungsdatum || abgangsdatum_von_fsx)){
