@@ -16,7 +16,7 @@ export class PersonSelectList extends Component{
     this.fetchData = this.fetchData.bind(this);
     this.getLastPersonsId = this.getLastPersonsId.bind(this);
     this.search = this.search.bind(this);
-    this.updateStateAfterEdit = this.updateStateAfterEdit.bind(this);
+    // this.updateStateAfterEdit = this.updateStateAfterEdit.bind(this);
     this.addPerson = this.addPerson.bind(this);
     this.state = {
       forceRemount:'',
@@ -53,13 +53,11 @@ export class PersonSelectList extends Component{
 
   search(name){
     this.setState.searchedPersons = [];
-    // console.log(this.state.searchedPersons);
+
     const results = [];
     this.state.persons.forEach(function(person){
       const person_name_credentials = person.person_id + person.rufname + ' '+ person.amtlicher_vorname + person.nachname;
-      // if(person_name_credentials.includes(name) && name != '' ){
-      //   results.push(person);
-      // }
+    
       if(person_name_credentials.toLowerCase().includes(name.toLowerCase()) && name != '' ){
         results.push(person);
       }
@@ -67,7 +65,7 @@ export class PersonSelectList extends Component{
     
     this.state.searchedPersons = results;
     
-    // console.log(this.state.searchedPersons);
+  
     this.forceUpdate();
   }
 
@@ -84,8 +82,7 @@ export class PersonSelectList extends Component{
     }).then(this.getLastPersonsId())
 
     .then((res)=>{
-    //Sleep(1000)
-    //when component Mounts it navigates to the last item edited
+    
     var lastLoc = sessionStorage.getItem("lastLocation");
     var lastId = sessionStorage.getItem("lastId");
     var filter = sessionStorage.getItem("filter");
@@ -98,13 +95,12 @@ export class PersonSelectList extends Component{
   
 
     if(lastLoc && lastId){
-      //console.log(lastId);
+      
       this.props.navi(lastLoc);
       
       var toClick = document.getElementById(lastId);
     
-      //console.log(toClick)
-      //console.log(filter)
+      
       if(toClick) {
         console.log("I am about to click!")
         toClick.click()
@@ -112,18 +108,16 @@ export class PersonSelectList extends Component{
       
       else console.log(toClick);
 
-      // Sleep(1000)
-      // sessionStorage.setItem("lastLocation", null);
-      // sessionStorage.setItem("lastId", null);
+      
     }
   })
   }
 
-  updateStateAfterEdit(){
-    this.setState({forceRemount: ''})
-    this.setState({forceRemount: 'remount now'})
-    //console.log("forcing")
-}
+//   updateStateAfterEdit(){
+//     this.setState({forceRemount: ''})
+//     this.setState({forceRemount: 'remount now'})
+//     //console.log("forcing")
+// }
   
 
   render() {
