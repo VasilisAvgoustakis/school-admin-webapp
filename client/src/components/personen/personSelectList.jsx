@@ -75,16 +75,23 @@ export class PersonSelectList extends Component{
     //when component Mounts it navigates to the last item edited
     var lastLoc = sessionStorage.getItem("lastLocation");
     var lastId = sessionStorage.getItem("lastId");
-    console.log(lastLoc, lastId)
+    console.log(lastLoc, lastId, typeof(lastId));
 
-    if((lastLoc != null || lastLoc != '') && (lastId!= null || lastId != '')){
-      //console.log(sessionStorage.getItem("lastId"))
+    if(lastLoc && lastId){
+      console.log(lastId);
       this.props.navi(lastLoc);
-      var toClick = document.getElementById(lastId.toString())
-      if(toClick != null) toClick.click();
-      else console.log(toClick)
+      
+      var toClick = document.getElementById(lastId);
+      
+      console.log(typeof(toClick))
+      if(toClick) {
+        console.log("I am about to click!");
+        toClick.click();
+      }
+      
+      else console.log(toClick);
 
-      // Sleep(500)
+      // Sleep(1000)
       // sessionStorage.setItem("lastLocation", null);
       // sessionStorage.setItem("lastId", null);
     }

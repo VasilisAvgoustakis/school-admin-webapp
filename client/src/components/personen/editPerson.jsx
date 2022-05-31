@@ -430,7 +430,7 @@ export class EditPerson extends React.Component{
                     if(!confirm){
                         //this.sendLocationToServer()
                         sessionStorage.setItem("lastLocation", "Personen")
-                        sessionStorage.setItem("lastId", this.state.person_id)
+                        sessionStorage.setItem("lastId", this.state.person_id+this.state.rufname)
                         window.location.reload();
 
                         //this.componentDidMount();
@@ -492,7 +492,7 @@ export class EditPerson extends React.Component{
                 //last delete query refreshes the page
                 if(!confirm){
                     sessionStorage.setItem("lastLocation", "Personen")
-                    sessionStorage.setItem("lastId", this.state.person_id)
+                    sessionStorage.setItem("lastId", this.state.person_id+this.state.rufname)
                     window.location.reload()
                     //console.log(result)
                 }
