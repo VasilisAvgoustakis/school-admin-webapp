@@ -41,7 +41,7 @@ export class Haushalt extends React.Component{
 
     async fetchAnwohner(haushalt_id){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/anwohner`, {
+        await axios.get(`http://172.25.12.99:3000/anwohner`, {
             params: {
                 haushalt_id: haushalt_id,
             },

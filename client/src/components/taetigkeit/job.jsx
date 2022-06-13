@@ -45,7 +45,7 @@ export class Job extends React.Component{
 
     async fetchEmployees(column){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/job_roles`, {
+        await axios.get(`http://172.25.12.99:3000/job_roles`, {
             params: {
                 column: column,
             },
@@ -54,7 +54,7 @@ export class Job extends React.Component{
 
     async fetchTeamContact(teamJobs, kollektiv){
     return (
-    await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/teamContacts`, {
+    await axios.get(`http://172.25.12.99:3000/teamContacts`, {
         params: {
             teamJobs: teamJobs,
             kollektiv: kollektiv
@@ -64,7 +64,7 @@ export class Job extends React.Component{
 
     async fetchTeamContactCompliment(teamJobs, kollektiv){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/teamContactsCompliment`, {
+        await axios.get(`http://172.25.12.99:3000/teamContactsCompliment`, {
             params: {
                 teamJobs: teamJobs,
                 kollektiv: kollektiv

@@ -62,7 +62,7 @@ export class EditHaus extends React.Component{
         var dataArr = Object.values(stateObj);
         console.log(dataArr)
         return(
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/editHaus`, {
+        await axios.get(`http://172.25.12.99:3000/editHaus`, {
            params: {
                state: dataArr
            } 
@@ -72,7 +72,7 @@ export class EditHaus extends React.Component{
 
     async fetchProbable(queryName){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/${queryName}`, {
+        await axios.get(`http://172.25.12.99:3000/${queryName}`, {
             
             }))
     }
@@ -80,7 +80,7 @@ export class EditHaus extends React.Component{
     //general query to fetch records of given table to populate options in selects
     async fetchHausDataMultitable(){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/dataMultitableHaus`, {
+        await axios.get(`http://172.25.12.99:3000/dataMultitableHaus`, {
             params: {
                 haushalt_id: this.state.haushalt_id,
                 },
@@ -91,7 +91,7 @@ export class EditHaus extends React.Component{
     async deleteQueryHaus(table){
         //console.log(table)
         return(
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteHausData`, {
+        await axios.get(`http://172.25.12.99:3000/deleteHausData`, {
            params: {
                table: table,
                haushalt_id: this.state.haushalt_id

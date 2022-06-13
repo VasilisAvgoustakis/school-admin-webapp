@@ -42,7 +42,7 @@ export class Ag extends React.Component{
 
     async fetchMitglieder(arbeitsgruppe_id){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/ag_mitglieder`, {
+        await axios.get(`http://172.25.12.99:3000/ag_mitglieder`, {
             params: {
                 arbeitsgruppe_id: arbeitsgruppe_id,
             },
@@ -51,7 +51,7 @@ export class Ag extends React.Component{
 
     async fetchContactData(person_id){
     return (
-    await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/contactData`, {
+    await axios.get(`http://172.25.12.99:3000/contactData`, {
         params: {
             person_id: person_id,
         },
@@ -60,7 +60,7 @@ export class Ag extends React.Component{
 
     async fetchContactDataCompliment(idsArr){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/contactDataCompliment`, {
+        await axios.get(`http://172.25.12.99:3000/contactDataCompliment`, {
             params: {
                 ids: idsArr,
             },

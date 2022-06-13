@@ -26,7 +26,7 @@ export class HausSelectList extends Component{
 
   fetchData(table){
     return (
-    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/hausList`, {
+    axios.get(`http://172.25.12.99:3000/hausList`, {
         params: {
           table: table,
         },
@@ -35,7 +35,7 @@ export class HausSelectList extends Component{
 
   getLastHausId(){
     return (
-    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lastHausId`, {
+    axios.get(`http://172.25.12.99:3000/lastHausId`, {
       })).then(res=>{
         this.setState({nextHaus_Id: res.data[0].id + 1})
         //console.log(this.state.nextHaus_Id)

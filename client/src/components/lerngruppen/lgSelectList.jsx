@@ -25,7 +25,7 @@ export class LgSelectList extends Component{
 
   fetchData(table){
     return (
-    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lerngruppenList`, {
+    axios.get(`http://172.25.12.99:3000/lerngruppenList`, {
         params: {
           table: table,
         },
@@ -34,7 +34,7 @@ export class LgSelectList extends Component{
 
   getLastLgId(){
     return (
-    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lastLgId`, {
+    axios.get(`http://172.25.12.99:3000/lastLgId`, {
       })).then(res=>{
         this.setState({nextLg_Id: res.data[0].id + 1})
         //console.log(this.state.nextHaus_Id)

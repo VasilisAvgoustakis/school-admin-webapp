@@ -46,7 +46,7 @@ app.use(function(req, res, next) {
 
 
 app.use(cors({
-  origin: ["http://localhost:3000"],
+  origin: ["http://172.25.12.99:3000"],
   methods: ["GET", "POST"],
   credentials: true,
 })
@@ -2807,5 +2807,5 @@ FROM
 
 
 app.listen(process.env.REACT_APP_SERVER_PORT, () => {
-  console.log(`App server now listening on port ${process.env.REACT_APP_SERVER_PORT}`);
+  console.log(`App server now listening on port 3000`);
 });

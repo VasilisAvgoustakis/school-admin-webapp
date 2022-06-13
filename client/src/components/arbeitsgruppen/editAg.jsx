@@ -56,7 +56,7 @@ export class EditAg extends React.Component{
         var dataArr = Object.values(stateObj);
         //console.log(dataArr)
         return(
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/editAg`, {
+        await axios.get(`http://172.25.12.99:3000/editAg`, {
            params: {
                state: dataArr
            } 
@@ -66,7 +66,7 @@ export class EditAg extends React.Component{
 
     async fetchProbable(queryName){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/${queryName}`, {
+        await axios.get(`http://172.25.12.99:3000/${queryName}`, {
             
             }))
     }
@@ -74,7 +74,7 @@ export class EditAg extends React.Component{
     //general query to fetch records of given table to populate options in selects
     async fetchAgDataMultitable(){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/dataMultitableAg`, {
+        await axios.get(`http://172.25.12.99:3000/dataMultitableAg`, {
             params: {
                 arbeitsgruppe_id: this.state.arbeitsgruppe_id,
                 },
@@ -85,7 +85,7 @@ export class EditAg extends React.Component{
     async deleteQueryAg(table){
         //console.log(table)
         return(
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/deleteAgData`, {
+        await axios.get(`http://172.25.12.99:3000/deleteAgData`, {
            params: {
                table: table,
                arbeitsgruppe_id: this.state.arbeitsgruppe_id

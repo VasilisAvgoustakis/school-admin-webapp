@@ -17,7 +17,7 @@ const [message, setMessage] = useState("");
 
 
 async function register() {
-    await axios.post(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/register`, {
+    await axios.post(`http://172.25.12.99:3000/register`, {
       username: usernameReg,
       password: passwordReg,
       verifCode: verifCode, 

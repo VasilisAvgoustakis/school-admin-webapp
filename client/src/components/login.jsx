@@ -30,7 +30,7 @@ export function Login(props){
   function login() {
     axios.defaults.crossDomain = true;
     axios.defaults.withCredentials = true;
-    axios.post(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/login`, {
+    axios.post(`http://172.25.12.99:3000/login`, {
       username: username,
       password: password,
     }).then((response)  => {

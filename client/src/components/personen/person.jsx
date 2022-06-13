@@ -54,7 +54,7 @@ export class Person extends React.Component{
 
     async fetchData(person_id){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/personsData`, {
+        await axios.get(`http://172.25.12.99:3000/personsData`, {
             params: {
                 person_id: person_id,
             },
@@ -63,7 +63,7 @@ export class Person extends React.Component{
 
     async fetchContactData(person_id){
     return (
-    await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/contactData`, {
+    await axios.get(`http://172.25.12.99:3000/contactData`, {
         params: {
             person_id: person_id,
         },
@@ -72,7 +72,7 @@ export class Person extends React.Component{
 
     async fetchAddresses(person_id){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/addresses`, {
+        await axios.get(`http://172.25.12.99:3000/addresses`, {
             params: {
                 person_id: person_id,
             },
@@ -80,7 +80,7 @@ export class Person extends React.Component{
         }
     async fetchAGs(person_id){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/arb_grp`, {
+        await axios.get(`http://172.25.12.99:3000/arb_grp`, {
             params: {
                 person_id: person_id,
             },
@@ -89,7 +89,7 @@ export class Person extends React.Component{
 
     async fetchBezugspersonen(person_id){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/bezugspersonen`, {
+        await axios.get(`http://172.25.12.99:3000/bezugspersonen`, {
             params: {
                 person_id: person_id,
             },
@@ -98,7 +98,7 @@ export class Person extends React.Component{
 
     async fetchBezugskinder(person_id){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/bezugskinder`, {
+        await axios.get(`http://172.25.12.99:3000/bezugskinder`, {
             params: {
                 person_id: person_id,
             },

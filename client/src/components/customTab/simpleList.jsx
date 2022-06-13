@@ -44,7 +44,7 @@ export class SimpleList extends React.Component{
 
     async fetchData(group, date){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/simpleList`, {
+        await axios.get(`http://172.25.12.99:3000/simpleList`, {
             params: {
                 group: group,
                 date: date,

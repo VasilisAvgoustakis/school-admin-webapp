@@ -38,7 +38,7 @@ export class PersonSelectList extends Component{
 
   getLastPersonsId(){
     return (
-    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lastPersonsId`, {
+    axios.get(`http://172.25.12.99:3000/lastPersonsId`, {
       })).then(res=>{
         this.setState({nextPerson_Id: res.data[0].id + 1})
         //console.log(this.state.nextPerson_Id)

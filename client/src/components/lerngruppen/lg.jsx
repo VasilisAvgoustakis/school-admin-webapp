@@ -43,7 +43,7 @@ export class Lg extends React.Component{
 
     async fetchMitglieder(lerngruppe_id){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lerngruppe_mitglieder`, {
+        await axios.get(`http://172.25.12.99:3000/lerngruppe_mitglieder`, {
             params: {
                 lerngruppe_id: lerngruppe_id,
             },
@@ -52,7 +52,7 @@ export class Lg extends React.Component{
 
     async fetchElternContact(kind_id){
     return (
-    await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/bezugsperson_kontakt`, {
+    await axios.get(`http://172.25.12.99:3000/bezugsperson_kontakt`, {
         params: {
             kind_id: kind_id,
         },
@@ -61,7 +61,7 @@ export class Lg extends React.Component{
 
     async fetchElternContactCompliment(idsArr){
         return (
-        await axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/bezugsperson_contact_compliment`, {
+        await axios.get(`http://172.25.12.99:3000/bezugsperson_contact_compliment`, {
             params: {
                 ids: idsArr,
             },

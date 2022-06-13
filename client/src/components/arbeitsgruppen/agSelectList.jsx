@@ -25,7 +25,7 @@ export class AgSelectList extends Component{
 
   fetchData(table){
     return (
-    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/agList`, {
+    axios.get(`http://172.25.12.99:3000/agList`, {
         params: {
           table: table,
         },
@@ -35,7 +35,7 @@ export class AgSelectList extends Component{
 
   getLastAgId(){
     return (
-    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/lastAgId`, {
+    axios.get(`http://172.25.12.99:3000/lastAgId`, {
       })).then(res=>{
         this.setState({nextAg_Id: res.data[0].id + 1})
         //console.log(this.state.nextHaus_Id)

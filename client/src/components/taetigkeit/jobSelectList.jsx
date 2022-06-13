@@ -43,7 +43,7 @@ export class JobSelectList extends Component{
 
   fetchData(table, column){
     return (
-    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/jobsList`, {
+    axios.get(`http://172.25.12.99:3000/jobsList`, {
         params: {
           table: table,
           column: column
