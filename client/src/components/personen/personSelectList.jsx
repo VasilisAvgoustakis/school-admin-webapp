@@ -29,7 +29,7 @@ export class PersonSelectList extends Component{
 
   fetchData(table){
     return (
-    axios.get(`http://localhost:${process.env.REACT_APP_SERVER_PORT}/personsList`, {
+    axios.get(`http://172.25.12.99:3000/personsList`, {
         params: {
           table: table,
         },
