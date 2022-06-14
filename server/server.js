@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const mysqlStore = require('express-mysql-session')(session);
 
+
 //db object from db.js containg all queries to db
 const db = require('./db');
 const PORT = process.env.REACT_APP_SERVER_PORT
@@ -57,13 +58,13 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(session({
-  name: "test session",
+  name: "SessionCookie" ,
   resave: false,
   saveUninitialized: false,
   store: sessionStore,
   secret: "secret",
   cookie: {
-      maxAge: 60000,
+      maxAge: 600000,
       // sameSite: 'None',
       // secure: "production",
       httpOnly: true

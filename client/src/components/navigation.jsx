@@ -7,6 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import './stylesheets/dashboard.css';
 
 
+
 const Tab = createMaterialTopTabNavigator();
 
 export function Navigation() {

@@ -41,6 +41,9 @@ export function Login(props){
       }else {
         setMessage("")
         console.log("Session Id: " + response.data);
+        sessionStorage.setItem("LoginToken", response.data)
+        window.location.href = "/dashboard";
+        console.log(sessionStorage)
       }
       
     })

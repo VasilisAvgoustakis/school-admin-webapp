@@ -5,6 +5,7 @@ import { Outlet, Link, withRouter } from "react-router-dom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navigation} from './components';
 import * as serviceWorker from './serviceWorker';
+import ProtectedRoutes from './routes/protectedRoutes'
 
 
 
@@ -16,7 +17,7 @@ ReactDOM.render(
     <BrowserRouter>
         <Routes>
             <Route path='/' element= {<Landing />} />
-            <Route path="/dashboard" element={<Navigation />} />
+            <ProtectedRoutes path="/dashboard"  element={<Navigation />} />
 
         </Routes>
     </BrowserRouter>, document.getElementById('root'));
