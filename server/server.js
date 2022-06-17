@@ -64,7 +64,7 @@ app.use(session({
   store: sessionStore,
   secret: "secret",
   cookie: {
-      maxAge: 600000,
+      maxAge: 6000,
       // sameSite: 'None',
       // secure: "production",
       httpOnly: true
@@ -174,8 +174,8 @@ app.post("/login", (req, res) => {
             bcrypt.compare(password, result[0].password, (error, response) => {
                 if (response) {
                   req.session.user = result;
-                  console.log(req.session.id)
-                  console.log(req.session);
+                  //console.log(req.session.id)
+                  //console.log(req.session);
                   res.send(req.session.id);
                 } else{
                     res.send({message: "Wrong username/ password comination!"}); 
@@ -187,6 +187,38 @@ app.post("/login", (req, res) => {
     }
 );
 });
+
+app.post('/sessionId', (req, res)=>{
+  const clientSession_id = req.body.params.session_id;
+  console.log("param Id : ",clientSession_id)
+  pool.query(`SELECT session_id FROM sessions;`, (err, results) => {
+    if (err) {
+      return res.send(err);
+    } else {
+
+      var resultsStr = JSON.stringify(results);
+      var resultsJSON = JSON.parse(resultsStr);
+      var sessionExists = false;
+
+      for(const key in resultsJSON){
+        //console.log("session ids: ", results[key].session_id )
+        var currentSessionId = results[key].session_id
+        if(currentSessionId == clientSession_id){
+          console.log("Success")
+          sessionExists = true;
+        }
+      }
+
+      if(sessionExists) res.send(results)
+
+      else{ res.send(err)}
+      
+
+
+    }
+  });
+
+})
 
 app.post('/logout', (req, res)=>{
   req.session.destroy(err => {

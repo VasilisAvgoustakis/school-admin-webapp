@@ -5,6 +5,9 @@ import { Personen, PersonSelectList, Logout, PersonenScreen, HaushalteScreen,
 ArbeitsgruppenScreen, LerngruppenScreen, JobsScreen, CustomScreen } from '.';
 import { NavigationContainer } from '@react-navigation/native';
 import './stylesheets/dashboard.css';
+import {Sleep} from "../globalFunctions"
+
+
 
 
 
@@ -13,23 +16,52 @@ const Tab = createMaterialTopTabNavigator();
 export function Navigation() {
 
 
+  const [data, setData] = useState([]);
 
-  return (
-    
-    <NavigationContainer >
+
+
+  async function LoginSessionQuery(session_id){
+    return (
+      await axios.post(`http://172.25.12.99:3000/sessionId`, {
+          params: {
+              session_id: session_id,
+          },
+          })
+          
+          )
+    }
+  
+  useEffect(() => {
+    LoginSessionQuery(sessionStorage.getItem("LoginToken")).then((res) => {
+      if(res.data){
+        setData(res.data)
+      }
+  }   
+  )
+
+
+
+    console.log(data)
+  });
+  
+  
+
+  if(data != ''){
+    return (
+        <NavigationContainer >
+          
+            <Logout />
+          
+            <Tab.Navigator>
+              <Tab.Screen name="Personen" component={PersonenScreen} />
+              <Tab.Screen name="Haushalte" component={HaushalteScreen} />
+              <Tab.Screen name="Arbeitsgruppen" component={ArbeitsgruppenScreen} />
+              <Tab.Screen name="Lerngruppen" component={LerngruppenScreen} />
+              <Tab.Screen id="jobs_tab" name="Tätigkeiten" component={JobsScreen} />
+              <Tab.Screen name="allg. Abfragen" component={CustomScreen} />
+            </Tab.Navigator>
+          
+        </NavigationContainer>
       
-        <Logout />
-      
-        <Tab.Navigator>
-          <Tab.Screen name="Personen" component={PersonenScreen} />
-          <Tab.Screen name="Haushalte" component={HaushalteScreen} />
-          <Tab.Screen name="Arbeitsgruppen" component={ArbeitsgruppenScreen} />
-          <Tab.Screen name="Lerngruppen" component={LerngruppenScreen} />
-          <Tab.Screen id="jobs_tab" name="Tätigkeiten" component={JobsScreen} />
-          <Tab.Screen name="allg. Abfragen" component={CustomScreen} />
-        </Tab.Navigator>
-      
-    </NavigationContainer>
-   
-  );
+    )}else{return (<p>error</p>)};
 }

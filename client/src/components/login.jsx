@@ -3,7 +3,14 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 
-
+// async function LoginSessionQuery(session_id){
+//   return (
+//     await axios.post(`http://172.25.12.99:3000/sessionId`, {
+//         params: {
+//             session_id: session_id,
+//         },
+//         }))
+//   }
 
 
 export function Login(props){
@@ -40,10 +47,11 @@ export function Login(props){
         console.log(response.data);
       }else {
         setMessage("")
-        console.log("Session Id: " + response.data);
+        //console.log("Session Id: " + response.data);
         sessionStorage.setItem("LoginToken", response.data)
+        
         window.location.href = "/dashboard";
-        console.log(sessionStorage)
+        //console.log(sessionStorage)
       }
       
     })

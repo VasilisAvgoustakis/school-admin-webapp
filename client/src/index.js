@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Landing from './app/landing';
+import axios from 'axios';
 import { Outlet, Link, withRouter } from "react-router-dom";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navigation} from './components';
@@ -12,12 +13,11 @@ import ProtectedRoutes from './routes/protectedRoutes'
 
 
 
-
 ReactDOM.render(
     <BrowserRouter>
         <Routes>
             <Route path='/' element= {<Landing />} />
-            <ProtectedRoutes path="/dashboard"  element={<Navigation />} />
+            <Route path="/dashboard"  element={<Navigation />} />
 
         </Routes>
     </BrowserRouter>, document.getElementById('root'));
