@@ -8,12 +8,16 @@ export function Logout(props){
 
     function logout() {
         axios.post(`http://172.25.12.99:3000/logout`, {
-    //   username: username,
+        session_id: sessionStorage.getItem("LoginToken"),
     //   password: password,
     }).then((response)  => {
         setMessage(response.data.message);
         console.log(response.data.message);
-    })
+        
+    }).then(
+        window.location.href = "/"
+        
+    ).then(setMessage("Logged out Succesfully"))
   }
 
   return(

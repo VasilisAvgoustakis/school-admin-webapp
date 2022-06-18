@@ -20,6 +20,7 @@ class AnwohnerRow extends React.Component{
 
     clickPerson({ navigation }){
         this.props.navi('Personen')
+        console.log(this.state.data[0].person_id.toString())
         document.getElementById(this.state.data[0].person_id.toString()).click();
     }
 

@@ -1,20 +1,16 @@
 import React, {useState, useEffect, setRole} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { withSession } from 'react-session';
+import { Sleep } from '../globalFunctions';
 
 
-// async function LoginSessionQuery(session_id){
-//   return (
-//     await axios.post(`http://172.25.12.99:3000/sessionId`, {
-//         params: {
-//             session_id: session_id,
-//         },
-//         }))
-//   }
+
 
 
 export function Login(props){
 
+  // const { session, nextAction } = props;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -25,6 +21,16 @@ export function Login(props){
 
   const navigate = useNavigate();
   //const { loggedIn } = useAuth();
+
+  async function LoginSessionQuery(session_id, username){
+    return (
+      await axios.post(`http://172.25.12.99:3000/sessionId`, {
+          params: {
+              session_id: session_id,
+              userName: username
+          },
+          }))
+    }
 
 
 /**
@@ -37,22 +43,42 @@ export function Login(props){
   function login() {
     axios.defaults.crossDomain = true;
     axios.defaults.withCredentials = true;
+
+    //check if the given username and pass corresponds to a registered user
     axios.post(`http://172.25.12.99:3000/login`, {
       username: username,
       password: password,
-    }).then((response)  => {
+    }).then(
+      (response)  => {
+        //if user does not exists the server sends a corresponding message
+        if (response.data.message){
+          setMessage(response.data.message);
+        }else { 
+          //make display message empty
+          setMessage("")
+          //console.log("Session Id: " + response.data);
 
-      if (response.data.message){
-        setMessage(response.data.message);
-        console.log(response.data);
-      }else {
-        setMessage("")
-        //console.log("Session Id: " + response.data);
-        sessionStorage.setItem("LoginToken", response.data)
-        
-        window.location.href = "/dashboard";
-        //console.log(sessionStorage)
-      }
+          //
+          sessionStorage.setItem("LoginToken", response.data)
+          sessionStorage.setItem("userName", username)
+          window.location.href = "/dashboard";
+
+          // LoginSessionQuery(sessionStorage.getItem("LoginToken"), sessionStorage.getItem("userName"))
+          //   .then((res) => {
+          //     if(res){
+          //       console.log(res.data)
+          //       sessionStorage.setItem("customDashboardURL", res.data)
+                
+          //     }else{
+          //       console.log("else")
+          //     }
+          //   }   
+          //   ).then( 
+          //     Sleep(5000),
+          //     window.location.href = "/"+sessionStorage.getItem("customDashboardURL")
+          //     );
+
+        }
       
     })
   }

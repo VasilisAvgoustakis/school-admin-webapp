@@ -359,7 +359,7 @@ export class Person extends React.Component{
       return (
 
         <li key={uuidv4()} 
-            id={this.state.core_data.personId + this.state.core_data.rufname} 
+            id={this.state.core_data.personId} 
             onClick={this.handleClick} >
               
             {this.state.core_data.rufname +' ' + this.state.core_data.nachname}

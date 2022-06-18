@@ -20,33 +20,9 @@ export function Navigation() {
 
 
 
-  async function LoginSessionQuery(session_id){
-    return (
-      await axios.post(`http://172.25.12.99:3000/sessionId`, {
-          params: {
-              session_id: session_id,
-          },
-          })
-          
-          )
-    }
-  
-  useEffect(() => {
-    LoginSessionQuery(sessionStorage.getItem("LoginToken")).then((res) => {
-      if(res.data){
-        setData(res.data)
-      }
-  }   
-  )
-
-
-
-    console.log(data)
-  });
-  
   
 
-  if(data != ''){
+  // if(data != ''){
     return (
         <NavigationContainer >
           
@@ -63,5 +39,6 @@ export function Navigation() {
           
         </NavigationContainer>
       
-    )}else{return (<p>error</p>)};
+    )
+  //}else{return (<p>error</p>)};
 }

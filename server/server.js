@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const mysqlStore = require('express-mysql-session')(session);
+var generatePassword = require("password-generator");
 
 
 //db object from db.js containg all queries to db
@@ -64,9 +65,9 @@ app.use(session({
   store: sessionStore,
   secret: "secret",
   cookie: {
-      maxAge: 6000,
+      maxAge: 60000,
       // sameSite: 'None',
-      // secure: "production",
+      //secure: "production",
       httpOnly: true
   },
   lastLocation: '',
@@ -189,29 +190,65 @@ app.post("/login", (req, res) => {
 });
 
 app.post('/sessionId', (req, res)=>{
+  //get current session id from client
   const clientSession_id = req.body.params.session_id;
-  console.log("param Id : ",clientSession_id)
-  pool.query(`SELECT session_id FROM sessions;`, (err, results) => {
+  const userName = req.body.params.userName;
+  //just the current data
+  var rightNow = new Date()
+
+  //console.log("param Id : ",clientSession_id)
+
+  //querry for all currently active session in the database
+  pool.query(`SELECT session_id, data FROM sessions;`, (err, results) => {
     if (err) {
       return res.send(err);
     } else {
-
-      var resultsStr = JSON.stringify(results);
-      var resultsJSON = JSON.parse(resultsStr);
-      var sessionExists = false;
-
-      for(const key in resultsJSON){
-        //console.log("session ids: ", results[key].session_id )
+      //loop through the active sessions
+      for( const key in results){
+        // current id field
         var currentSessionId = results[key].session_id
+        //current data field
+        var currentData = results[key].data
+        // turn current data field into JSON object
+        var dataJSON = JSON.parse(currentData);
+        //get expiry date of current session
+        var currentExpireDate = new Date(dataJSON.cookie.expires)
+
+        //if now is past expiry date delete session from db
+        if(rightNow > currentExpireDate){
+          //console.log(currentExpireDate, " : ", rightNow, currentSessionId)
+          pool.query(`DELETE FROM sessions WHERE session_id = '${currentSessionId}';`)
+        }
+      }
+      
+      //turn query results to string
+      var resultsStr = JSON.stringify(results);
+      //turn query results to JSON Object
+      var resultsJSON = JSON.parse(resultsStr);
+
+      //boolean var if true then session in tables sessions has not expired yet
+      var sessionExists = false;
+      // a randomly genrated part of the url fo used on client side as dashboard url
+      var randomlyGeneratedPart = generatePassword(8, false);
+      //console.log(userName + "_" + randomlyGeneratedPart + "_" + "dashboard")
+
+      var dashboardURL = '';
+
+      //loop through the current results JSON Object
+      for(const key in resultsJSON){
+        //get session id of each result
+        var currentSessionId = results[key].session_id
+        //check if the session id received from client corresponds to non expired session in the db
         if(currentSessionId == clientSession_id){
           console.log("Success")
           sessionExists = true;
+          dashboardURL = userName + "_" + randomlyGeneratedPart + "_" + "dashboard";
         }
       }
 
-      if(sessionExists) res.send(results)
+      if(sessionExists) res.send(dashboardURL)
 
-      else{ res.send(err)}
+      else{res.send(err)}
       
 
 
@@ -221,14 +258,20 @@ app.post('/sessionId', (req, res)=>{
 })
 
 app.post('/logout', (req, res)=>{
+  const session_id =  req.body.session_id;
+  //console.log("logout: ",session_id)
+
   req.session.destroy(err => {
       if(err){
           console.log(err);
       }
       sessionStore.close()
-      res.clearCookie("test session")
-      res.send({message: "Loged out succesfully!"}) 
+      res.clearCookie("SessionCookie")
+      res.send({message: "Logged out succesfully!"}) 
   })
+
+  //delete session from db
+  pool.query(`DELETE FROM sessions WHERE session_id = '${session_id}';`)
 })
 
 /**

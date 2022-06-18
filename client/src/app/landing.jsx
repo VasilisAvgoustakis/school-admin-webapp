@@ -10,26 +10,12 @@ import { Outlet, Link, withRouter } from "react-router-dom";
 
 function Landing() {
   axios.defaults.withCredentials = true;
-  
-    // Check already logged users using Axios.
-  // a useEffect to run whenever we refresh the page.
-  // In here “SET ROLE” changes the active roles within the current session.
-  // useEffect(() => {
-  //   axios.get(`http://172.25.12.99:3000/login`).then((response) => {
-  //     if (response.data.user) {
-  //       //setRole(response.data.user[0].role);
-  //       console.log(response.data)
-  //     }
-  //   });
-  // }, []);
-
-
 
   return (
     
     <div className="Landing">
       <h1>FSX_APP</h1>
-        <Logout />
+        {/* <Logout /> */}
         <Login />
         <br></br>
         <Register />
@@ -37,7 +23,6 @@ function Landing() {
     </div>
   );
 }
-
 
 
 export default Landing;

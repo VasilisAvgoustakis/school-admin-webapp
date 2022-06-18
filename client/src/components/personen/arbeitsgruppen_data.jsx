@@ -18,7 +18,11 @@ class AG extends React.Component{
     clickAg({ navigation }){
         this.props.navi('Arbeitsgruppen')
         //console.log(this.state.data[0])
-        //document.getElementById(this.state.data[0].arbeitsgruppe_id).click();
+        document.getElementById(
+            this.state.data[0].arbeitsgruppe_id
+            + 
+            this.state.data[0].bezeichnung
+            ).click();
     }
 
     render(){
