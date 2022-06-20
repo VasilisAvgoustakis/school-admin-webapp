@@ -13,11 +13,9 @@ export function Logout(props){
     }).then((response)  => {
         setMessage(response.data.message);
         console.log(response.data.message);
+        window.location.href = "/";
         
-    }).then(
-        window.location.href = "/"
-        
-    ).then(setMessage("Logged out Succesfully"))
+    })
   }
 
   return(

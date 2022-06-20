@@ -49,35 +49,21 @@ export function Login(props){
       username: username,
       password: password,
     }).then(
+      
       (response)  => {
+        //console.log(response)
+
         //if user does not exists the server sends a corresponding message
         if (response.data.message){
           setMessage(response.data.message);
         }else { 
           //make display message empty
           setMessage("")
-          //console.log("Session Id: " + response.data);
-
-          //
-          sessionStorage.setItem("LoginToken", response.data)
-          sessionStorage.setItem("userName", username)
+          console.log("Session Id: " + response.data);
+          //store session id in session storage
+          sessionStorage.setItem("LoginToken", response.data);
+          localStorage.setItem("isAuthenticated", true);
           window.location.href = "/dashboard";
-
-          // LoginSessionQuery(sessionStorage.getItem("LoginToken"), sessionStorage.getItem("userName"))
-          //   .then((res) => {
-          //     if(res){
-          //       console.log(res.data)
-          //       sessionStorage.setItem("customDashboardURL", res.data)
-                
-          //     }else{
-          //       console.log("else")
-          //     }
-          //   }   
-          //   ).then( 
-          //     Sleep(5000),
-          //     window.location.href = "/"+sessionStorage.getItem("customDashboardURL")
-          //     );
-
         }
       
     })

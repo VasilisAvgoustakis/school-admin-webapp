@@ -177,6 +177,7 @@ app.post("/login", (req, res) => {
                   req.session.user = result;
                   //console.log(req.session.id)
                   //console.log(req.session);
+                  //send session id to client
                   res.send(req.session.id);
                 } else{
                     res.send({message: "Wrong username/ password comination!"}); 
@@ -193,7 +194,7 @@ app.post('/sessionId', (req, res)=>{
   //get current session id from client
   const clientSession_id = req.body.params.session_id;
   const userName = req.body.params.userName;
-  //just the current data
+  //just the current date
   var rightNow = new Date()
 
   //console.log("param Id : ",clientSession_id)
@@ -215,24 +216,23 @@ app.post('/sessionId', (req, res)=>{
         var currentExpireDate = new Date(dataJSON.cookie.expires)
 
         //if now is past expiry date delete session from db
-        if(rightNow > currentExpireDate){
-          //console.log(currentExpireDate, " : ", rightNow, currentSessionId)
-          pool.query(`DELETE FROM sessions WHERE session_id = '${currentSessionId}';`)
-        }
+        // if(rightNow > currentExpireDate){
+        //   req.session.destroy(err => {
+        //     if(err){
+        //         console.log(err);
+        //     }
+        //     console.log("in logoiut")
+        //     sessionStore.close()
+        //     res.clearCookie("SessionCookie")
+        //     res.send({message: "Logged out succesfully!"}) 
+        // })
+        // }
       }
       
       //turn query results to string
       var resultsStr = JSON.stringify(results);
       //turn query results to JSON Object
       var resultsJSON = JSON.parse(resultsStr);
-
-      //boolean var if true then session in tables sessions has not expired yet
-      var sessionExists = false;
-      // a randomly genrated part of the url fo used on client side as dashboard url
-      var randomlyGeneratedPart = generatePassword(8, false);
-      //console.log(userName + "_" + randomlyGeneratedPart + "_" + "dashboard")
-
-      var dashboardURL = '';
 
       //loop through the current results JSON Object
       for(const key in resultsJSON){
@@ -242,13 +242,12 @@ app.post('/sessionId', (req, res)=>{
         if(currentSessionId == clientSession_id){
           console.log("Success")
           sessionExists = true;
-          dashboardURL = userName + "_" + randomlyGeneratedPart + "_" + "dashboard";
+          res.send(currentSessionId)
+        }else{//res.send(err)}
         }
       }
 
-      if(sessionExists) res.send(dashboardURL)
-
-      else{res.send(err)}
+      
       
 
 
@@ -258,20 +257,15 @@ app.post('/sessionId', (req, res)=>{
 })
 
 app.post('/logout', (req, res)=>{
-  const session_id =  req.body.session_id;
-  //console.log("logout: ",session_id)
-
   req.session.destroy(err => {
       if(err){
           console.log(err);
       }
+      console.log("in logoiut")
       sessionStore.close()
       res.clearCookie("SessionCookie")
       res.send({message: "Logged out succesfully!"}) 
   })
-
-  //delete session from db
-  pool.query(`DELETE FROM sessions WHERE session_id = '${session_id}';`)
 })
 
 /**

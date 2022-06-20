@@ -11,11 +11,13 @@ import { Outlet, Link, withRouter } from "react-router-dom";
 function Landing() {
   axios.defaults.withCredentials = true;
 
+  
+
   return (
     
     <div className="Landing">
       <h1>FSX_APP</h1>
-        {/* <Logout /> */}
+        <Logout />
         <Login />
         <br></br>
         <Register />
