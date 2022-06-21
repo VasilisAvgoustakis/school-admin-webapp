@@ -1,4 +1,5 @@
 import React, {useState, useEffect, setRole} from 'react';
+import { Route, Navigate, Outlet } from "react-router-dom";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { withSession } from 'react-session';
@@ -64,6 +65,7 @@ export function Login(props){
           sessionStorage.setItem("LoginToken", response.data);
           localStorage.setItem("isAuthenticated", true);
           window.location.href = "/dashboard";
+          
         }
       
     })
