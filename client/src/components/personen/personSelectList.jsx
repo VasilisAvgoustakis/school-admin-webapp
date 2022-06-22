@@ -103,7 +103,7 @@ export class PersonSelectList extends Component{
       
       if(toClick) {
         console.log("I am about to click!")
-        Sleep(50).then((resolve)=>{
+        Sleep(250).then((resolve)=>{
           toClick.click()
           console.log("Clicked")
         })
