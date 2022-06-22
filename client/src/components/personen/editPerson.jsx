@@ -142,7 +142,7 @@ export class EditPerson extends React.Component{
         }else{
             this.setState({ [e.target.id]: e.target.value })
         }
-        console.log(e.target.id + ":" + e.target.value)
+        //console.log(e.target.id + ":" + e.target.value)
     }
 
 
@@ -430,7 +430,7 @@ export class EditPerson extends React.Component{
                     if(!confirm){
                         //this.sendLocationToServer()
                         sessionStorage.setItem("lastLocation", "Personen")
-                        sessionStorage.setItem("lastId", this.state.person_id+this.state.rufname)
+                        sessionStorage.setItem("lastId", this.state.person_id)
                         window.location.reload();
 
                         //this.componentDidMount();

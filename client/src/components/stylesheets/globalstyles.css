@@ -2,6 +2,13 @@
 /* This file contains only styling for html elements that are rendered almost in every
 Tab and are thus relevant globaly. */
 
+
+#person-data{
+  display: flex;
+  flex-direction: row;
+  
+}
+
 .main-entity-data-cont{
   height:88vh;
   width: 100%;
@@ -41,6 +48,7 @@ Tab and are thus relevant globaly. */
   height:100%;
   width: 17.6%;
   overflow: auto;
+  
 }
 
 .entity-search{

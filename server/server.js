@@ -65,7 +65,7 @@ app.use(session({
   store: sessionStore,
   secret: "secret",
   cookie: {
-      maxAge: 60000,
+      maxAge: (86400000),
       // sameSite: 'None',
       //secure: "production",
       httpOnly: true
@@ -133,7 +133,7 @@ app.post('/register', (req, res)=> {
                             }
                           );
                           
-                          res.send({message: "User Successfully registered!"})
+                          res.send({message: "User Successfully registered! Du kannst nun dein Anmeldendaten zu nutzen um dich einzulogen!!!"})
 
                         }
                       }
@@ -216,17 +216,12 @@ app.post('/sessionId', (req, res)=>{
         var currentExpireDate = new Date(dataJSON.cookie.expires)
 
         //if now is past expiry date delete session from db
-        // if(rightNow > currentExpireDate){
-        //   req.session.destroy(err => {
-        //     if(err){
-        //         console.log(err);
-        //     }
-        //     console.log("in logoiut")
-        //     sessionStore.close()
-        //     res.clearCookie("SessionCookie")
-        //     res.send({message: "Logged out succesfully!"}) 
-        // })
-        // }
+        if(rightNow > currentExpireDate){
+          pool.query(`DELETE FROM sessions WHERE session_id = '${currentSessionId}';`,(err,res)=>{
+            if(err)console.log(err)
+            else{console.log(res)}
+          })
+       }
       }
       
       //turn query results to string

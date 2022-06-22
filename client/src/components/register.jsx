@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 
 
@@ -25,39 +25,47 @@ async function register() {
 
       if (response.data.message){
         setMessage(response.data.message);
-      }//else {
-       // setVerifCode(response.data[0].code)
-      //}
-      
-      console.log(response.data);
+        document.getElementById('user').value = '';
+        document.getElementById('pass').value = '';
+        document.getElementById('verification').value = '';
+        
+      }
     });
  };
+
+ //useEffect()
 
 
     return (
     <div className="registration">
         <h1>Registration</h1>
         <input
+            id='user'
             type="text"
             placeholder="Benutzername..."
             onChange={(e) => {
             setUsernameReg(e.target.value);
             }}
         />
+        <br></br>
         <input 
+        id='pass'
         type="password"
         placeholder="Passwort..."
         onChange={(e) =>{
             setPasswordReg(e.target.value);
         }}
         /> 
+        <br></br>
         <input 
+        id='verification'
         type="text"
         placeholder="Verifizierungs Code..."
         onChange={(e) =>{
             setVerifCode(e.target.value);
         }}
         /> 
+        <br></br>
         <button onClick={register} > 
           Register
         </button>

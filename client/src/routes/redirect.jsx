@@ -8,10 +8,10 @@ import { Sleep } from "../globalFunctions";
 function Redirect({isAuthenticated}) {
 
     useEffect(() => {
-        console.log(isAuthenticated)
-        Sleep(3000).then((resolve)=>{
-            if(!isAuthenticated)window.location.href = "/";
-            
+        
+        Sleep(5000).then((resolve)=>{
+            //console.log(document.getElementById('person-screen'))
+            if(!document.getElementById('person-screen'))window.location.href = "/";
         })
         
       }, [])

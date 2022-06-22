@@ -99,11 +99,15 @@ export class PersonSelectList extends Component{
       this.props.navi(lastLoc);
       
       var toClick = document.getElementById(lastId);
-    
+      console.log(toClick)
       
       if(toClick) {
         console.log("I am about to click!")
-        toClick.click()
+        Sleep(50).then((resolve)=>{
+          toClick.click()
+          console.log("Clicked")
+        })
+        
       }
       
       else console.log(toClick);

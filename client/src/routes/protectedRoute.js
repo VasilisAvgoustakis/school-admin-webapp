@@ -21,17 +21,17 @@ function ProtectedRoute({children}, ...props) {
           },
           }).then((res) => {
             if(res){
-              console.log(res.data)
+              //console.log(res.data)
               let serverReturnId = res.data
       
               if(serverReturnId === sessionStorage.getItem("LoginToken")){
                 setAuth(true);
                 //setLoading(false);
-                console.log("Session Id exists", "Authenticated: ", isAuthenticated, typeof(isAuthenticated))
+                //console.log("Session Id exists", "Authenticated: ", isAuthenticated, typeof(isAuthenticated))
               }
               
             }else{
-              console.log("Session has expired!")
+              //console.log("Session has expired!")
             }
           }).then((res) =>{ console.log(isAuthenticated)})
           )

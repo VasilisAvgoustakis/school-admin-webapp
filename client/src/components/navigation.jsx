@@ -18,8 +18,6 @@ export function Navigation() {
 
   const [data, setData] = useState([]);
 
-
-
   
 
   // if(data != ''){

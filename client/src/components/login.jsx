@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { withSession } from 'react-session';
 import { Sleep } from '../globalFunctions';
+import "./stylesheets/app.css";
 
 
 
@@ -73,7 +74,7 @@ export function Login(props){
 
 
   return(
-    <div className="login">
+    <div>
         <h1>Anmelden</h1>
         <input 
           type="text" 
@@ -82,7 +83,8 @@ export function Login(props){
             setUsername(e.target.value);
           }}
         />
-
+        <br></br>
+        
         <input 
           type="password" 
           placeholder="Passwort..."
@@ -90,10 +92,12 @@ export function Login(props){
             setPassword(e.target.value);
           }}
         />
+        <br></br>
+        <br></br>
         <button onClick={login}>
           Anmelden
         </button>
         <h1>{message}</h1>
-      </div>   
+    </div>   
   )
 }
