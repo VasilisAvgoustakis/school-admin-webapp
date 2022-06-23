@@ -1,47 +1,37 @@
-import React, {useState, useEffect, setRole} from 'react';
-import { Route, Navigate, Outlet } from "react-router-dom";
+import React, {useState} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { withSession } from 'react-session';
-import { Sleep } from '../globalFunctions';
 import "./stylesheets/app.css";
 
+/**
+ * 'Login' is functional React component containg all Login functionality. 
+ *
+ * @returns The html code with the Login Form.
+ */
 
 
+export function Login(){
 
-
-export function Login(props){
-
-  // const { session, nextAction } = props;
+  //State Variables
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  //const [loginStatus, setLoginStatus] = useState("");
   const [message,setMessage] = useState("");
-
-  //const [toDashboard, setToDashboard] = React.useState(false);
-
-  const navigate = useNavigate();
-  //const { loggedIn } = useAuth();
-
-  async function LoginSessionQuery(session_id, username){
-    return (
-      await axios.post(`http://172.25.12.99:3000/sessionId`, {
-          params: {
-              session_id: session_id,
-              userName: username
-          },
-          }))
-    }
+  //const navigate = useNavigate();
 
 
 /**
+ * The login() function is triggered when the user has entered his/her
+ * login credentials. It makes the necessary request to the server to 
+ * to authenticate the user. 
+ * 
+ * Note:
  * To send the information from the client application to the server 
  * application to see a session exists, we have to be very careful. 
  * The XMLHttpRequest from a different domain cannot set cookie values 
  * for their domain unless withCredentials is set to true before making 
  * the request.
  */
+
   function login() {
     axios.defaults.crossDomain = true;
     axios.defaults.withCredentials = true;
@@ -51,22 +41,20 @@ export function Login(props){
       username: username,
       password: password,
     }).then(
-      
       (response)  => {
-        //console.log(response)
-
         //if user does not exists the server sends a corresponding message
         if (response.data.message){
           setMessage(response.data.message);
-        }else { 
+        }else { //user exists int the database
           //make display message empty
           setMessage("")
-          console.log("Session Id: " + response.data);
-          //store session id in session storage
+
+          //after succesfull authenitcation store session id in session storage for session expiry check later
           sessionStorage.setItem("LoginToken", response.data);
           localStorage.setItem("isAuthenticated", true);
-          window.location.href = "/dashboard";
-          
+          sessionStorage.setItem("lastLocation", '');
+          sessionStorage.setItem("lastId", '');
+          window.location.href = "/dashboard"; 
         }
       
     })

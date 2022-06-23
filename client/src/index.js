@@ -3,7 +3,10 @@ import ReactDOM from 'react-dom';
 import App from "./App";
 import * as serviceWorker from './serviceWorker';
 
-
+/**
+ * 'index.js' serves as an entrypoint for the webapp.
+ * It renders the "App" React component by simple  JavaScript.
+ */
 
 
 ReactDOM.render(   

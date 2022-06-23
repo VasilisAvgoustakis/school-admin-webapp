@@ -5,8 +5,10 @@ import { Outlet } from "react-router-dom";
 import logo from "../resources/pictures/logo.png"
 
 /**
- * 'Landi
- * @returns 
+ * 'Landing' is a simple functional React component 
+ *  which holds all Login/Register functionality components and 
+ *  forms the landing page for users.
+ * @returns html code containg all components for loggin in and registering.
  */
 
 
@@ -19,18 +21,14 @@ function Landing() {
       <div id='logo'>
         <img  src= {logo} alt="FSX Logo" style={({width:"250px"})} />
       </div>
-      
-        {/* <Logout /> */}
         <div id='login-cont'>
           <Login />
         </div>
-          
         <div id='register-cont'>
           <br></br>
           <Register />
           <Outlet />
         </div>
-        
     </div>
   );
 }

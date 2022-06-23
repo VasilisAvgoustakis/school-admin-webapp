@@ -1,11 +1,14 @@
-import React,{useEffect, useState} from "react";
-import axios from 'axios';
+import React from "react";
 import "./components/stylesheets/app.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./routes/protectedRoute";
 import Landing from './app/landing';
 import { Navigation} from './components';
 
+/**
+ * "App" is a simple functional React component that returns the webapps main routes.
+ * @returns BrowserRouter Component containg all main and protected Routes.
+ */
 
 function App() {
   return (

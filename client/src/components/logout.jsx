@@ -1,21 +1,29 @@
 import React, {useState} from 'react';
 import axios from 'axios';
 
+/**
+ * 'Logout' is a functinal React Component containing the logout funtionality.
+ * On succesfull logout the user's session is deleted from the database.
+ *  
+ * @returns HTML Code containing the logout button.
+ */
 
-export function Logout(props){
 
+export function Logout(){
+    //State Variables and set Methods
     const [message,setMessage] = useState("");
 
+    //Logout function triggered by the logout button
     function logout() {
+        //POST request to server to delete the LoginToken (session id) form the DB.
         axios.post(`http://172.25.12.99:3000/logout`, {
-        session_id: sessionStorage.getItem("LoginToken"),
-    //   password: password,
-    }).then((response)  => {
-        setMessage(response.data.message);
-        console.log(response.data.message);
-        window.location.href = "/";
-        
-    })
+            session_id: sessionStorage.getItem("LoginToken")
+        })
+        .then((response)  => {
+            setMessage(response.data.message);
+            //redirect to Landing page
+            window.location.href = "/"; 
+        })
   }
 
   return(
