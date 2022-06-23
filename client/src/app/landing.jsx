@@ -1,10 +1,13 @@
-import React, {useState, useEffect, setRole} from 'react';
-import { Login, Register, Logout} from '../components';
+import React from 'react';
+import { Login, Register} from '../components';
 import axios from 'axios';
-import { Outlet, Link, withRouter } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import logo from "../resources/pictures/logo.png"
 
-
+/**
+ * 'Landi
+ * @returns 
+ */
 
 
 function Landing() {

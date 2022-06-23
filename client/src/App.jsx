@@ -8,8 +8,6 @@ import { Navigation} from './components';
 
 
 function App() {
-
-
   return (
     <BrowserRouter>
         <Routes>
