@@ -81,40 +81,42 @@ export class PersonSelectList extends Component{
       this.setState.searchedPersons = [];
     }).then(this.getLastPersonsId())
 
-    .then((res)=>{
-    
-    var lastLoc = sessionStorage.getItem("lastLocation");
-    var lastId = sessionStorage.getItem("lastId");
-    var filter = sessionStorage.getItem("filter");
+  }
 
-    if (filter == "typ" && lastLoc){
-      this.props.navi(lastLoc);
-      if(document.getElementById("job_typ_btn"))document.getElementById("job_typ_btn").click()
-      
-    }
-  
+  componentDidUpdate() {
+    Sleep(500).then(()=>{
+      var lastLoc = sessionStorage.getItem("lastLocation");
+      var lastId = sessionStorage.getItem("lastId");
+      var filter = sessionStorage.getItem("filter");
 
-    if(lastLoc && lastId){
-      
-      this.props.navi(lastLoc);
-      
-      var toClick = document.getElementById(lastId);
-      console.log(toClick)
-      
-      if(toClick) {
-        console.log("I am about to click!")
-        Sleep(250).then((resolve)=>{
-          toClick.click()
-          console.log("Clicked")
-        })
+      if (filter == "typ" && lastLoc){
+        this.props.navi(lastLoc);
+        if(document.getElementById("job_typ_btn"))document.getElementById("job_typ_btn").click()
         
       }
-      
-      else console.log(toClick);
+    
 
-      
+      if(lastLoc && lastId){
+        
+        this.props.navi(lastLoc);
+        
+        var toClick = document.getElementById(lastId);
+        console.log(toClick)
+        
+      if(toClick) {
+        console.log("I am about to click!")
+        // Sleep(250).then((resolve)=>{
+          toClick.click()
+          console.log("Clicked")
+        
+        
+      }
+        
+        else console.log(toClick);
     }
-  })
+      })
+    
+
   }
 
 //   updateStateAfterEdit(){

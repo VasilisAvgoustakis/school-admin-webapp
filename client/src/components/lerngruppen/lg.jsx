@@ -31,8 +31,8 @@ export class Lg extends React.Component{
             core_data:{
                 lerngruppe_id: this.props.lerngruppe_id,
                 bezeichnung: this.props.bezeichnung,
-                email_eltern_eltern: this.props.email_eltern_eltern,
-                email_eltern_team: this.props.email_eltern_team,
+                email_eltern_eltern: this.props.email_eltern,
+                email_eltern_team: this.props.email_team,
                 telefon_team: this.props.telefon_team
             },
             schuller:[],
@@ -270,7 +270,7 @@ export class Lg extends React.Component{
 
 
     render() {
-        //console.log(this.state.schuller)
+        console.log(this.props.emai_eltern)
       return (
 
         <li id={this.state.core_data.lerngruppe_id+this.state.core_data.bezeichnung} key={uuidv4()} onClick={this.handleClick} >

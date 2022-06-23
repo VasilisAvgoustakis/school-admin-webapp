@@ -71,9 +71,10 @@ export class LgSelectList extends Component{
       this.setState.searchedGruppe = [];
     }).then(this.getLastLgId());
   }
-  
+
 
   render() {
+    
     var lgsToRender = [];
     // console.log(this.state.haushalte)
     if(this.state.searchedGruppe.length >=1){
@@ -82,9 +83,7 @@ export class LgSelectList extends Component{
       lgsToRender = this.state.lerngruppen;
 
     }
-    //console.log(lgsToRender);
-    
-    
+
       return (
         <div className='entity-list-scroller-cont' >
           <input
