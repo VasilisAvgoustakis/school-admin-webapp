@@ -54,7 +54,7 @@ export class CustomSelectList extends Component{
         ReactDOM.render(<Schullerbewegung />, document.getElementById("custom-data"));
         break;
       default:
-        ReactDOM.render(<p>Wähle einer der custom Anfragen von der List Links</p>, 
+        ReactDOM.render(<p className='info-text'>Wähle einer der custom Anfragen von der List Links</p>, 
           document.getElementById("custom-data"));
     }
   }
@@ -89,7 +89,7 @@ export class CustomSelectList extends Component{
               </ul>
           </div>
           <div className='entity-data-cont'  id='custom-data'>
-            Custom Data Container 
+            <p className='info-text'>Wähle einer der custom Anfragen von der List Links</p> 
           </div>
         </div>
 

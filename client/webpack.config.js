@@ -1,5 +1,6 @@
 const path = require('path');
 
+
 module.exports = {
   resolve: {
     modules: [ "./node_modules/" ] , 
@@ -8,6 +9,7 @@ module.exports = {
   
     },
     extensions: ['.jsx', '.js', '.scss', '.json'],
-
   },
+  
 };
+

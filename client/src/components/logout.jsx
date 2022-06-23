@@ -1,5 +1,8 @@
 import React, {useState} from 'react';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import './stylesheets/globalstyles.css';
 
 /**
  * 'Logout' is a functinal React Component containing the logout funtionality.
@@ -21,15 +24,23 @@ export function Logout(){
         })
         .then((response)  => {
             setMessage(response.data.message);
+            sessionStorage.setItem("lastLocation", '');
+            sessionStorage.setItem("lastId", '');
             //redirect to Landing page
             window.location.href = "/"; 
         })
   }
 
   return(
+    
       <div className='logout'>
-          <button onClick={logout}>Logout</button>
-          <h1>{message}</h1>
+        <button className='logout-btn' onClick={logout}><FontAwesomeIcon icon={faArrowRightFromBracket} />Logout</button>
+        <br></br>
+        <div className='current-user'>
+            Eingeloggt als: {sessionStorage.getItem('User')}
+            {/* <h3>{message}</h3> */}
+        </div>
+        
       </div>
   )
 }

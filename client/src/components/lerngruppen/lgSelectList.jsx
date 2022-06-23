@@ -5,6 +5,8 @@ import {Lg} from './lg.jsx';
 import { EditLg } from './editLg.jsx';
 import '../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 
 export class LgSelectList extends Component{
@@ -44,6 +46,8 @@ export class LgSelectList extends Component{
 
   search(lgName){
     this.setState.searchedGruppe = [];
+    sessionStorage.setItem("lastLocation", '');
+    sessionStorage.setItem("lastId", '');
     // console.log(this.state.searchedGruppe);
     const results = [];
     this.state.lerngruppen.forEach(function(lg){
@@ -97,7 +101,7 @@ export class LgSelectList extends Component{
                 }}
             />
 
-          <button className='add-button' onClick={this.addLg}>+</button>
+          <button className='add-button' onClick={this.addLg}><FontAwesomeIcon icon={faPlus}/></button>
 
           <div className='entity-list-scroller'>
               <ul>
@@ -114,7 +118,7 @@ export class LgSelectList extends Component{
               </ul>
           </div>
           <div className='entity-data-cont'  id='lg-data'>
-            Lg Data Container 
+            <p className='info-text'>Lg Data Container </p>
           </div>
         </div>
 

@@ -155,12 +155,9 @@ export class JobSelectList extends Component{
               </ul>
           </div>
           <div className='entity-data-cont'  id='job-data'>
-            Job Data Container 
+            <p className='info-text'>Job Data Container </p>
           </div>
         </div>
-
-        
-     
       );
   }
 }

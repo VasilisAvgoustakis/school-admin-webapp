@@ -7,6 +7,9 @@ import '../stylesheets/personen.css';
 import '../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
 import { EditPerson } from './editPerson';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
+//import { solid, regular, brands } from '@fortawesome/fontawesome-svg-core/import.macro'
 
 
 export class PersonSelectList extends Component{
@@ -53,6 +56,8 @@ export class PersonSelectList extends Component{
 
   search(name){
     this.setState.searchedPersons = [];
+    sessionStorage.setItem("lastLocation", '');
+    sessionStorage.setItem("lastId", '');
 
     const results = [];
     this.state.persons.forEach(function(person){
@@ -119,12 +124,6 @@ export class PersonSelectList extends Component{
 
   }
 
-//   updateStateAfterEdit(){
-//     this.setState({forceRemount: ''})
-//     this.setState({forceRemount: 'remount now'})
-//     //console.log("forcing")
-// }
-  
 
   render() {
     var personsToRender = [];
@@ -140,7 +139,8 @@ export class PersonSelectList extends Component{
     
       return (
         <div className='entity-list-scroller-cont' >
-          <input
+        {/* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>           */}
+        <input
                 type="text"
                 className='entity-search'              
                 // id="header-search"
@@ -151,7 +151,7 @@ export class PersonSelectList extends Component{
                 }}
             />
 
-          <button className='add-button' onClick={this.addPerson}>+</button>
+          <button className='add-button' onClick={this.addPerson}><FontAwesomeIcon icon={faPlus}/></button>
 
           <div className='entity-list-scroller'>
               <ul id='person-list'  >
@@ -172,7 +172,8 @@ export class PersonSelectList extends Component{
           </div>
           <div className='entity-data-cont'  id='person-data'>
             <p className='info-text' >
-              Klicke auf eine Person von der Liste links um seine/ihre Daten anzusehen!</p>
+              Klicke auf eine Person aus der Liste links um ihre Daten anzusehen!
+            </p>
           </div>
         </div>
 

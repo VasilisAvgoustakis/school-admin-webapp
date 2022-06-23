@@ -11,7 +11,9 @@ function Redirect({isAuthenticated}) {
         
         Sleep(5000).then((resolve)=>{
             //console.log(document.getElementById('person-screen'))
-            if(!document.getElementById('person-screen'))window.location.href = "/";
+            if(!document.getElementById('person-screen')){
+              window.location.href = "/";
+            }
         })
         
       }, [])

@@ -48,9 +48,10 @@ export function Login(){
         }else { //user exists int the database
           //make display message empty
           setMessage("")
-
+          console.log(response)
           //after succesfull authenitcation store session id in session storage for session expiry check later
           sessionStorage.setItem("LoginToken", response.data);
+          sessionStorage.setItem("User", username);
           localStorage.setItem("isAuthenticated", true);
           sessionStorage.setItem("lastLocation", '');
           sessionStorage.setItem("lastId", '');

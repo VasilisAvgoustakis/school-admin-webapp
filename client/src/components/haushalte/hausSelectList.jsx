@@ -6,6 +6,8 @@ import { EditHaus } from './editHaus';
 import '../stylesheets/personen.css';
 import '../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 
 export class HausSelectList extends Component{
@@ -45,6 +47,8 @@ export class HausSelectList extends Component{
 
   search(hausName){
     this.setState.searchedHause = [];
+    sessionStorage.setItem("lastLocation", '');
+    sessionStorage.setItem("lastId", '');
     // console.log(this.state.searchedHause);
     const results = [];
     this.state.haushalte.forEach(function(haus){
@@ -101,7 +105,7 @@ export class HausSelectList extends Component{
                 }}
             />
 
-          <button className='add-button' onClick={this.addHaus}>+</button>  
+          <button className='add-button' onClick={this.addHaus}><FontAwesomeIcon icon={faPlus}/></button>  
 
           <div className='entity-list-scroller'>
               <ul>
@@ -124,7 +128,8 @@ export class HausSelectList extends Component{
               </ul>
           </div>
           <div className='entity-data-cont'  id='haus-data'>
-            Haus Data Container 
+            <p className='info-text'>
+              Klicke auf eine Addresse links um ihre Daten anzushen. </p>
           </div>
         </div>
 

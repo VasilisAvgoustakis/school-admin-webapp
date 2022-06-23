@@ -5,6 +5,8 @@ import {Ag} from './ag.jsx';
 import { EditAg } from './editAg.jsx';
 import '../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 
 export class AgSelectList extends Component{
@@ -45,6 +47,8 @@ export class AgSelectList extends Component{
 
   search(agName){
     this.setState.searchedGruppe = [];
+    sessionStorage.setItem("lastLocation", '');
+    sessionStorage.setItem("lastId", '');
     // console.log(this.state.searchedGruppe);
     const results = [];
     this.state.arbeitsgruppen.forEach(function(ag){
@@ -99,7 +103,7 @@ export class AgSelectList extends Component{
                 }}
             />
 
-          <button className='add-button' onClick={this.addAg}>+</button>
+          <button className='add-button' onClick={this.addAg}><FontAwesomeIcon icon={faPlus}/></button>
 
           <div className='entity-list-scroller'>
               <ul>
@@ -115,7 +119,7 @@ export class AgSelectList extends Component{
               </ul>
           </div>
           <div className='entity-data-cont'  id='ag-data'>
-            Ag Data Container 
+            <p className='info-text'>Ag Data Container </p>
           </div>
         </div>
 
