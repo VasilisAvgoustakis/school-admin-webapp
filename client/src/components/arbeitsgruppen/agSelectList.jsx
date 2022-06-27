@@ -1,9 +1,10 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import {Ag} from './ag.jsx';
 import { EditAg } from './editAg.jsx';
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
@@ -27,7 +28,7 @@ export class AgSelectList extends Component{
 
   fetchData(table){
     return (
-    axios.get(`http://172.25.12.99:3000/agList`, {
+    axios.get(`http://${SERVER_IP}:3000/agList`, {
         params: {
           table: table,
         },
@@ -37,7 +38,7 @@ export class AgSelectList extends Component{
 
   getLastAgId(){
     return (
-    axios.get(`http://172.25.12.99:3000/lastAgId`, {
+    axios.get(`http://${SERVER_IP}:3000/lastAgId`, {
       })).then(res=>{
         this.setState({nextAg_Id: res.data[0].id + 1})
         //console.log(this.state.nextHaus_Id)

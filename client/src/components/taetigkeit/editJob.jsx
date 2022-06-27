@@ -1,10 +1,9 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React from 'react';
 import axios from 'axios';
-import ReactDOM from 'react-dom';
-import '../stylesheets/globalstyles.css'
-import '../stylesheets/edits.css';
+import '../../stylesheets/globalstyles.css'
+import '../../stylesheets/edits.css';
 import {dateToDEFormat, dateToENFormat} from '../../globalFunctions'
-import { TouchableNativeFeedbackBase } from 'react-native';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -56,7 +55,7 @@ export class EditJob extends React.Component{
         var dataArr = Object.values(stateObj);
         console.log(dataArr)
         return(
-        await axios.get(`http://172.25.12.99:3000/editJob`, {
+        await axios.get(`http://${SERVER_IP}:3000/editJob`, {
            params: {
                state: dataArr
            } 
@@ -66,7 +65,7 @@ export class EditJob extends React.Component{
 
     async fetchProbable(queryName){
         return (
-        await axios.get(`http://172.25.12.99:3000/${queryName}`, {
+        await axios.get(`http://${SERVER_IP}:3000/${queryName}`, {
             
             }))
     }
@@ -75,7 +74,7 @@ export class EditJob extends React.Component{
     async deleteQueryJob(filter, taetigkeit, typ){
         //console.log(table)
         return(
-        await axios.get(`http://172.25.12.99:3000/deleteJobData`, {
+        await axios.get(`http://${SERVER_IP}:3000/deleteJobData`, {
            params: {
                filter: filter,
                taetigkeit: this.state.taetigkeit,

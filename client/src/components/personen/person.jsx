@@ -1,9 +1,10 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React from 'react';
-import axios,{setPost} from 'axios';
+import axios from 'axios';
 import ReactDOM from 'react-dom'
 import KontaktDaten from './kontaktdaten';
-import '../stylesheets/personen.css'
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/personen.css'
+import '../../stylesheets/globalstyles.css';
 import { KindDaten } from './kindDaten';
 import { AddressData } from './adressData';
 import {AGData} from './arbeitsgruppen_data';
@@ -54,7 +55,7 @@ export class Person extends React.Component{
 
     async fetchData(person_id){
         return (
-        await axios.get(`http://172.25.12.99:3000/personsData`, {
+        await axios.get(`http://${SERVER_IP}:3000/personsData`, {
             params: {
                 person_id: person_id,
             },
@@ -63,7 +64,7 @@ export class Person extends React.Component{
 
     async fetchContactData(person_id){
     return (
-    await axios.get(`http://172.25.12.99:3000/contactData`, {
+    await axios.get(`http://${SERVER_IP}:3000/contactData`, {
         params: {
             person_id: person_id,
         },
@@ -72,7 +73,7 @@ export class Person extends React.Component{
 
     async fetchAddresses(person_id){
         return (
-        await axios.get(`http://172.25.12.99:3000/addresses`, {
+        await axios.get(`http://${SERVER_IP}:3000/addresses`, {
             params: {
                 person_id: person_id,
             },
@@ -80,7 +81,7 @@ export class Person extends React.Component{
         }
     async fetchAGs(person_id){
         return (
-        await axios.get(`http://172.25.12.99:3000/arb_grp`, {
+        await axios.get(`http://${SERVER_IP}:3000/arb_grp`, {
             params: {
                 person_id: person_id,
             },
@@ -89,7 +90,7 @@ export class Person extends React.Component{
 
     async fetchBezugspersonen(person_id){
         return (
-        await axios.get(`http://172.25.12.99:3000/bezugspersonen`, {
+        await axios.get(`http://${SERVER_IP}:3000/bezugspersonen`, {
             params: {
                 person_id: person_id,
             },
@@ -98,7 +99,7 @@ export class Person extends React.Component{
 
     async fetchBezugskinder(person_id){
         return (
-        await axios.get(`http://172.25.12.99:3000/bezugskinder`, {
+        await axios.get(`http://${SERVER_IP}:3000/bezugskinder`, {
             params: {
                 person_id: person_id,
             },

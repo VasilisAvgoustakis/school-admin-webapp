@@ -1,7 +1,8 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/globalstyles.css';
 import dateToDEFormat from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
 
@@ -53,7 +54,7 @@ export class Schullerbewegung extends React.Component{
 
     async fetchData(year, month, day, thirdVar, genderVal, yearSum, ){
         return (
-        await axios.get(`http://172.25.12.99:3000/schullerBewegung`, {
+        await axios.get(`http://${SERVER_IP}:3000/schullerBewegung`, {
             params: {
                 date: year.toString() + '-' + month + '-' + day ,
                 thirdVar: thirdVar,
@@ -65,7 +66,7 @@ export class Schullerbewegung extends React.Component{
 
     async fetchData2(year, month, day, thirdVar, genderVal, yearSum, ){
     return (
-    await axios.get(`http://172.25.12.99:3000/schullerBewegung2`, {
+    await axios.get(`http://${SERVER_IP}:3000/schullerBewegung2`, {
         params: {
             date: year.toString() + '-' + month + '-' + day ,
             thirdVar: thirdVar,
@@ -77,7 +78,7 @@ export class Schullerbewegung extends React.Component{
 
     async fetchData3(year, month, day, thirdVar, genderVal ){
         return (
-        await axios.get(`http://172.25.12.99:3000/sekundarvon4`, {
+        await axios.get(`http://${SERVER_IP}:3000/sekundarvon4`, {
             params: {
                 date: year.toString() + '-' + month + '-' + day ,
                 thirdVar: thirdVar,
@@ -89,7 +90,7 @@ export class Schullerbewegung extends React.Component{
 
     async fetchData4(year, month, day, thirdVar, genderVal ){
         return (
-        await axios.get(`http://172.25.12.99:3000/absolventen`, {
+        await axios.get(`http://${SERVER_IP}:3000/absolventen`, {
             params: {
                 date: year.toString() + '-' + month + '-' + day ,
                 thirdVar: thirdVar,

@@ -12,7 +12,7 @@ services:
     container_name: mysql_container
     environment:
       <<: *common-variables
-      MYSQL_HOST: 172.25.12.99
+      MYSQL_HOST: ${SERVER_IP}
       MYSQL_ROOT_PASSWORD: root
     ports:
       - 3307:3307

@@ -1,9 +1,10 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React, {Component} from 'react';
 import axios from 'axios';
 import ReactDOM from 'react-dom';
 import {Lg} from './lg.jsx';
 import { EditLg } from './editLg.jsx';
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
@@ -27,7 +28,7 @@ export class LgSelectList extends Component{
 
   fetchData(table){
     return (
-    axios.get(`http://172.25.12.99:3000/lerngruppenList`, {
+    axios.get(`http://${SERVER_IP}:3000/lerngruppenList`, {
         params: {
           table: table,
         },
@@ -36,7 +37,7 @@ export class LgSelectList extends Component{
 
   getLastLgId(){
     return (
-    axios.get(`http://172.25.12.99:3000/lastLgId`, {
+    axios.get(`http://${SERVER_IP}:3000/lastLgId`, {
       })).then(res=>{
         this.setState({nextLg_Id: res.data[0].id + 1})
         //console.log(this.state.nextHaus_Id)

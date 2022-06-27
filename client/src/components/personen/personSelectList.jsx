@@ -1,15 +1,15 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React, {Component} from 'react';
 import axios from 'axios';
 import ReactDOM from 'react-dom'
 import {Person} from './person';
 import { Sleep } from '../../globalFunctions';
-import '../stylesheets/personen.css';
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/personen.css';
+import '../../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
 import { EditPerson } from './editPerson';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-//import { solid, regular, brands } from '@fortawesome/fontawesome-svg-core/import.macro'
 
 
 export class PersonSelectList extends Component{
@@ -32,7 +32,7 @@ export class PersonSelectList extends Component{
 
   fetchData(table){
     return (
-    axios.get(`http://172.25.12.99:3000/personsList`, {
+    axios.get(`http://${SERVER_IP}:3000/personsList`, {
         params: {
           table: table,
         },
@@ -41,7 +41,7 @@ export class PersonSelectList extends Component{
 
   getLastPersonsId(){
     return (
-    axios.get(`http://172.25.12.99:3000/lastPersonsId`, {
+    axios.get(`http://${SERVER_IP}:3000/lastPersonsId`, {
       })).then(res=>{
         this.setState({nextPerson_Id: res.data[0].id + 1})
         //console.log(this.state.nextPerson_Id)

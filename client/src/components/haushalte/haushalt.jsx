@@ -1,11 +1,10 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React from 'react';
 import axios,{setPost} from 'axios';
 import ReactDOM from 'react-dom'
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/globalstyles.css';
 import { Anwohner } from './anwohner';
 import { EditHaus } from './editHaus';
-import dateToDEFormat from '../../globalFunctions'
-import { dateToENFormat } from '../../globalFunctions';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -41,7 +40,7 @@ export class Haushalt extends React.Component{
 
     async fetchAnwohner(haushalt_id){
         return (
-        await axios.get(`http://172.25.12.99:3000/anwohner`, {
+        await axios.get(`http://${SERVER_IP}:3000/anwohner`, {
             params: {
                 haushalt_id: haushalt_id,
             },

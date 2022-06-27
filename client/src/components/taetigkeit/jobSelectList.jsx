@@ -1,7 +1,8 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React, {Component} from 'react';
 import axios from 'axios';
 import {Job} from './job.jsx';
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -43,7 +44,7 @@ export class JobSelectList extends Component{
 
   fetchData(table, column){
     return (
-    axios.get(`http://172.25.12.99:3000/jobsList`, {
+    axios.get(`http://${SERVER_IP}:3000/jobsList`, {
         params: {
           table: table,
           column: column

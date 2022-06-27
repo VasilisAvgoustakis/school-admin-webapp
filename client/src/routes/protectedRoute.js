@@ -1,4 +1,4 @@
-
+import { SERVER_IP } from '../globalFunctions';
 import React,{useEffect, useState} from "react";
 import { Route, Navigate, Outlet } from "react-router-dom";
 import axios from 'axios';
@@ -15,7 +15,7 @@ function ProtectedRoute({children}, ...props) {
 
   async function LoginSessionQuery(session_id){
     return (
-      await axios.post(`http://172.25.12.99:3000/sessionId`, {
+      await axios.post(`http://${SERVER_IP}:3000/sessionId`, {
           params: {
               session_id: session_id,
           },
@@ -33,7 +33,7 @@ function ProtectedRoute({children}, ...props) {
             }else{
               //console.log("Session has expired!")
             }
-          }).then((res) =>{ console.log(isAuthenticated)})
+          })//.then((res) =>{ console.log(isAuthenticated)})
           )
   }
 

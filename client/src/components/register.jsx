@@ -1,3 +1,4 @@
+import { SERVER_IP } from '../globalFunctions';
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 
@@ -17,7 +18,7 @@ const [message, setMessage] = useState("");
 
 
 async function register() {
-    await axios.post(`http://172.25.12.99:3000/register`, {
+    await axios.post(`http://${SERVER_IP}:3000/register`, {
       username: usernameReg,
       password: passwordReg,
       verifCode: verifCode, 

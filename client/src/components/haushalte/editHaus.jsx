@@ -1,7 +1,8 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React from 'react';
 import axios from 'axios';
-import '../stylesheets/globalstyles.css'
-import '../stylesheets/edits.css';
+import '../../stylesheets/globalstyles.css'
+import '../../stylesheets/edits.css';
 import {dateToDEFormat, dateToENFormat} from '../../globalFunctions'
 import { TouchableNativeFeedbackBase } from 'react-native';
 import { v4 as uuidv4 } from 'uuid';
@@ -62,7 +63,7 @@ export class EditHaus extends React.Component{
         var dataArr = Object.values(stateObj);
         console.log(dataArr)
         return(
-        await axios.get(`http://172.25.12.99:3000/editHaus`, {
+        await axios.get(`http://${SERVER_IP}:3000/editHaus`, {
            params: {
                state: dataArr
            } 
@@ -72,7 +73,7 @@ export class EditHaus extends React.Component{
 
     async fetchProbable(queryName){
         return (
-        await axios.get(`http://172.25.12.99:3000/${queryName}`, {
+        await axios.get(`http://${SERVER_IP}:3000/${queryName}`, {
             
             }))
     }
@@ -80,7 +81,7 @@ export class EditHaus extends React.Component{
     //general query to fetch records of given table to populate options in selects
     async fetchHausDataMultitable(){
         return (
-        await axios.get(`http://172.25.12.99:3000/dataMultitableHaus`, {
+        await axios.get(`http://${SERVER_IP}:3000/dataMultitableHaus`, {
             params: {
                 haushalt_id: this.state.haushalt_id,
                 },
@@ -91,7 +92,7 @@ export class EditHaus extends React.Component{
     async deleteQueryHaus(table){
         //console.log(table)
         return(
-        await axios.get(`http://172.25.12.99:3000/deleteHausData`, {
+        await axios.get(`http://${SERVER_IP}:3000/deleteHausData`, {
            params: {
                table: table,
                haushalt_id: this.state.haushalt_id

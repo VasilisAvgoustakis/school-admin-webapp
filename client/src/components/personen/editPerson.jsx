@@ -1,9 +1,9 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React from 'react';
 import axios from 'axios';
-import '../stylesheets/globalstyles.css'
-import '../stylesheets/edits.css';
+import '../../stylesheets/globalstyles.css'
+import '../../stylesheets/edits.css';
 import {dateToDEFormat, dateToENFormat} from '../../globalFunctions'
-import { TouchableNativeFeedbackBase } from 'react-native';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -148,14 +148,14 @@ export class EditPerson extends React.Component{
 
     async fetchProbable(queryName){
         return (
-        await axios.get(`http://172.25.12.99:3000/${queryName}`, {
+        await axios.get(`http://${SERVER_IP}:3000/${queryName}`, {
             
             }))
     }
     //general query to fetch records of given table to populate options in selects
     async fetchPersonsDataMultitable(table1, table2, sortByColumn){
         return (
-        await axios.get(`http://172.25.12.99:3000/dataMultitablePerson`, {
+        await axios.get(`http://${SERVER_IP}:3000/dataMultitablePerson`, {
             params: {
                 table1: table1,
                 table2: table2,
@@ -168,7 +168,7 @@ export class EditPerson extends React.Component{
     //general query to fetch records of given table to populate options in selects
     async fetchPersonsRecords(table, sortByColumn){
         return (
-        await axios.get(`http://172.25.12.99:3000/personsRecords`, {
+        await axios.get(`http://${SERVER_IP}:3000/personsRecords`, {
             params: {
                 table: table,
                 person_id: this.state.person_id,
@@ -183,7 +183,7 @@ export class EditPerson extends React.Component{
         var dataArr = Object.values(stateObj);
         console.log(dataArr)
         return(
-        await axios.get(`http://172.25.12.99:3000/editPerson`, {
+        await axios.get(`http://${SERVER_IP}:3000/editPerson`, {
            params: {
                state: dataArr
            } 
@@ -195,7 +195,7 @@ export class EditPerson extends React.Component{
     async deleteQueryPerson(table){
         console.log(table)
         return(
-        await axios.get(`http://172.25.12.99:3000/deletePersonData`, {
+        await axios.get(`http://${SERVER_IP}:3000/deletePersonData`, {
            params: {
                table: table,
                person_id: this.state.person_id
@@ -210,7 +210,7 @@ export class EditPerson extends React.Component{
     // which always the same for each table
     async deleteQueryKind(table, id, columnNames){
         return(
-        await axios.get(`http://172.25.12.99:3000/deleteKindData`, {
+        await axios.get(`http://${SERVER_IP}:3000/deleteKindData`, {
            params: {
                table: table,
                id: id,
@@ -396,7 +396,7 @@ export class EditPerson extends React.Component{
     }
 
     // sendLocationToServer(){
-    //     axios.get(`http://172.25.12.99:3000/lastLocation`, {
+    //     axios.get(`http://${SERVER_IP}:3000/lastLocation`, {
     //        params: {
     //            tab: "Personen",
     //            person_id: this.state.person_id

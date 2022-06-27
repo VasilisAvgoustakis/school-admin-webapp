@@ -1,10 +1,11 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React, {Component} from 'react';
 import axios,{setPost} from 'axios';
 import ReactDOM from 'react-dom'
 import {Haushalt} from './haushalt';
 import { EditHaus } from './editHaus';
-import '../stylesheets/personen.css';
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/personen.css';
+import '../../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
@@ -28,7 +29,7 @@ export class HausSelectList extends Component{
 
   fetchData(table){
     return (
-    axios.get(`http://172.25.12.99:3000/hausList`, {
+    axios.get(`http://${SERVER_IP}:3000/hausList`, {
         params: {
           table: table,
         },
@@ -37,7 +38,7 @@ export class HausSelectList extends Component{
 
   getLastHausId(){
     return (
-    axios.get(`http://172.25.12.99:3000/lastHausId`, {
+    axios.get(`http://${SERVER_IP}:3000/lastHausId`, {
       })).then(res=>{
         this.setState({nextHaus_Id: res.data[0].id + 1})
         //console.log(this.state.nextHaus_Id)

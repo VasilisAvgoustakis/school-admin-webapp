@@ -48,7 +48,7 @@ app.use(function(req, res, next) {
 
 
 app.use(cors({
-  origin: ["http://172.25.12.99:3000"],
+  origin: ["http://${SERVER_IP}:3000"],
   methods: ["GET", "POST"],
   credentials: true,
 })

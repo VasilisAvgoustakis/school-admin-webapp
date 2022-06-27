@@ -1,7 +1,8 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React from 'react';
 import axios from 'axios';
-import '../stylesheets/globalstyles.css'
-import '../stylesheets/edits.css';
+import '../../stylesheets/globalstyles.css'
+import '../../stylesheets/edits.css';
 import {dateToDEFormat, dateToENFormat} from '../../globalFunctions'
 import { TouchableNativeFeedbackBase } from 'react-native';
 import { v4 as uuidv4 } from 'uuid';
@@ -56,7 +57,7 @@ export class EditAg extends React.Component{
         var dataArr = Object.values(stateObj);
         //console.log(dataArr)
         return(
-        await axios.get(`http://172.25.12.99:3000/editAg`, {
+        await axios.get(`http://${SERVER_IP}:3000/editAg`, {
            params: {
                state: dataArr
            } 
@@ -66,7 +67,7 @@ export class EditAg extends React.Component{
 
     async fetchProbable(queryName){
         return (
-        await axios.get(`http://172.25.12.99:3000/${queryName}`, {
+        await axios.get(`http://${SERVER_IP}:3000/${queryName}`, {
             
             }))
     }
@@ -74,7 +75,7 @@ export class EditAg extends React.Component{
     //general query to fetch records of given table to populate options in selects
     async fetchAgDataMultitable(){
         return (
-        await axios.get(`http://172.25.12.99:3000/dataMultitableAg`, {
+        await axios.get(`http://${SERVER_IP}:3000/dataMultitableAg`, {
             params: {
                 arbeitsgruppe_id: this.state.arbeitsgruppe_id,
                 },
@@ -85,7 +86,7 @@ export class EditAg extends React.Component{
     async deleteQueryAg(table){
         //console.log(table)
         return(
-        await axios.get(`http://172.25.12.99:3000/deleteAgData`, {
+        await axios.get(`http://${SERVER_IP}:3000/deleteAgData`, {
            params: {
                table: table,
                arbeitsgruppe_id: this.state.arbeitsgruppe_id

@@ -1,7 +1,8 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React from 'react';
 import axios from 'axios';
 import ReactDOM from 'react-dom'
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/globalstyles.css';
 import { Employee } from './employee';
 import { EditJob } from './editJob';
 import {dateToDEFormat, Sleep} from '../../globalFunctions'
@@ -45,7 +46,7 @@ export class Job extends React.Component{
 
     async fetchEmployees(column){
         return (
-        await axios.get(`http://172.25.12.99:3000/job_roles`, {
+        await axios.get(`http://${SERVER_IP}:3000/job_roles`, {
             params: {
                 column: column,
             },
@@ -54,7 +55,7 @@ export class Job extends React.Component{
 
     async fetchTeamContact(teamJobs, kollektiv){
     return (
-    await axios.get(`http://172.25.12.99:3000/teamContacts`, {
+    await axios.get(`http://${SERVER_IP}:3000/teamContacts`, {
         params: {
             teamJobs: teamJobs,
             kollektiv: kollektiv
@@ -64,7 +65,7 @@ export class Job extends React.Component{
 
     async fetchTeamContactCompliment(teamJobs, kollektiv){
         return (
-        await axios.get(`http://172.25.12.99:3000/teamContactsCompliment`, {
+        await axios.get(`http://${SERVER_IP}:3000/teamContactsCompliment`, {
             params: {
                 teamJobs: teamJobs,
                 kollektiv: kollektiv

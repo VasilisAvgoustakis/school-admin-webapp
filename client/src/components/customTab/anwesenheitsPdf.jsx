@@ -1,6 +1,6 @@
 import React from 'react';
 import dateToDEFormat from '../../globalFunctions'
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
 import { jsPDF } from "jspdf";
 

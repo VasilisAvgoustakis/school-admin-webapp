@@ -1,7 +1,8 @@
+import { SERVER_IP } from '../globalFunctions';
 import React, {useState} from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import "./stylesheets/app.css";
+import "../stylesheets/app.css";
 
 /**
  * 'Login' is functional React component containg all Login functionality. 
@@ -33,11 +34,12 @@ export function Login(){
  */
 
   function login() {
+    console.log(SERVER_IP)
     axios.defaults.crossDomain = true;
     axios.defaults.withCredentials = true;
 
     //check if the given username and pass corresponds to a registered user
-    axios.post(`http://172.25.12.99:3000/login`, {
+    axios.post(`http://${SERVER_IP}:3000/login`, {
       username: username,
       password: password,
     }).then(
@@ -48,7 +50,7 @@ export function Login(){
         }else { //user exists int the database
           //make display message empty
           setMessage("")
-          console.log(response)
+          //console.log(response)
           //after succesfull authenitcation store session id in session storage for session expiry check later
           sessionStorage.setItem("LoginToken", response.data);
           sessionStorage.setItem("User", username);

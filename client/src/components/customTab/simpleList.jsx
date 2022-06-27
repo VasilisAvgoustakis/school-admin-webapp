@@ -1,10 +1,11 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Anwesenheitsliste } from './anwesenheitsPdf';
 import {CSVLink, CSVDownload} from "react-csv";
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/globalstyles.css';
 import {dateToDEFormat, Sleep} from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
 import { useWindowDimensions } from 'react-native';
@@ -44,7 +45,7 @@ export class SimpleList extends React.Component{
 
     async fetchData(group, date){
         return (
-        await axios.get(`http://172.25.12.99:3000/simpleList`, {
+        await axios.get(`http://${SERVER_IP}:3000/simpleList`, {
             params: {
                 group: group,
                 date: date,

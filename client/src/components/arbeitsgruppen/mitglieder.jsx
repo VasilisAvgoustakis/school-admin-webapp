@@ -1,5 +1,5 @@
 import React from 'react';
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/globalstyles.css';
 import dateToDEFormat from '../../globalFunctions';
 import { v4 as uuidv4 } from 'uuid';
 

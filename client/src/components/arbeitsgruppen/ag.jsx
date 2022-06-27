@@ -1,8 +1,9 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React from 'react';
 import axios,{setPost} from 'axios';
 import ReactDOM from 'react-dom';
 import {EditAg} from './editAg'
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/globalstyles.css';
 import { Mitglieder } from './mitglieder';
 import {CSVLink, CSVDownload} from "react-csv";
 import {dateToDEFormat, Sleep} from '../../globalFunctions'
@@ -42,7 +43,7 @@ export class Ag extends React.Component{
 
     async fetchMitglieder(arbeitsgruppe_id){
         return (
-        await axios.get(`http://172.25.12.99:3000/ag_mitglieder`, {
+        await axios.get(`http://${SERVER_IP}:3000/ag_mitglieder`, {
             params: {
                 arbeitsgruppe_id: arbeitsgruppe_id,
             },
@@ -51,7 +52,7 @@ export class Ag extends React.Component{
 
     async fetchContactData(person_id){
     return (
-    await axios.get(`http://172.25.12.99:3000/contactData`, {
+    await axios.get(`http://${SERVER_IP}:3000/contactData`, {
         params: {
             person_id: person_id,
         },
@@ -60,7 +61,7 @@ export class Ag extends React.Component{
 
     async fetchContactDataCompliment(idsArr){
         return (
-        await axios.get(`http://172.25.12.99:3000/contactDataCompliment`, {
+        await axios.get(`http://${SERVER_IP}:3000/contactDataCompliment`, {
             params: {
                 ids: idsArr,
             },

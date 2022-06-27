@@ -1,8 +1,9 @@
+import { SERVER_IP } from '../globalFunctions';
 import React, {useState} from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
-import './stylesheets/globalstyles.css';
+import '../stylesheets/globalstyles.css';
 
 /**
  * 'Logout' is a functinal React Component containing the logout funtionality.
@@ -19,7 +20,7 @@ export function Logout(){
     //Logout function triggered by the logout button
     function logout() {
         //POST request to server to delete the LoginToken (session id) form the DB.
-        axios.post(`http://172.25.12.99:3000/logout`, {
+        axios.post(`http://${SERVER_IP}:3000/logout`, {
             session_id: sessionStorage.getItem("LoginToken")
         })
         .then((response)  => {

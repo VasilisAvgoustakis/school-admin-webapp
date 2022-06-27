@@ -1,8 +1,8 @@
 import React,{useRef, useEffect} from 'react';
 import { PersonSelectList } from '..';
 import axios from 'axios';
-import '../stylesheets/personen.css';
-import '../stylesheets/globalstyles.css'
+import '../../stylesheets/personen.css';
+import '../../stylesheets/globalstyles.css'
 
 
 

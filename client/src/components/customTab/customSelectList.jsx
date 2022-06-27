@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 import {SimpleList} from './simpleList.jsx';
 import { Schullerbewegung } from './schullerbewegung.jsx';
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/globalstyles.css';
 import { v4 as uuidv4 } from 'uuid';
 
 

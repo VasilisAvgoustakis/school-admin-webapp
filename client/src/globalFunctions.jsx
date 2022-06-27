@@ -1,5 +1,12 @@
 //var sampleDate = new Date("2018-08-01T00:00:00.000Z");
 
+
+//global variable containing the server IP
+const SERVER_IP = "172.25.12.99";
+
+
+
+
 function dateToDEFormat(date){
 
     let day = date.getDate();
@@ -64,6 +71,6 @@ function Sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
    }
 
-export {dateToDEFormat, dateToENFormat, Sleep};
+export {dateToDEFormat, dateToENFormat, Sleep, SERVER_IP};
 
 //console.log(dateToDEFormat(sampleDate))

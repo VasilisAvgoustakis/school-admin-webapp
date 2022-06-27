@@ -1,12 +1,13 @@
+import { SERVER_IP } from '../../globalFunctions';
 import React from 'react';
 import axios from 'axios';
 import ReactDOM from 'react-dom'
-import '../stylesheets/globalstyles.css';
+import '../../stylesheets/globalstyles.css';
 import { Schuller } from './schuller';
 import { EditLg } from './editLg';
 import {dateToDEFormat, Sleep} from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
-import {CSVLink, CSVDownload} from "react-csv";
+import {CSVLink} from "react-csv";
 
 
 
@@ -43,7 +44,7 @@ export class Lg extends React.Component{
 
     async fetchMitglieder(lerngruppe_id){
         return (
-        await axios.get(`http://172.25.12.99:3000/lerngruppe_mitglieder`, {
+        await axios.get(`http://${SERVER_IP}:3000/lerngruppe_mitglieder`, {
             params: {
                 lerngruppe_id: lerngruppe_id,
             },
@@ -52,7 +53,7 @@ export class Lg extends React.Component{
 
     async fetchElternContact(kind_id){
     return (
-    await axios.get(`http://172.25.12.99:3000/bezugsperson_kontakt`, {
+    await axios.get(`http://${SERVER_IP}:3000/bezugsperson_kontakt`, {
         params: {
             kind_id: kind_id,
         },
@@ -61,7 +62,7 @@ export class Lg extends React.Component{
 
     async fetchElternContactCompliment(idsArr){
         return (
-        await axios.get(`http://172.25.12.99:3000/bezugsperson_contact_compliment`, {
+        await axios.get(`http://${SERVER_IP}:3000/bezugsperson_contact_compliment`, {
             params: {
                 ids: idsArr,
             },
@@ -270,7 +271,7 @@ export class Lg extends React.Component{
 
 
     render() {
-        console.log(this.props.emai_eltern)
+        //console.log(this.props.emai_eltern)
       return (
 
         <li id={this.state.core_data.lerngruppe_id+this.state.core_data.bezeichnung} key={uuidv4()} onClick={this.handleClick} >

@@ -1,5 +1,5 @@
 import React from "react";
-import "./components/stylesheets/app.css";
+import "./stylesheets/app.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./routes/protectedRoute";
 import Landing from './app/landing';

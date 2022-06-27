@@ -1,7 +1,7 @@
 import React from 'react';
 import { AgSelectList } from '..';
 import axios from 'axios';
-import '../stylesheets/globalstyles.css'
+import '../../stylesheets/globalstyles.css'
 
 
 

@@ -1,10 +1,8 @@
-import React, {useState, useEffect, setRole} from 'react';
-import axios from 'axios';
+import React from 'react';
 import {createMaterialTopTabNavigator}  from "@react-navigation/material-top-tabs";
-import { Personen, PersonSelectList, Logout, PersonenScreen, HaushalteScreen,
-ArbeitsgruppenScreen, LerngruppenScreen, JobsScreen, CustomScreen } from '.';
+import {Logout, PersonenScreen, HaushalteScreen, ArbeitsgruppenScreen, LerngruppenScreen, JobsScreen, CustomScreen } from '.';
 import { NavigationContainer } from '@react-navigation/native';
-import './stylesheets/dashboard.css';
+import '../stylesheets/dashboard.css';
 
 
 
