@@ -140,6 +140,11 @@ export class PersonSelectList extends Component{
       return (
         <div className='entity-list-scroller-cont' >
         {/* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>           */}
+        
+        <button className='add-button' onClick={this.addPerson}><FontAwesomeIcon icon={faPlus}/>
+              Neue Person hinzufügen
+          </button>
+        
         <input
                 type="text"
                 className='entity-search'              
@@ -149,9 +154,9 @@ export class PersonSelectList extends Component{
                 onChange={(e) => {
                   this.search(e.target.value);
                 }}
-            />
+            ></input>
 
-          <button className='add-button' onClick={this.addPerson}><FontAwesomeIcon icon={faPlus}/></button>
+          
 
           <div className='entity-list-scroller'>
               <ul id='person-list'  >
@@ -170,11 +175,11 @@ export class PersonSelectList extends Component{
               ))}
               </ul>
           </div>
-          <div className='entity-data-cont'  id='person-data'>
+          {/* <div className='entity-data-cont'  id='person-data'>
             <p className='info-text' >
               Klicke auf eine Person aus der Liste links um ihre Daten anzusehen!
             </p>
-          </div>
+          </div> */}
         </div>
 
         

@@ -15,6 +15,11 @@ export function HaushalteScreen({ navigation: { navigate }}) {
       <div className='main-entity-data-cont'>
         <HausSelectList 
         navi={navigate} />
+
+      <div className='entity-data-cont'  id='haus-data'>
+            <p className='info-text'>
+              Klicke auf eine Addresse links um ihre Daten anzushen. </p>
+      </div>
       </div>
   );
 }

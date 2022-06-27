@@ -2,7 +2,7 @@
 
 
 //global variable containing the server IP
-const SERVER_IP = "172.25.12.99";
+const SERVER_IP = "localhost";
 
 
 

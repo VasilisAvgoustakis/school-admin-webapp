@@ -353,7 +353,6 @@ export class Person extends React.Component{
     }
 
 
-    
     render() {
         //console.log(this.state.data.typ)
         //console.log(this.state.data.grund_fuer_mitgliedschaftsende)

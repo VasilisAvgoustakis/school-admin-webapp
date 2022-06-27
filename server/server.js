@@ -9,6 +9,7 @@ const mysqlStore = require('express-mysql-session')(session);
 var generatePassword = require("password-generator");
 
 
+
 //db object from db.js containg all queries to db
 const db = require('./db');
 const PORT = process.env.REACT_APP_SERVER_PORT
@@ -48,7 +49,7 @@ app.use(function(req, res, next) {
 
 
 app.use(cors({
-  origin: ["http://${SERVER_IP}:3000"],
+  origin: ["http://localhost:3000"],
   methods: ["GET", "POST"],
   credentials: true,
 })
@@ -96,6 +97,7 @@ app.get("/lastLocation", (req, res) => {
 
 //register
 app.post('/register', (req, res)=> {
+  console.log(req.body)
   const username = req.body.username;
   const password = req.body.password;
   const verifCode = req.body.verifCode;
@@ -109,7 +111,7 @@ app.post('/register', (req, res)=> {
             res.send({err: err});
           }
           if (result.length > 0) {
-            //console.log(result)
+            console.log(result)
             bcrypt.hash(password,saltRound, (err, hash) => {
               if (err) {
                       console.log(err)

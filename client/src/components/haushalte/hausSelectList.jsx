@@ -128,10 +128,10 @@ export class HausSelectList extends Component{
               ))}
               </ul>
           </div>
-          <div className='entity-data-cont'  id='haus-data'>
+          {/* <div className='entity-data-cont'  id='haus-data'>
             <p className='info-text'>
               Klicke auf eine Addresse links um ihre Daten anzushen. </p>
-          </div>
+          </div> */}
         </div>
 
         
