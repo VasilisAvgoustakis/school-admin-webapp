@@ -1,3 +1,8 @@
+/**
+ * This files contains all exports of Components from different Paths.
+ * This way they are made available for import from othe files where they are needed.
+ */
+
 export {Login} from './login';
 export {Register} from './register';
 export {Logout} from './logout';

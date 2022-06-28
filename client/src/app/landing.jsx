@@ -17,21 +17,25 @@ function Landing() {
 
   return (    
     <div className="App">
-      <h2>FSX Datenbank</h2>
+
+      <h2>School Database</h2>
+
       <div id='logo'>
         <img  src= {logo} alt="FSX Logo" style={({width:"250px"})} />
       </div>
-        <div id='login-cont'>
-          <Login />
-        </div>
-        <div id='register-cont'>
-          <br></br>
-          <Register />
-          <Outlet />
-        </div>
+
+      <div id='login-cont'>
+        <Login />
+      </div>
+
+      <div id='register-cont'>
+        <br></br>
+        <Register />
+        <Outlet />
+      </div>
+
     </div>
   );
 }
-
 
 export default Landing;
