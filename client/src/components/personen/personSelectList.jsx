@@ -142,8 +142,8 @@ export class PersonSelectList extends Component{
         {/* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>           */}
         
         <button className='add-button' onClick={this.addPerson}><FontAwesomeIcon icon={faPlus}/>
-              Neue Person hinzufügen
-          </button>
+          Neue Person hinzufügen
+        </button>
         
         <input
                 type="text"

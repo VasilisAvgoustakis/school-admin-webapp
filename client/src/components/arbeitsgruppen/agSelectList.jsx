@@ -93,6 +93,10 @@ export class AgSelectList extends Component{
     
       return (
         <div className='entity-list-scroller-cont' >
+          <button className='add-button' onClick={this.addAg}>
+            <FontAwesomeIcon icon={faPlus}/>
+            Neue AG hinzufügen
+          </button>
           <input
                 type="text"
                 className='entity-search'              
@@ -104,7 +108,7 @@ export class AgSelectList extends Component{
                 }}
             />
 
-          <button className='add-button' onClick={this.addAg}><FontAwesomeIcon icon={faPlus}/></button>
+          
 
           <div className='entity-list-scroller'>
               <ul>

@@ -91,11 +91,9 @@ export function AGData(props){
                         />
                        
                     ))}
-                
-                
-
             </tbody>
         </table>)}
+        <br></br>
     </div>
     )
     

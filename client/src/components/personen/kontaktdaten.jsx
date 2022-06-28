@@ -8,7 +8,8 @@ export function KontaktDaten(props) {
     return (
     
     <div>
-        {props.data.length == 0 ?  (<table>
+        {props.data.length == 0 ?  (
+        <table>
             <thead>
                 <tr>
                     <th colSpan="2">Kontaktdaten</th>
@@ -19,6 +20,7 @@ export function KontaktDaten(props) {
                     <td><strong>Keine Kontaktdaten vorhanden!</strong></td>
                 </tr>
             </tbody>
+            <br></br>
         </table>):(
         <table>
             <thead>

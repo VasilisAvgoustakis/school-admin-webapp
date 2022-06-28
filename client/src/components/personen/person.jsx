@@ -220,32 +220,47 @@ export class Person extends React.Component{
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td style={{width:'10%'}}><strong>Id:</strong></td>
-                                    <td>{this.state.core_data.personId}</td>
+                                    <td style={{width:'10%'}}>
+                                        <strong>Id:</strong>
+                                        {this.state.core_data.personId}
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td style={{width:'10%'}}><strong>Rufname:</strong></td>
-                                    <td>{this.state.core_data.rufname}</td>
+                                    <td style={{width:'10%'}}>
+                                        <strong>Rufname:</strong>
+                                         {this.state.core_data.rufname}
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td style={{width:'10%'}}><strong>Amt.Vorname:</strong></td>
-                                    <td>{this.state.core_data.amtlicher_vorname}</td>
+                                    <td style={{width:'10%'}}>
+                                        <strong>Amt.Vorname:</strong> 
+                                        {this.state.core_data.amtlicher_vorname}
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td style={{width:'10%'}}><strong>Nachname:</strong></td>
-                                    <td>{this.state.core_data.nachname}</td>
+                                    <td style={{width:'10%'}}>
+                                        <strong>Nachname:</strong> 
+                                        {this.state.core_data.nachname}
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td style={{width:'10%'}}><strong>Geburtsdatum:</strong></td>
-                                    <td>{dateToDEFormat(new Date(this.state.core_data.geburtsdatum))}</td>
+                                    <td style={{width:'10%'}}>
+                                        <strong>Geburtsdatum:</strong> 
+                                         {dateToDEFormat(new Date(this.state.core_data.geburtsdatum))}
+                                    </td>
+
                                 </tr>
                                 {this.state.core_data.einschulungsdatum ? (<tr>
-                                    <td style={{width:'10%'}}><strong>Einschulungsdatum:</strong></td>
-                                    <td>{dateToDEFormat(new Date(this.state.core_data.einschulungsdatum))}</td>
+                                    <td style={{width:'10%'}}>
+                                        <strong>Einschulungsdatum:</strong>
+                                         {dateToDEFormat(new Date(this.state.core_data.einschulungsdatum))}
+                                    </td>
                                 </tr>) : (<tr></tr>) }
                                 {this.state.data.taetigkeit ?(<tr>
-                                    <td style={{width:'10%'}}><strong>Tätigkeit:</strong></td>
-                                    <td>{this.state.data.taetigkeit}</td>
+                                    <td style={{width:'10%'}}>
+                                        <strong>Tätigkeit:</strong>
+                                         {this.state.data.taetigkeit}
+                                    </td>
                                 </tr>):(<tr></tr>)}
                             </tbody>
                         </table>

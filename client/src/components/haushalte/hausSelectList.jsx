@@ -96,6 +96,10 @@ export class HausSelectList extends Component{
     
       return (
         <div className='entity-list-scroller-cont' >
+           <button className='add-button' onClick={this.addHaus}>
+              <FontAwesomeIcon icon={faPlus}/> Neues Haushalt hinzufügen
+            </button>  
+
           <input
                 type="text"
                 className='entity-search'              
@@ -106,7 +110,7 @@ export class HausSelectList extends Component{
                 }}
             />
 
-          <button className='add-button' onClick={this.addHaus}><FontAwesomeIcon icon={faPlus}/></button>  
+         
 
           <div className='entity-list-scroller'>
               <ul>

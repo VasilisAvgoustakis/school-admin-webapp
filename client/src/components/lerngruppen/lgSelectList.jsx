@@ -91,6 +91,11 @@ export class LgSelectList extends Component{
 
       return (
         <div className='entity-list-scroller-cont' >
+           <button className='add-button' onClick={this.addLg}>
+            <FontAwesomeIcon icon={faPlus}/>
+            Neue Lerngruppe hinzufügen
+          </button>
+
           <input
                 type="text"
                 className='entity-search'              
@@ -102,7 +107,7 @@ export class LgSelectList extends Component{
                 }}
             />
 
-          <button className='add-button' onClick={this.addLg}><FontAwesomeIcon icon={faPlus}/></button>
+         
 
           <div className='entity-list-scroller'>
               <ul>
