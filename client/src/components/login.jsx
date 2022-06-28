@@ -1,11 +1,10 @@
 import { SERVER_IP } from '../globalFunctions';
 import React, {useState} from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import "../stylesheets/app.css";
 
 /**
- * 'Login' is functional React component containg all Login functionality. 
+ * 'Login'is a functional React component containing all Login functionality. 
  *
  * @returns The html code with the Login Form.
  */
@@ -17,7 +16,6 @@ export function Login(){
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message,setMessage] = useState("");
-  //const navigate = useNavigate();
 
 
 /**
@@ -34,7 +32,7 @@ export function Login(){
  */
 
   function login() {
-    console.log(SERVER_IP)
+    
     axios.defaults.crossDomain = true;
     axios.defaults.withCredentials = true;
 
@@ -47,16 +45,20 @@ export function Login(){
         //if user does not exists the server sends a corresponding message
         if (response.data.message){
           setMessage(response.data.message);
-        }else { //user exists int the database
-          //make display message empty
+        }else { //user exists in db
+          //empty display message
           setMessage("")
-          //console.log(response)
+          
           //after succesfull authenitcation store session id in session storage for session expiry check later
-          sessionStorage.setItem("LoginToken", response.data);
-          sessionStorage.setItem("User", username);
-          localStorage.setItem("isAuthenticated", true);
+          sessionStorage.setItem("LoginToken", response.data); //store session_id as LoginToken in session storage
+          sessionStorage.setItem("User", username); // store Username in Session Storage
+          localStorage.setItem("isAuthenticated", true); //boolean value showing authentication statur in local storage
+          
+          //empty sessionStorage vars lastLocation and lastId so no redirection from last sessions happens after login
           sessionStorage.setItem("lastLocation", '');
           sessionStorage.setItem("lastId", '');
+
+          //redirect to dashboard
           window.location.href = "/dashboard"; 
         }
       
@@ -67,6 +69,7 @@ export function Login(){
   return(
     <div>
         <h1>Anmelden</h1>
+        
         <input 
           type="text" 
           placeholder="Benutzername..."
@@ -74,6 +77,7 @@ export function Login(){
             setUsername(e.target.value);
           }}
         />
+
         <br></br>
         
         <input 
@@ -83,11 +87,14 @@ export function Login(){
             setPassword(e.target.value);
           }}
         />
+
         <br></br>
         <br></br>
+
         <button onClick={login}>
           Anmelden
         </button>
+
         <h1>{message}</h1>
     </div>   
   )

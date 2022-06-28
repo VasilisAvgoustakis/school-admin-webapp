@@ -21,12 +21,14 @@ export function Logout(){
     function logout() {
         //POST request to server to delete the LoginToken (session id) form the DB.
         axios.post(`http://${SERVER_IP}:3000/logout`, {
-            session_id: sessionStorage.getItem("LoginToken")
+            session_id: sessionStorage.getItem("LoginToken") //session_id stored in session storage is passed as parameter to the query
         })
         .then((response)  => {
             setMessage(response.data.message);
-            sessionStorage.setItem("lastLocation", '');
+            //empty session storage vars used for redirecting after 
+            sessionStorage.setItem("lastLocation", ''); 
             sessionStorage.setItem("lastId", '');
+
             //redirect to Landing page
             window.location.href = "/"; 
         })
@@ -41,7 +43,6 @@ export function Logout(){
             Eingeloggt als: {sessionStorage.getItem('User')}
             {/* <h3>{message}</h3> */}
         </div>
-        
       </div>
   )
 }

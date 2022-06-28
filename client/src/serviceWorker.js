@@ -1,4 +1,4 @@
-const SERVER_IP = "172.25.12.99";
+import { SERVER_IP } from "./globalFunctions";
 
 // This optional code is used to register a service worker.
 // register() is not called by default.
