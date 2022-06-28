@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const mysqlStore = require('express-mysql-session')(session);
 var generatePassword = require("password-generator");
+const SERVER_IP = "172.25.12.99";
 
 
 
@@ -49,7 +50,7 @@ app.use(function(req, res, next) {
 
 
 app.use(cors({
-  origin: ["http://localhost:3000"],
+  origin: [`http://${SERVER_IP}:3000`],
   methods: ["GET", "POST"],
   credentials: true,
 })

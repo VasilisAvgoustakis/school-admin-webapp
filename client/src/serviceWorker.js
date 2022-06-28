@@ -1,3 +1,5 @@
+const SERVER_IP = "172.25.12.99";
+
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
@@ -11,7 +13,7 @@
 // opt-in, read https://bit.ly/CRA-PWA
 
 const isLocalhost = Boolean(
-  window.location.hostname === '${SERVER_IP}' ||
+  window.location.hostname === SERVER_IP ||
     // [::1] is the IPv6 ${SERVER_IP} address.
     window.location.hostname === '[::1]' ||
     // 127.0.0.1/8 is considered ${SERVER_IP} for IPv4.
