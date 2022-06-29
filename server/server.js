@@ -6,14 +6,13 @@ const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const mysqlStore = require('express-mysql-session')(session);
-var generatePassword = require("password-generator");
+
+
 const SERVER_IP = "172.25.12.99";
 
-
-
 //db object from db.js containg all queries to db
-const db = require('./db');
-const PORT = process.env.REACT_APP_SERVER_PORT
+// const db = require('./db');
+// const PORT = process.env.REACT_APP_SERVER_PORT
 
 
 //connection pool to db

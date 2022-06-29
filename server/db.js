@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 
 
-//connection pooll to db
+//connection pool to db
 const pool = mysql.createPool({
     host: process.env.MYSQL_HOST_IP,
     user: process.env.MYSQL_USER,

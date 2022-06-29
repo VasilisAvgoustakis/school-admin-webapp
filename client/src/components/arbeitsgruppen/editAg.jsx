@@ -3,17 +3,21 @@ import React from 'react';
 import axios from 'axios';
 import '../../stylesheets/globalstyles.css'
 import '../../stylesheets/edits.css';
-import {dateToDEFormat, dateToENFormat} from '../../globalFunctions'
-import { TouchableNativeFeedbackBase } from 'react-native';
+import {dateToENFormat} from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
 
 
+/**
+ * Class Component containg the EditView Forms for AGs
+ */
 
 export class EditAg extends React.Component{
     constructor(props){
         super(props);
         this.today = new Date();
         this.defaultDateValue = this.today.getFullYear()+'-'+(this.today.getMonth()+1)+'-'+ this.today.getDate();
+        
+        //this bindings
         this.handleChange = this.handleChange.bind(this);
         this.updateQuery = this.updateQuery.bind(this);
         this.deleteQueryAg = this.deleteQueryAg.bind(this);
@@ -22,8 +26,9 @@ export class EditAg extends React.Component{
         this.fetchProbable = this.fetchProbable.bind(this);
         this.fetchAgDataMultitable = this.fetchAgDataMultitable.bind(this);
 
-        
+        //state vats
         this.state = {
+
             //Kerndaten
             arbeitsgruppe_id: this.props.arbeitsgruppe_id ? (this.props.arbeitsgruppe_id):(''),
             bezeichnung: this.props.bezeichnung ? (this.props.bezeichnung):(''),
@@ -38,33 +43,38 @@ export class EditAg extends React.Component{
             datum_mitgliedschaftsende: this.defaultDateValue,
             mitgliedToBeDeleted: '',
             mitglieder: [],
-
-        
         }
     }
 
+
+    //handles changes of the input fields
     handleChange(e){
         if((e.target.id).includes('datum')){
             this.setState({ [e.target.id]: e.target.value})
         }else{
             this.setState({ [e.target.id]: e.target.value })
         }
-        console.log(e.target.id + ":" + e.target.value)
     }
 
+
+    //makes the data update request to the server
     async updateQuery(){
+
         var stateObj = this.state;
         var dataArr = Object.values(stateObj);
-        //console.log(dataArr)
+
         return(
-        await axios.get(`http://${SERVER_IP}:3000/editAg`, {
-           params: {
-               state: dataArr
-           } 
-      })
+            await axios.get(`http://${SERVER_IP}:3000/editAg`, {
+                params: {
+                    state: dataArr
+                } 
+            }
+        )
        )
     }
 
+
+    //fetches all probable persons that could be added in a AG
     async fetchProbable(queryName){
         return (
         await axios.get(`http://${SERVER_IP}:3000/${queryName}`, {
@@ -75,40 +85,50 @@ export class EditAg extends React.Component{
     //general query to fetch records of given table to populate options in selects
     async fetchAgDataMultitable(){
         return (
-        await axios.get(`http://${SERVER_IP}:3000/dataMultitableAg`, {
-            params: {
-                arbeitsgruppe_id: this.state.arbeitsgruppe_id,
-                },
-            }))
+            await axios.get(`http://${SERVER_IP}:3000/dataMultitableAg`, {
+                    params: {
+                        arbeitsgruppe_id: this.state.arbeitsgruppe_id,
+                        },
+            }
+            )
+        )
     }
 
     //deletes all records from a table with the given id
     async deleteQueryAg(table){
-        //console.log(table)
         return(
-        await axios.get(`http://${SERVER_IP}:3000/deleteAgData`, {
-           params: {
-               table: table,
-               arbeitsgruppe_id: this.state.arbeitsgruppe_id
-           } 
-      })
+            await axios.get(`http://${SERVER_IP}:3000/deleteAgData`, {
+                params: {
+                    table: table,
+                    arbeitsgruppe_id: this.state.arbeitsgruppe_id
+                } 
+            }
+            )
        )
     }
 
-    // edits DB for changed data in the form
+    // called from speichern button. Calls all relevant function above to edit the data in the db.
     editData(){
+
         //input validation
         let validationSuccess = false;
         //get all invalid inputs
         let invalidInputFields = document.querySelectorAll(':invalid');
         
-
+        //check for existing invalid inputs
         if(invalidInputFields.length > 0){
-            window.alert('Bitte kontrollieren Sie alle rot gekennzeichnete Input Felder und versuchen Sie es erneut!')
+            window.alert(
+                        'Bitte kontrollieren Sie alle rot gekennzeichnete \
+                        Input Felder und versuchen Sie es erneut!'
+                        )
         }else if(invalidInputFields.length === 0) validationSuccess = true;
 
         if(validationSuccess){
-            var confirm = window.confirm('Diese Aktion wird die Daten direkt in der Datenbank bearbeiten!!! Bist du sicher dass diese Korrekt sind?')
+            var confirm = window.confirm(
+                'Diese Aktion wird die Daten direkt in der Datenbank bearbeiten!!! \
+                Bist du sicher dass diese Korrekt sind?'
+                )
+            //only run update query if all inputs have the right format    
             if(confirm){
             this.updateQuery().then(res =>{
                 if(typeof(res.data) == 'string'){
@@ -127,11 +147,10 @@ export class EditAg extends React.Component{
         }
     }
 
-    // delete general Haushalt Data by given table
+
+    // delete all AG Data by given table
     deleteAgData(e){
-        //console.log(e.target.id)
         let table = e.target.id;
-        console.log(table);
 
         var confirm = window.confirm(
                     `ACHTUNG!!! Diese Aktion wird ${table === 'arbeitsgruppen' ? 
@@ -144,25 +163,30 @@ export class EditAg extends React.Component{
             .then(result=>{
                 console.log("confirm")
                 confirm = false;
+                
                 //last delete query refreshes the page
                 if(!confirm){
                     sessionStorage.setItem("lastLocation", "Arbeitsgruppen")
                     sessionStorage.setItem("lastId", this.state.arbeitsgruppe_id+this.state.bezeichnung)
                     window.location.reload()
                 }
-                console.log(result)
             });
     }
     }
+
+
 
     componentDidMount() {
         this.fetchProbable('personsList').then(res => {
           
             let mitglieder = [];
             res.data.forEach(person => {
-                //console.log(person.rufname)
                 mitglieder.push(
-                    Object.create({person_id:person.person_id, rufname:person.rufname, nachname:person.nachname})) 
+                    Object.create({
+                                person_id:person.person_id, 
+                                rufname:person.rufname, 
+                                nachname:person.nachname
+                                })) 
             });
             this.setState({
               probableMitglieder: mitglieder
@@ -179,7 +203,6 @@ export class EditAg extends React.Component{
                             rufname: person.rufname,
                             nachname: person.nachname
                             }))
-            
         });
         this.setState({
             mitglieder: mitglieder
@@ -193,6 +216,7 @@ export class EditAg extends React.Component{
      <div>
         <div>
             <button type='button' onClick={this.editData}>Speichern</button>
+            
             <div className='edit-person-cont'>
                 {/* allgemeine AG Daten */}
                 <div className='bg-cont' style={({backgroundColor: "#74a3ed"})}>
@@ -295,7 +319,6 @@ export class EditAg extends React.Component{
                                         className='delete-buttons' 
                                         id='person_arbeitsgruppe' type='button'
                                         onClick={this.deleteAgData}
-                                        
                                     >Alle Mitglieder löschen</button>
                                 </div>
                         </div>

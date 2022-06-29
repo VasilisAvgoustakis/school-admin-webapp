@@ -10,14 +10,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 
+/**
+ * React class component containing the clickable selection list on the left,
+ * for the current Entity.
+ */
+
+
 export class AgSelectList extends Component{
   
   constructor(props) {
     super(props);
+
+    //this bindings
     this.fetchData = this.fetchData.bind(this);
     this.search = this.search.bind(this);
     this.addAg = this.addAg.bind(this);
     this.getLastAgId = this.getLastAgId.bind(this);
+
+    //state vars
     this.state = {
       arbeitsgruppen: [],
       searchedGruppe: [],
@@ -25,33 +35,39 @@ export class AgSelectList extends Component{
     };
   }
 
-
+  //fetches all existing AGs
   fetchData(table){
     return (
-    axios.get(`http://${SERVER_IP}:3000/agList`, {
+    axios.get(`http://${SERVER_IP}:3000/agList`, 
+      {
         params: {
           table: table,
         },
       }))
   }
 
-
+  //fetches the last AG id from db
   getLastAgId(){
     return (
-    axios.get(`http://${SERVER_IP}:3000/lastAgId`, {
-      })).then(res=>{
-        this.setState({nextAg_Id: res.data[0].id + 1})
-        //console.log(this.state.nextHaus_Id)
-      })
+      axios.get(`http://${SERVER_IP}:3000/lastAgId`, 
+      )).then(
+          res=>{
+            this.setState({nextAg_Id: res.data[0].id + 1})
+          })
   }
   
-
+  //called by onChange attribute of search input
   search(agName){
-    this.setState.searchedGruppe = [];
+    this.setState.searchedGruppe = []; //empty the list containing the searched items
+    
+    //empty session storage variables
     sessionStorage.setItem("lastLocation", '');
     sessionStorage.setItem("lastId", '');
-    // console.log(this.state.searchedGruppe);
+    
+    //results array
     const results = [];
+
+    //loop through existing AGs to find the matching your search string
     this.state.arbeitsgruppen.forEach(function(ag){
       const ag_credentials = ag.bezeichnung;
       if(ag_credentials.toLowerCase().includes(agName.toLowerCase()) && agName != '' ){
@@ -62,12 +78,14 @@ export class AgSelectList extends Component{
     this.forceUpdate();
   }
   
+  //renders the add new AGs view
   addAg(){
     ReactDOM.render(<EditAg 
                         arbeitsgruppe_id={this.state.nextAg_Id}
-                         />, document.getElementById('ag-data'))
+                    />, document.getElementById('ag-data'))
   }
 
+  //runs after component is mounted
   componentDidMount() {
     this.fetchData('arbeitsgruppen').then(res => {
       
@@ -80,23 +98,23 @@ export class AgSelectList extends Component{
   
 
   render() {
+    //the AGs to be rendered on the left, either all or just the search matches
     var agsToRender = [];
-    // console.log(this.state.haushalte)
+
     if(this.state.searchedGruppe.length >=1){
       agsToRender = this.state.searchedGruppe;
     }else{
       agsToRender = this.state.arbeitsgruppen;
-
     }
-    //console.log(agsToRender);
-    
     
       return (
         <div className='entity-list-scroller-cont' >
+
           <button className='add-button' onClick={this.addAg}>
             <FontAwesomeIcon icon={faPlus}/>
             Neue AG hinzufügen
           </button>
+
           <input
                 type="text"
                 className='entity-search'              
@@ -109,7 +127,6 @@ export class AgSelectList extends Component{
             />
 
           
-
           <div className='entity-list-scroller'>
               <ul>
               {agsToRender.map(ag => (
@@ -123,13 +140,12 @@ export class AgSelectList extends Component{
               ))}
               </ul>
           </div>
+
           <div className='entity-data-cont'  id='ag-data'>
             <p className='info-text'>Ag Data Container </p>
           </div>
-        </div>
 
-        
-     
+        </div>
       );
   }
 }
