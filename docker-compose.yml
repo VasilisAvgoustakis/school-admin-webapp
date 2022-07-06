@@ -41,8 +41,8 @@ services:
       MYSQL_HOST_IP: mysql-db
     ports:
       - 8000:8000
-    volumes:
-      - ./server:/app
+    # volumes:
+    #   - ./server:/app
     links:
       - mysql-db
     command: npm start

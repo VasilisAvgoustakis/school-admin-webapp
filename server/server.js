@@ -11,8 +11,8 @@ const mysqlStore = require('express-mysql-session')(session);
 const SERVER_IP = "172.25.12.99";
 
 //db object from db.js containg all queries to db
-// const db = require('./db');
-// const PORT = process.env.REACT_APP_SERVER_PORT
+const db = require('./db');
+const PORT = process.env.REACT_APP_SERVER_PORT
 
 
 //connection pool to db

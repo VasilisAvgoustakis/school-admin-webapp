@@ -7,6 +7,7 @@ MAC
 2. Download this repository as ZIP and unzip in your location of choice. 
 3. Using the terminal navigate inside the unzipped folder where the docker-compose.yml is.
 4. Run `docker-compose build` in the directory containing the docker-compose.yml file.
+5. Run `docker-compose up -d` to start the containers in detouched mode.
 
 
 # REACT-NODEJS-MYSQL-DOCKER 

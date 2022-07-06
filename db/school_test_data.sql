@@ -31,8 +31,8 @@ CREATE TABLE `verification` (
 LOCK TABLES `verification` WRITE;
 INSERT INTO `verification` (`code_id`, `verifcode`) VALUES
 (1, '123456'),
-(2, '123456'),
-(3, '123456');
+(2, '234567'),
+(3, '345678');
 UNLOCK TABLES;
 
 -- table for user authentication
