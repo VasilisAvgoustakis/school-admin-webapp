@@ -1,4 +1,4 @@
-#Node / React School administration web application
+# Node / React School administration web application
 
 
 
