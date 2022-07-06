@@ -3,11 +3,10 @@
 # INSTALLATION
 MAC
 --------------
-1. Install [Docker](https://docs.docker.com/desktop/mac/install/).
-    - Either download the .dmg from the link or if you have homebrew installed use `brew install docker`.
-    - Using brew install docker-compose `brew install docker-compose`.
-
-2. Download this repository as ZIP and unzip in your location of choice. Using the terminal navigate inside the unzipped folder where the docker-compose.yml is.
+1. Download and Install the [Docker desktop app](https://docs.docker.com/desktop/mac/install/#install-interactively). Once the installation is finished run the Docker desktop app.
+2. Download this repository as ZIP and unzip in your location of choice. 
+3. Using the terminal navigate inside the unzipped folder where the docker-compose.yml is.
+4. Run `docker-compose build` in the directory containing the docker-compose.yml file.
 
 
 # REACT-NODEJS-MYSQL-DOCKER 
