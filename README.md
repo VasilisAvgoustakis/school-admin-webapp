@@ -4,7 +4,8 @@
 MAC
 --------------
 1. Install [Docker](https://docs.docker.com/desktop/mac/install/).
-- Either download the .dmg from the link or if you have homebrew installed use `brew install docker`
+    - Either download the .dmg from the link or if you have homebrew installed use `brew install docker`.
+    - Using brew install docker-compose `brew install docker-compose`.
 
 2. Download this repository as ZIP and unzip in your location of choice. Using the terminal navigate inside the unzipped folder where the docker-compose.yml is.
 
