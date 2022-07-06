@@ -1,6 +1,8 @@
-# Node / React School administration web application
+# NODE / REACT SCHOOL ADMINISTRATION WEB APPLICATION
 
-
+# INSTALLATION
+MAC
+--------------
 
 
 # REACT-NODEJS-MYSQL-DOCKER 
