@@ -1,3 +1,8 @@
+#Node / React School administration web application
+
+
+
+
 # REACT-NODEJS-MYSQL-DOCKER 
 
 Installation instruction etc. comming soon!
