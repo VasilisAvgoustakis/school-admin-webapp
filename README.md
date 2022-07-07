@@ -9,13 +9,13 @@ The web application in this repository was developed as part of the 2nd semester
 # INSTALLATION
 
 
-PLATFORM INDEPENDETNT PREREQUISITES
+PLATFORM INDEPENDENT PREREQUISITES
 --------------
 - Make sure that the following ports on your machine are free to be used by the containers: 8000, 8080, 3307, 3000
 
 If containers started succesfully:
-- The webapp is available in any modern browser under: (https://localhost:3000)
-- phpAdmin is available in any modern browser under: (https://localhost:8080)
+- The webapp is available in any modern browser under: (localhost:3000)
+- phpAdmin is available in any modern browser under: (localhost:8080)
 
 
 MAC
