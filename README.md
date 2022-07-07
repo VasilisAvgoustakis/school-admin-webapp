@@ -3,7 +3,11 @@
 # INSTALLATION
 PLATFORM INDEPENDETNT PREREQUISITES
 --------------
-Make sure that the following ports on your machine are free to be used by the containers: 8000, 8080, 3307, 3000
+- Make sure that the following ports on your machine are free to be used by the containers: 8000, 8080, 3307, 3000
+
+If containers started succesfully:
+- The webapp is available in any modern browser under: (https://localhost:3000)
+- phpAdmin is available in any modern browser under: (https://localhost:8080)
 
 MAC
 --------------
@@ -14,8 +18,7 @@ MAC
 4. Run `docker-compose build` in the directory containing the docker-compose.yml file.
 5. Run `docker-compose up -d` to start the containers in detouched mode.
 
-- The webapp is available in any modern browser under: (https://localhost:3000)
-- phpAdmin is available in any modern browser under: (https://localhost:8080)
+
 
 
 WINDOWS
@@ -28,8 +31,6 @@ WINDOWS
 4. Run `docker-compose build` in the directory containing the docker-compose.yml file.
 5. Run `docker-compose up -d` to start the containers in detouched mode.
 
-- The webapp is available in any modern browser under: (https://localhost:3000)
-- phpAdmin is available in any modern browser under: (https://localhost:8080)
 
 # REACT-NODEJS-MYSQL-DOCKER 
 
