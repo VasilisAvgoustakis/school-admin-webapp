@@ -1,7 +1,7 @@
 # NODE / REACT: SCHOOL ADMINISTRATION WEB APPLICATION
-The web application in this repository was developed as part of the 2nd semester of my Computer science major.
+The web application in this repository was developed as part of the 2nd semester of my Computer Science major.
 
-###Disclaimer
+### Disclaimer
 - All names and other personal data with which this version is deployed, are randomly generated data and do not correspond to real persons.
 - Due to the random generation of the data, in some cases, some of the mappings between entities will not make sense. i.e. Some Persons who appear as School students, also appear as school employees, or some Housholds appear withour addresses. The application is however fully functional if provided with a real-world dataset.
 
