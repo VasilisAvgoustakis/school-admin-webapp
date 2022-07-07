@@ -16,6 +16,7 @@ PLATFORM INDEPENDENT PREREQUISITES
 If containers started succesfully:
 - The webapp is available in any modern browser under: (http://localhost:3000)
 - phpAdmin is available in any modern browser under: (http://localhost:8080)
+- There 3 verifications codes that can be used for registering the first 3 users: '123456', '234567' and '345678'.
 
 
 MAC
