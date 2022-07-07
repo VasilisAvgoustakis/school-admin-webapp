@@ -14,6 +14,10 @@ MAC
 4. Run `docker-compose build` in the directory containing the docker-compose.yml file.
 5. Run `docker-compose up -d` to start the containers in detouched mode.
 
+- The webapp is available in any modern browser under: (https://localhost:3000)
+- phpAdmin is available in any modern browser under: (https://localhost:8080)
+
+
 WINDOWS
 --------------
 1. Enable the WSL 2 feature on Windows. For detailed instructions, refer to the [Microsoft documentation](https://docs.microsoft.com/en-us/windows/wsl/install).
@@ -23,6 +27,9 @@ WINDOWS
 3. Download this repository as ZIP and unzip in your location of choice. 
 4. Run `docker-compose build` in the directory containing the docker-compose.yml file.
 5. Run `docker-compose up -d` to start the containers in detouched mode.
+
+- The webapp is available in any modern browser under: (https://localhost:3000)
+- phpAdmin is available in any modern browser under: (https://localhost:8080)
 
 # REACT-NODEJS-MYSQL-DOCKER 
 
