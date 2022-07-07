@@ -19,7 +19,6 @@ export class PersonSelectList extends Component{
     this.fetchData = this.fetchData.bind(this);
     this.getLastPersonsId = this.getLastPersonsId.bind(this);
     this.search = this.search.bind(this);
-    // this.updateStateAfterEdit = this.updateStateAfterEdit.bind(this);
     this.addPerson = this.addPerson.bind(this);
     this.state = {
       forceRemount:'',
@@ -100,21 +99,13 @@ export class PersonSelectList extends Component{
         
       }
     
-
       if(lastLoc && lastId){
-        
         this.props.navi(lastLoc);
-        
         var toClick = document.getElementById(lastId);
-        console.log(toClick)
         
       if(toClick) {
-        console.log("I am about to click!")
-        // Sleep(250).then((resolve)=>{
-          toClick.click()
-          console.log("Clicked")
-        
-        
+        //click the element
+        toClick.click()
       }
         
         else console.log(toClick);
@@ -127,19 +118,16 @@ export class PersonSelectList extends Component{
 
   render() {
     var personsToRender = [];
-    //console.log(personsToRender)
     if(this.state.searchedPersons.length >=1){
       personsToRender = this.state.searchedPersons;
     }else{
       personsToRender = this.state.persons;
-
     }
     
     
     
       return (
         <div className='entity-list-scroller-cont' >
-        {/* <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>           */}
         
         <button className='add-button' onClick={this.addPerson}><FontAwesomeIcon icon={faPlus}/>
           Neue Person hinzufügen

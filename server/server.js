@@ -137,7 +137,7 @@ app.post('/register', (req, res)=> {
                             }
                           );
                           
-                          res.send({message: "User Successfully registered! Du kannst nun dein Anmeldendaten zu nutzen um dich einzulogen!!!"})
+                          res.send({message: "User Successfully registered! You can now login!!!"})
 
                         }
                       }
