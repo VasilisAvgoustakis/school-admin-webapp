@@ -19,14 +19,14 @@ If containers started succesfully:
 
 
 MAC
-
+--------------
 1. Docker on MAC needs [Virtual Box](https://www.virtualbox.org/wiki/Downloads) to work. Make sure you have installed it.
 2. Download and Install [Docker desktop app](https://docs.docker.com/desktop/mac/install/#install-interactively). Once the installation is finished run the Docker desktop app.
 3. Download this repository as ZIP and unzip in your location of choice. 
 4. Using the terminal navigate inside the unzipped folder where the docker-compose.yml is.
 5. Run `docker-compose build` in the directory containing the docker-compose.yml file.
 6. Run `docker-compose up -d` to start the containers in detouched mode.
---------------
+
 
 WINDOWS
 --------------
