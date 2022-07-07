@@ -395,14 +395,6 @@ export class EditPerson extends React.Component{
 
     }
 
-    // sendLocationToServer(){
-    //     axios.get(`http://${SERVER_IP}:3000/lastLocation`, {
-    //        params: {
-    //            tab: "Personen",
-    //            person_id: this.state.person_id
-    //        } 
-    //   })
-    // }
     
     // edits DB for changed data in the form
     editData(){
@@ -421,20 +413,14 @@ export class EditPerson extends React.Component{
             if(confirm){
             this.updateQuery().then(res =>{
                 if(typeof(res.data) == 'string'){
-                    //console.log("This is the Err: ")
                     console.log(res.data)
                     window.alert(res.data);
                 }else{
-                    //console.log("confirm")
                     confirm = false;
                     if(!confirm){
-                        //this.sendLocationToServer()
                         sessionStorage.setItem("lastLocation", "Personen")
                         sessionStorage.setItem("lastId", this.state.person_id)
                         window.location.reload();
-
-                        //this.componentDidMount();
-                    //console.log(res);
                     }
                 }
             }).catch(err =>{console.log(err)})
@@ -467,16 +453,13 @@ export class EditPerson extends React.Component{
                 confirm = false;
                 //last delete query refreshes the page
                 if(!confirm)window.location.reload()
-                console.log(result)
             });
         }
     }
 
     // delete general Person Data by given table
     deletePersonData(e){
-        //console.log(e.target.id)
         let table = e.target.id;
-        console.log(table);
 
         var confirm = window.confirm(
                     `ACHTUNG!!! Diese Aktion wird ${table === 'personen' ? 
@@ -494,7 +477,6 @@ export class EditPerson extends React.Component{
                     sessionStorage.setItem("lastLocation", "Personen")
                     sessionStorage.setItem("lastId", this.state.person_id+this.state.rufname)
                     window.location.reload()
-                    //console.log(result)
                 }
             });
     }

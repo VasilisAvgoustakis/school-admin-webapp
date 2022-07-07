@@ -114,7 +114,6 @@ export class Person extends React.Component{
     
 
     onEdit(){
-        //this.props.updateStateAfterEdit();
         this.state.editing ? (this.setState({editing: false})):(this.setState({editing:true}))
     }
 
@@ -315,7 +314,6 @@ export class Person extends React.Component{
         if(this.state.clicked){
             this.customRender();
         }
-        //console.log(this.state.data)
     }
     
     handleClick = async() => {
@@ -358,10 +356,6 @@ export class Person extends React.Component{
                 )},
         this.setState({loading:false}),
         this.setState({clicked: true}),
-        ////console.log(this.state.bezugspersonen)
-        
-        
-        // //console.log(this.state.loading + ' :after fetching')
         );
 
         
@@ -369,8 +363,6 @@ export class Person extends React.Component{
 
 
     render() {
-        //console.log(this.state.data.typ)
-        //console.log(this.state.data.grund_fuer_mitgliedschaftsende)
       return (
 
         <li key={uuidv4()} 

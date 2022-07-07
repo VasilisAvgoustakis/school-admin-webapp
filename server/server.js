@@ -6,13 +6,7 @@ const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const mysqlStore = require('express-mysql-session')(session);
-
-
 const SERVER_IP = "localhost";
-
-//db object from db.js containg all queries to db
-const db = require('./db');
-const PORT = process.env.REACT_APP_SERVER_PORT
 
 
 //connection pool to db
@@ -24,9 +18,7 @@ const pool = mysql.createPool({
 });
 
 
-
-
-// create sessioStore middleware  allows
+// create sessionStore middleware  allows
 // work with SQL relational tables and schema-less JSON collections.
 const sessionStore = new mysqlStore({
   connectionLimit: 10,
@@ -38,9 +30,12 @@ const sessionStore = new mysqlStore({
   createDatabaseTable: false
 },pool)
 
+
 //express app object
 const app = express();
 
+
+//set HTTP headers
 app.use(function(req, res, next) {
   res.header('Access-Control-Allow-Credentials', true);
   res.header('Access-Control-Allow-Origin', "*");
@@ -50,6 +45,15 @@ app.use(function(req, res, next) {
 });
 
 
+/**
+ * The word CORS stands for “Cross-Origin Resource Sharing”. 
+ * Cross-Origin Resource Sharing is an HTTP-header based mechanism implemented by the browser which allows 
+ * a server or an API(Application Programming Interface) to indicate any origins (different in terms of protocol,
+ *  hostname, or port) other than its origin from which the unknown origin gets permission to access and 
+ * load resources. The cors package available in the npm registry is used to tackle CORS errors in a Node.js
+ *  application. 
+ */
+
 app.use(cors({
   origin: [`http://${SERVER_IP}:3000`],
   methods: ["GET", "POST"],
@@ -57,10 +61,16 @@ app.use(cors({
 })
 );
 
-
+// to use cookies in our app we nee the cookieParser middleware
 app.use(cookieParser());
+
+// middleware for parsing bodies from URL
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// middleware for parsing json objects
 app.use(bodyParser.json());
+
+//session managements
 app.use(session({
   name: "SessionCookie" ,
   resave: false,
@@ -78,38 +88,26 @@ app.use(session({
   filter:''
 }))
 
-app.get("/lastLocation", (req, res) => {
-  ssn = req.session;
-  const tab = req.query.tab;
-  const id = req.query.person_id;
-
-  //console.log("Test: ", tab, id)
-  ssn.lastLocation = tab;
-  ssn.lastId = id;
-  
-  console.log(ssn.lastLocation)
-  console.log(ssn.lastId)
-});
-
-
 
 /**
- * Authentication
+ * AUTHENTICATION
+ * All following requests have to do with user authentication.
  */
 
-//register
+
+//register POST request
 app.post('/register', (req, res)=> {
-  console.log(req.body)
+  
   const username = req.body.username;
   const password = req.body.password;
   const verifCode = req.body.verifCode;
+
   if (username && password && verifCode){
     pool.query(
       "SELECT * FROM verification WHERE verifcode = ?;",
       [verifCode],
       (err,result) => {
           if (err) {
-            //console.log("error")
             res.send({err: err});
           }
           if (result.length > 0) {
@@ -158,11 +156,8 @@ app.post('/register', (req, res)=> {
 // Higher values of “saltRound” take more time to the hashing algorithm. 
 const saltRound = 10;
 
-//Indicate login status using session variables
-app.get("/login", (req, res) => {
-  console.log(req.session.cookie)
-});
 
+// login POST request
 app.post("/login", (req, res) => {
 
   const username = req.body.username;
@@ -179,8 +174,6 @@ app.post("/login", (req, res) => {
             bcrypt.compare(password, result[0].password, (error, response) => {
                 if (response) {
                   req.session.user = result;
-                  //console.log(req.session.id)
-                  //console.log(req.session);
                   //send session id to client
                   res.send(req.session.id);
                 } else{
@@ -194,20 +187,30 @@ app.post("/login", (req, res) => {
 );
 });
 
+
+/**
+ * Every time the client either automatically after login or manualy by typing the /dashboard at the url
+ * is trying to visit the "Dashboard" this request is triggered which deletes all expired session ids from the db
+ * and thus only users with non-expired session ids can visit the URL 
+ */
 app.post('/sessionId', (req, res)=>{
+
   //get current session id from client
   const clientSession_id = req.body.params.session_id;
   const userName = req.body.params.userName;
+
   //just the current date
   var rightNow = new Date()
 
-  //console.log("param Id : ",clientSession_id)
 
   //querry for all currently active session in the database
   pool.query(`SELECT session_id, data FROM sessions;`, (err, results) => {
     if (err) {
       return res.send(err);
     } else {
+
+      //Delete all expired session first
+
       //loop through the active sessions
       for( const key in results){
         // current id field
@@ -221,13 +224,17 @@ app.post('/sessionId', (req, res)=>{
 
         //if now is past expiry date delete session from db
         if(rightNow > currentExpireDate){
-          pool.query(`DELETE FROM sessions WHERE session_id = '${currentSessionId}';`,(err,res)=>{
+          pool.query(`DELETE FROM sessions WHERE session_id = '${currentSessionId}';`,
+          (err,res)=>{
             if(err)console.log(err)
             else{console.log(res)}
           })
        }
       }
       
+
+      //Then check if current session id is valid
+
       //turn query results to string
       var resultsStr = JSON.stringify(results);
       //turn query results to JSON Object
@@ -239,28 +246,23 @@ app.post('/sessionId', (req, res)=>{
         var currentSessionId = results[key].session_id
         //check if the session id received from client corresponds to non expired session in the db
         if(currentSessionId == clientSession_id){
-          console.log("Success")
           sessionExists = true;
           res.send(currentSessionId)
-        }else{//res.send(err)}
         }
       }
-
-      
-      
-
-
     }
   });
 
 })
 
+
+//logout POST Request
 app.post('/logout', (req, res)=>{
   req.session.destroy(err => {
       if(err){
           console.log(err);
       }
-      console.log("in logoiut")
+      
       sessionStore.close()
       res.clearCookie("SessionCookie")
       res.send({message: "Logged out succesfully!"}) 
@@ -268,10 +270,12 @@ app.post('/logout', (req, res)=>{
 })
 
 /**
- * End of Authentication
+ * END OF AUTHENTICATION
 */
 
-//Person relevant Queries
+/**
+ * PERSONS RELEVANT QUERIES
+ */
 
 app.get('/personsList', (req, res) => {
   const { table } = req.query;

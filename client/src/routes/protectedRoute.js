@@ -11,7 +11,7 @@ function ProtectedRoute({children}, ...props) {
   const [loading, setLoading] = useState(true);
   var strBoolean = localStorage.getItem("isAuthenticated");
   var [isAuthenticated, setAuth] = useState();
-  //console.log("User is authenticated:", isAuthenticated);
+
 
   async function LoginSessionQuery(session_id){
     return (
@@ -26,14 +26,12 @@ function ProtectedRoute({children}, ...props) {
       
               if(serverReturnId === sessionStorage.getItem("LoginToken")){
                 setAuth(true);
-                //setLoading(false);
-                //console.log("Session Id exists", "Authenticated: ", isAuthenticated, typeof(isAuthenticated))
               }
               
             }else{
-              //console.log("Session has expired!")
+              
             }
-          })//.then((res) =>{ console.log(isAuthenticated)})
+          })
           )
   }
 
