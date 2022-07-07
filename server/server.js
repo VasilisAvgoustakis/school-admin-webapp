@@ -8,7 +8,7 @@ const session = require('express-session');
 const mysqlStore = require('express-mysql-session')(session);
 
 
-const SERVER_IP = "172.25.12.99";
+const SERVER_IP = "localhost";
 
 //db object from db.js containg all queries to db
 const db = require('./db');
@@ -22,6 +22,8 @@ const pool = mysql.createPool({
   password: process.env.MYSQL_PASSWORD,
   database: process.env.MYSQL_DATABASE,
 });
+
+
 
 
 // create sessioStore middleware  allows
