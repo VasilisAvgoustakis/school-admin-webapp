@@ -10,6 +10,7 @@ services:
   mysql-db:
     image: mysql:8.0
     container_name: school_mysql_container
+    command: --default-authentication-plugin=mysql_native_password
     environment:
       <<: *common-variables
       MYSQL_HOST: localhost
