@@ -141,7 +141,6 @@ export class EditJob extends React.Component{
                     sessionStorage.setItem("lastLocation", "Tätigkeiten")
                     sessionStorage.setItem("lastId", this.props.nameId+this.state.filter)
                     window.location.reload()
-                    //console.log(result)
                 }
             });
     }
@@ -160,29 +159,10 @@ export class EditJob extends React.Component{
               probableMitglieder: probMitglieder
             })
           });
-
-    //     this.fetchJobDataMultitable().then(res => {
-    
-    //     let mitglieder = [];
-    //     res.data.forEach(person => {
-    //         mitglieder.push(
-    //             Object.create({ 
-    //                         person_id: person.person_id,
-    //                         rufname: person.rufname,
-    //                         nachname: person.nachname
-    //                         }))
-            
-    //     });
-    //     this.setState({
-    //         mitglieder: mitglieder
-    //     })
-    // }
-    // );
     }
 
 
     render(){
-        //console.log(this.state)
         return(
      <div>
         <div>

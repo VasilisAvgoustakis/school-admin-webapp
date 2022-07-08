@@ -449,7 +449,7 @@ export class EditPerson extends React.Component{
                 )
             
             .then(result=>{
-                console.log("confirm")
+                
                 confirm = false;
                 //last delete query refreshes the page
                 if(!confirm)window.location.reload()
@@ -484,7 +484,7 @@ export class EditPerson extends React.Component{
    
 
     render(){
-        console.log("grund " , this.state.grund_fuer_mitgliedschaftsende)
+        
         return(
             <div>
                 <button type='button' onClick={this.editData}>Speichern</button>
