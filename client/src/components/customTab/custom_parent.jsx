@@ -6,7 +6,7 @@ import '../../stylesheets/globalstyles.css'
 
 
 export function CustomScreen({ navigation: { navigate }}) {
-  axios.defaults.withCredentials = true;
+  axios.defaults.withCredentials = false;
 
   return (
       

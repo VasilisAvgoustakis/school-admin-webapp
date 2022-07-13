@@ -25,10 +25,12 @@ export class SimpleList extends React.Component{
         this.updateGroup = this.updateGroup.bind(this);
         this.updateDate = this.updateDate.bind(this);
         this.fetchData = this.fetchData.bind(this);
+        this.fetchHoliday = this.fetchHoliday.bind(this);
         this.showData = this.showData.bind(this);
         this.generatePDF = this.generatePDF.bind(this);
         this.generateCSV = this.generateCSV.bind(this);
         this.clickPerson = this.clickPerson.bind(this);
+        this.dateToListeFormat = this.dateToListeFormat.bind(this);
         
         
         this.state = {
@@ -52,6 +54,13 @@ export class SimpleList extends React.Component{
             },
           }))
       }
+    
+    // fetch all holiday for berlin in current year
+    async fetchHoliday(){
+        return(
+            await axios.get(`https://get.api-feiertage.de?years=${this.today.getFullYear().toString()}&states=be`)
+        )
+    }
 
     updateGroup(e){
         this.setState({group: e.target.value})
@@ -73,17 +82,17 @@ export class SimpleList extends React.Component{
             })
           })
 
-          .then(this.setState({showData: true})).then( () => 
+          .then(this.setState({showData: true}))
+          .then( () => 
             ReactDOM.render(
             <Anwesenheitsliste 
                 id= {'anwesenheitsTable'} 
                 selectedDate= {this.state.selectedDate} 
                 data= {this.state.data} 
                 navi={this.props.navi}
-                />, document.getElementById('hiddenTable')
-
-
-            ))
+                />, document.getElementById('hiddenTable')),
+                
+            )
 
           
     }
@@ -121,7 +130,55 @@ export class SimpleList extends React.Component{
         this.csvLink.current.link.click()   
     }
 
-    generatePDF() {
+    // returns the right date format for the dates on the pdf
+    dateToListeFormat(date){
+
+        // get the day number from date obj
+        let day = date.getDate();
+
+        // place a 0 infront of day numbers between 1 - 9
+        function formatDay(day){
+            if(day < 10){
+                return '0' + (day).toString();
+            }else{
+                return (day).toString();
+            }
+        }
+    
+        // get month number from date obj
+        let month = date.getMonth();
+
+        // place a 0 infront of months 1 to 9
+        function formatMonth(month){
+            if(month+1 < 10){
+                return '0' + (month+1).toString();
+            }else{
+                return (month+1).toString();
+            }
+        }
+
+        // the final "short" date format that appears on the PDF
+        let shortDate = formatDay(day) + "." + formatMonth(month)
+
+        // returned as string
+        return shortDate.toString()
+    }
+
+
+    async generatePDF() {
+
+        // array to populate with all holiday of the year
+        var holiday = [];
+
+        await this.fetchHoliday()
+        .then(res => {
+
+            let data = res.data.feiertage;
+            data.forEach(element => {
+                holiday.push(this.dateToListeFormat(new Date (element.date)))
+            });
+        })   
+
         
         const doc = new jsPDF('l', 'mm', [297, 210], false);
     
@@ -149,19 +206,19 @@ export class SimpleList extends React.Component{
                  0: { halign: 'center', fontStyle: 'bold'  }
             },
 
-            // createdCell: function(data) {
-            //     data.cell.styles.cellPadding = 50;
-            //   },
-
 
             didParseCell: function (data) {
 
                 if(parseInt(data.cell.raw.abbr, 10) % 2 == 0 ){
-                    //console.log(data.cell.raw)
+                    
                     data.cell.styles.fillColor = [220, 220, 220];
                 } 
                 
-                if( data.cell.raw.accessKey == 0 || data.cell.raw.accessKey == 6 ){
+                if( data.cell.raw.accessKey == 0 ||
+                    data.cell.raw.accessKey == 6 ||
+                    holiday.indexOf(data.cell.raw.innerText) != -1 ||
+                    holiday.indexOf(data.cell.raw.id) != -1 
+                ){
                      data.cell.styles.fillColor = [20, 20, 20];
                  }
              }
