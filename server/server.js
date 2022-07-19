@@ -3029,5 +3029,5 @@ app.get('/absolventen', (req, res) => {
 
 
 app.listen(process.env.REACT_APP_SERVER_PORT, () => {
-  console.log(`App server now listening on port 4000`, process.env.REACT_APP_SERVER_PORT);
+  console.log(`App server now listening on port 3000`);
 });

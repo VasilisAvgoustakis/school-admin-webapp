@@ -42,8 +42,8 @@ services:
       MYSQL_HOST_IP: mysql-db
     ports:
       - 8000:8000
-    # volumes:
-    #   - ./server:/app
+    volumes:     # connects the local path with the container path and allows nodemon to restart server when server.js is saved saved
+      - ./server:/app # but creates a bug where package.json dependencies do not install properly
     links:
       - mysql-db
     command: npm start
