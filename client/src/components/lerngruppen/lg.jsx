@@ -32,8 +32,8 @@ export class Lg extends React.Component{
             core_data:{
                 lerngruppe_id: this.props.lerngruppe_id,
                 bezeichnung: this.props.bezeichnung,
-                email_eltern_eltern: this.props.email_eltern,
-                email_eltern_team: this.props.email_team,
+                email_eltern: this.props.email_eltern,
+                email_team: this.props.email_team,
                 telefon_team: this.props.telefon_team
             },
             schuller:[],
@@ -135,11 +135,11 @@ export class Lg extends React.Component{
                                 </tr>
                                 <tr>
                                     <td><strong>E-Mail Eltern:</strong></td>
-                                    <td >{this.state.core_data.email_eltern_eltern}</td>
+                                    <td >{this.state.core_data.email_eltern}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>E-Mail Team:</strong></td>
-                                    <td>{this.state.core_data.email_eltern_team}</td>
+                                    <td>{this.state.core_data.email_team}</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Telefon Team:</strong></td>
