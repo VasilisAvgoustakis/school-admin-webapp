@@ -1,18 +1,16 @@
 import { SERVER_IP } from '../../globalFunctions';
-import React, {Component} from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Anwesenheitsliste } from './anwesenheitsPdf';
-import {CSVLink, CSVDownload} from "react-csv";
+import {CSVLink} from "react-csv";
 import '../../stylesheets/globalstyles.css';
 import {dateToDEFormat, Sleep} from '../../globalFunctions'
 import { v4 as uuidv4 } from 'uuid';
-import { useWindowDimensions } from 'react-native';
 import { jsPDF } from "jspdf";
 import 'jspdf-autotable';
 
-//Since the edits that allow the Lerngruppen to be dynamically fetched from the kind_lerngruppe table depending 
+// Since the edits that allow the Lerngruppen to be dynamically fetched from the kind_lerngruppe table depending 
 // on the selected date, the form only works for dates in 2022 since no other records exist in the kind_lerngruppe table
 // inside the current db
 export class SimpleList extends React.Component{
