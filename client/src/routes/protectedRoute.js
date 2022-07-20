@@ -29,7 +29,7 @@ function ProtectedRoute({children}, ...props) {
               }
               
             }else{
-              
+              setAuth(false)
             }
           })
           )

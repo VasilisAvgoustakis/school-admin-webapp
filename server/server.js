@@ -280,7 +280,7 @@ app.post('/logout', (req, res)=>{
 
 
 /**
- * PERSONS RELEVANT QUERIES
+ * PERSON RELEVANT QUERIES
  */
 
 
@@ -3028,6 +3028,8 @@ app.get('/absolventen', (req, res) => {
 //End of Queries
 
 
-app.listen(process.env.REACT_APP_SERVER_PORT, () => {
+const server = app.listen(process.env.REACT_APP_SERVER_PORT, () => {
   console.log(`App server now listening on port 3000`);
 });
+
+module.exports = server;
