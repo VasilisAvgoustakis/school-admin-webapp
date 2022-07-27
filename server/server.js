@@ -2763,7 +2763,7 @@ app.get('/simpleList', (req, res) => {
         console.log(err)
         return res.send(err);
       } else {
-        console.log(results)
+        // console.log(results)
         return res.send(results);
       }
     }

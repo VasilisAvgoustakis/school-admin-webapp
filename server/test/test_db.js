@@ -193,8 +193,10 @@ describe('Test DB Connectivity', ()=>{
     })
 
 
+    
+    // multitable queries tests
     describe("GET /dataMultitablePerson", () => {
-        it("should get all records of a Person in the db.", (done)=>{
+        it("should get data of triple relationships of a Person.", (done)=>{
             chai.request(server)
                 .get("/dataMultitablePerson")
                 .query({table1: "kind_lerngruppe", table2:"lerngruppen", person_id: "280", sortByColumn: "eintrittsdatum"})
@@ -206,30 +208,33 @@ describe('Test DB Connectivity', ()=>{
         })
     })
 
-    // multitable queries tests
 
-    //dictionary containg parameter name as key and expected values as keyvalues
-    const multiQueries = {
-        haushalt_id: "2", 
-    }
-
-    const queryNames = ["dataMultitableHaus"]
-
-    for (var n in multiQueries){
-        let dictIndex = 0;
-        describe(`GET /${queryNames[dictIndex]}`, () => {
-            it("should get .", (done)=>{
-                chai.request(server)
-                    .get(`/${queryNames[dictIndex]}`)
-                    .query({haushalt_id: '2'})
-                    .end((err, response) => {
-                        response.should.have.status(200);
-                        response.body.should.be.a("array");
-                    done();
-                    })
-            })
+    
+    describe(`GET /dataMultitableHaus}`, () => {
+        it("should get data from triple relationships of households.", (done)=>{
+            chai.request(server)
+                .get(`/dataMultitableHaus`)
+                .query({haushalt_id: "2"})
+                .end((_err, response) => {
+                    response.should.have.status(200);
+                    response.body.should.be.a("array");
+                done();
+                })
         })
-        dictIndex++;
-    }
+    })
+
+    // CUSTOM QUERIES
+    describe(`GET /simpleList}`, () => {
+        it("should get all pupils depending on group or class.", (done)=>{
+            chai.request(server)
+                .get(`/simpleList`)
+                .query({group: "alle", date: "2021-08-01"})
+                .end((_err, response) => {
+                    response.should.have.status(200);
+                    response.body.should.be.a("array");
+                done();
+                })
+        })
+    })
     
 })
