@@ -56,8 +56,7 @@ LINUX
 
 1. Run `docker ps` in the terminal to make sure the containers are running and find out the name of the server container.
 2. Run `docker exec -it school_node_server_container /bin/bash`to attach to the container's CLI.
-#### TROUBLESHOOTING
-- In case the error `Uncaught Error: listen EADDRINUSE: address already in use :::8000` is thrown, it means you need to stop the node server before going through the steps described below.
+* In case the error `Uncaught Error: listen EADDRINUSE: address already in use :::8000` is thrown, it means you need to stop the node server before going through the steps described below.
     1. Run `netstat -ntlp` to find the GID of the node server.
     2. RUN `kill -9 GID#` to kill node.
 3. Once in the CLI simply run `npm test`to start testing with mocha.
