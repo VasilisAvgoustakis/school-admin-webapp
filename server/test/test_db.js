@@ -47,19 +47,6 @@ describe('Test DB Connectivity', ()=>{
         })
     })
 
-    // describe("POST /sessionId", () => {
-    //     it("should return nothing since the session id passed does not corresponds to that of an active session.", (done)=>{
-            
-    //         chai.request(server)
-    //             .post("/sessionId")
-    //             .send({"params":{"session_id":"lajdhfiusHOILHJLKJHGsdgulsjkf45879"}})
-    //             .end((err, response) => {
-    //                 response.should.have.status(200)
-    //                 // response.body.should.be.a('string');
-    //             done();
-    //             })
-    //     })
-    // })
 
     describe("POST /logout", () => {
         it("should return an object with string message after loging out.", (done)=>{
@@ -223,7 +210,7 @@ describe('Test DB Connectivity', ()=>{
         })
     })
 
-    // CUSTOM QUERIES
+    // CUSTOM QUERIES sample test
     describe(`GET /simpleList}`, () => {
         it("should get all pupils depending on group or class.", (done)=>{
             chai.request(server)
